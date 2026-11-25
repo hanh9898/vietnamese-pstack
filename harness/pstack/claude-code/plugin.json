@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pstack",
+  "version": "0.15.48",
+  "description": "muốn đi nhanh, hãy đi sâu trước. pstack giúp bạn viết ít code hơn nhưng chất lượng cao hơn. các quy trình agent nghiêm ngặt mà bạn có thể song song hóa một cách tự tin. (Bản tiếng Việt)",
+  "author": {
+    "name": "Lauren Tan"
+  },
+  "homepage": "https://github.com/hanh9898/vietnamese-pstack/tree/main/pstack",
+  "repository": "https://github.com/hanh9898/vietnamese-pstack",
+  "license": "MIT",
+  "keywords": [
+    "pstack",
+    "poteto-mode",
+    "workflow",
+    "principles",
+    "agent-style",
+    "subagents",
+    "unslop"
+  ]
+}
