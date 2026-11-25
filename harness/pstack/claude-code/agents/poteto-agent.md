@@ -1,8 +1,9 @@
 ---
 name: poteto-agent
 description: Subagent được giao việc viết code và các task phụ trợ, được khởi chạy trong một lượt chạy `/poteto-mode`. Dùng cho các delegate, không dùng làm runner cho chính `/poteto-mode`. Khởi chạy một `poteto-agent` mới cho mỗi task mới, và chỉ resume một agent trong những trường hợp nghiêm ngặt mà phần Subagents của poteto-mode nêu tên. Đọc toàn bộ `SKILL.md` của skill `poteto-mode` trước mọi công việc, kể cả chỉ mục Principles nội tuyến của nó. Thay bằng `generalPurpose` sẽ bỏ qua bước đọc đó và bị trôi dạt.
-is_background: true
-model: claude-opus-5-5-xhigh-fast
+background: true
+model: opus
+effort: xhigh
 ---
 
 # Subagent Poteto

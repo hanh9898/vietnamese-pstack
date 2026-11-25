@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Automate me
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Một luồng có hướng dẫn để biến các quy ước làm việc của người dùng thành một skill mà agent sẽ làm theo. Output là một skill `-mode` được may đo cho họ (ví dụ `jay-mode`, `priya-mode`).
 

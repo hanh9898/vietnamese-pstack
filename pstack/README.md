@@ -20,16 +20,25 @@ hãy fork nó. cải tiến nó. biến nó thành của bạn. PR luôn đượ
 
 trong claude code:
 
+Nếu trước đây bạn đã cài pstack upstream từ `cursor/plugins`, hãy tắt rồi gỡ plugin đó trước khi cài bản tiếng Việt bên dưới. Cả hai plugin cung cấp lệnh dưới namespace `/pstack:`, nên bật cùng lúc có thể làm trùng lệnh. Với cài đặt user:
+
 ```bash
-/plugin marketplace add cursor/plugins
-/plugin install pstack@cursor-plugins
+claude plugin disable --scope user pstack@cursor-plugins
+claude plugin uninstall --scope user pstack@cursor-plugins
 ```
 
-claude code tắt auto-update cho các marketplace bên thứ ba, nên pstack giữ nguyên phiên bản bạn đã cài. để bật nó, chạy `/plugin`, mở tab **marketplaces**, chọn `cursor-plugins` và chọn **enable auto-update**. để cập nhật thủ công một lần, chạy `claude plugin update pstack@cursor-plugins`.
+Nếu bản upstream được cài ở phạm vi `project` hoặc `local`, thay `user` thành cùng phạm vi trong lệnh `disable`, `uninstall` ở trên và lệnh `install` bên dưới. Trong giao diện, chọn cùng phạm vi đó.
+
+```bash
+claude plugin marketplace add hanh9898/vietnamese-pstack
+claude plugin install --scope user pstack@vietnamese-pstack
+```
+
+trong một session đang mở, bạn cũng có thể chạy `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack` và chọn phạm vi cài đặt trong bảng plugin. claude code tắt auto-update cho các marketplace bên thứ ba, nên pstack giữ nguyên phiên bản bạn đã cài. để bật nó, chạy `/plugin`, mở tab **marketplaces**, chọn `vietnamese-pstack` và chọn **enable auto-update**. để cập nhật thủ công một lần, chạy `claude plugin update pstack@vietnamese-pstack`.
 
 claude code thêm tiền tố cho lệnh và agent của plugin, nên `/poteto-mode` thành `/pstack:poteto-mode`. [bộ chuyển đổi claude code](./docs/harness/claude-code.md) ánh xạ mọi tên cursor còn lại. trong claude code, `/pstack:setup-pstack` ghi lựa chọn model của bạn vào `~/.claude/rules/pstack-models.md`, và bước nào cần tính năng chỉ có trên cursor, như bugbot hay automations, sẽ bị bỏ qua kèm một dòng ghi chú.
 
-claude code cài một bản sao được sinh tự động của pstack, gồm cả readme này và hướng dẫn, từ [`harness/pstack/`](https://github.com/cursor/plugins/tree/main/harness/pstack) ở gốc repository. sau khi thay đổi pstack, chạy `node scripts/generate-pstack-harness-trees.mjs` từ gốc repository và commit kết quả. ci sẽ fail khi bản sao sinh tự động bị lỗi thời.
+claude code cài một bản sao được sinh tự động của pstack, gồm cả readme này và hướng dẫn, từ [`harness/pstack/claude-code`](https://github.com/hanh9898/vietnamese-pstack/tree/main/harness/pstack/claude-code) ở gốc repository. sau khi thay đổi pstack, chạy `node scripts/generate-pstack-harness-trees.mjs` từ gốc repository và commit kết quả. ci sẽ fail khi bản sao sinh tự động bị lỗi thời.
 
 ## bắt đầu
 

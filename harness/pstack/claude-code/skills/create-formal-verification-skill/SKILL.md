@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Tạo một formal verification skill
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Một test kiểm tra các trường hợp mà ai đó đã nghĩ ra để viết. Kiểm chứng hình thức kiểm tra mọi trường hợp trong một phạm vi đã nêu: mọi thứ tự các bước trong một model, mọi input đến một giới hạn, hoặc mọi input. Skill này tìm phần của repo nơi điều đó quan trọng nhất, kiểm chứng một tính chất của nó, và để lại một skill cục bộ cho dự án cho phép agent tiếp theo kiểm tra một thay đổi với tính chất đó. Viết skill đó cho một agent đọc nó từ đầu, giữa chừng một thay đổi, và chưa bao giờ thấy công việc của bạn. Người dùng phải có thể tin kết quả và hành động dựa trên nó mà không cần học ngôn ngữ kiểm chứng.
 

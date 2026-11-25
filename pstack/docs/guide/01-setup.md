@@ -12,7 +12,16 @@ Trong một chat Cursor, chạy:
 
 Cursor xác nhận plugin đã được cài.
 
-Trong Claude Code, chạy `/plugin marketplace add cursor/plugins`, rồi `/plugin install pstack@cursor-plugins`. Claude Code thêm tiền tố cho lệnh của plugin, nên mỗi lệnh trong hướng dẫn này cần tiền tố `pstack:` ở đó, ví dụ `/pstack:setup-pstack`, lệnh này ghi rule model vào `~/.claude/rules/pstack-models.md`. [Bộ chuyển đổi Claude Code](../harness/claude-code.md) đề cập các khác biệt còn lại.
+Nếu trước đây bạn đã cài pstack upstream từ `cursor/plugins`, hãy tắt rồi gỡ plugin đó trước khi cài bản tiếng Việt bên dưới. Cả hai plugin cung cấp lệnh dưới namespace `/pstack:`, nên bật cùng lúc có thể làm trùng lệnh. Với cài đặt user:
+
+```bash
+claude plugin disable --scope user pstack@cursor-plugins
+claude plugin uninstall --scope user pstack@cursor-plugins
+```
+
+Nếu bản upstream được cài ở phạm vi `project` hoặc `local`, thay `user` thành cùng phạm vi trong lệnh `disable`, `uninstall` ở trên và lệnh `install` bên dưới. Trong giao diện, chọn cùng phạm vi đó.
+
+Trong terminal, chạy `claude plugin marketplace add hanh9898/vietnamese-pstack`, rồi `claude plugin install --scope user pstack@vietnamese-pstack`. Trong một session đang mở, dùng `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack` và chọn cùng phạm vi cài đặt trong bảng plugin. Claude Code thêm tiền tố cho lệnh của plugin; các slash command bên dưới dùng dạng Cursor, nên thêm `pstack:` trong Claude Code, ví dụ `/pstack:setup-pstack`. [Bộ chuyển đổi Claude Code](../harness/claude-code.md) đề cập các khác biệt còn lại.
 
 ## Chọn model
 
@@ -22,7 +31,7 @@ Chạy:
 /setup-pstack
 ```
 
-[`/setup-pstack`](../../skills/setup-pstack/SKILL.md) phát hiện các model bạn có quyền truy cập, hỏi mức ngân sách suy luận (reasoning budget), cho bạn xem từng vai trò (code delegate, phán đoán, các review panel), và hỏi bạn muốn gì. Hãy trả lời các câu hỏi. Nó ghi `~/.cursor/rules/pstack-models.mdc`, một rule nhỏ mà mọi skill pstack đều đọc.
+[`/setup-pstack`](../../skills/setup-pstack/SKILL.md) phát hiện các model bạn có quyền truy cập, hỏi mức ngân sách suy luận (reasoning budget), cho bạn xem từng vai trò (code delegate, phán đoán, các review panel), và hỏi bạn muốn gì. Hãy trả lời các câu hỏi. Trong Cursor, nó ghi `~/.cursor/rules/pstack-models.mdc`; trong Claude Code, nó ghi `~/.claude/rules/pstack-models.md`, một rule nhỏ mà mọi skill pstack đều đọc.
 
 Các giá trị mặc định giống với budget `large`. Code, văn bản và phán đoán chạy trên Opus 5.5 với mức suy luận `xhigh`, còn các review panel và swarm worker chạy ở `high`. Không vai trò nào chạy trên `xhigh`. Ngoài review panel, Fable 5.2 chỉ chạy khi bạn gọi tên nó cho một task hoặc sau khi hai lần chạy Opus 5.5 với cùng một brief đều không qua được bước kiểm tra. `medium` hạ mỗi vai trò xuống một mức và `small` hạ hai mức, cả hai đều tốn ít token hơn.
 
@@ -34,7 +43,7 @@ Có thể bạn đang thắc mắc điều gì xảy ra nếu dùng Auto. Đặt
 
 Cuối quá trình cài đặt, `/setup-pstack` tìm một cách để chứng minh hành vi ứng dụng trong dự án của bạn, hoặc là một skill `verify-*` hoặc là một harness có sẵn. Nếu không thấy cái nào, nó đề xuất một lần việc sinh ra một cái bằng [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md).
 
-Đồng ý thì nó ghi `.cursor/skills/verify-<app>/`, một skill cục bộ của dự án dạy agent điều khiển ứng dụng của bạn theo cách người dùng làm. Nó chứng minh skill hoạt động một lần trước khi bàn giao. Từ chối thì quá trình cài đặt tiếp tục. Bạn có thể tự chạy `/create-verification-skill` bất cứ lúc nào. [Kiểm chứng và ship](./06-verify-and-ship.md#tạo-một-verification-skill-cho-dự-án) đề cập chi tiết.
+Đồng ý thì nó ghi `.cursor/skills/verify-<app>/` trong Cursor hoặc `.claude/skills/verify-<app>/` trong Claude Code, một skill cục bộ của dự án dạy agent điều khiển ứng dụng của bạn theo cách người dùng làm. Nó chứng minh skill hoạt động một lần trước khi bàn giao. Từ chối thì quá trình cài đặt tiếp tục. Bạn có thể tự chạy `/create-verification-skill` bất cứ lúc nào. [Kiểm chứng và ship](./06-verify-and-ship.md#tạo-một-verification-skill-cho-dự-án) đề cập chi tiết.
 
 Nếu bạn mới dùng pstack, hãy đồng ý. Một agent có thể kiểm tra công việc của chính nó sẽ tiếp tục cho đến khi bước kiểm tra pass. Một agent không làm được vậy sẽ trả mọi kết quả về cho bạn kiểm tra bằng tay. Trong mọi thứ ở hướng dẫn này, verification skill là thứ đáng giá nhất.
 

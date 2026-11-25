@@ -96,6 +96,20 @@ for (const [skill, { usesCursorNames, wrap }] of classes) {
   if (name !== skill) problems.push(`skills/${skill}/SKILL.md has name ${JSON.stringify(name ?? "")}, not its folder name ${skill}`);
   if (!SKILL_NAME.test(skill) || skill.length > 64) problems.push(`skills/${skill} is not lowercase words joined by hyphens, at most 64 characters`);
 }
+try {
+  const marketplace = JSON.parse(readFileSync(join(ROOT, ".claude-plugin", "marketplace.json"), "utf8"));
+  const plugin = marketplace.plugins?.find(({ name }) => name === "pstack");
+  const sourceManifest = JSON.parse(readFileSync(join(PSTACK, "plugin.json"), "utf8"));
+  if (marketplace.name !== "vietnamese-pstack") problems.push("Claude Code marketplace name must be vietnamese-pstack");
+  if (!plugin) {
+    problems.push("Claude Code marketplace has no pstack plugin entry");
+  } else {
+    if (plugin.source !== "./harness/pstack/claude-code") problems.push("Claude Code marketplace pstack source must be ./harness/pstack/claude-code");
+    if (sourceManifest.name !== plugin.name) problems.push("Claude Code marketplace pstack name does not match pstack/plugin.json");
+  }
+} catch (error) {
+  problems.push(`Claude Code marketplace or pstack source manifest is invalid: ${error.message}`);
+}
 const adapter = readFileSync(join(PSTACK, ADAPTER), "utf8");
 for (const [key, using] of users) {
   if (!adapter.includes(key)) problems.push(`Claude Code adapter has no row for ${key}, used by ${using.join(", ")}`);
@@ -124,9 +138,23 @@ function render() {
     join(PSTACK, ADAPTER),
     join(PSTACK, "README.md"),
   ];
-  const files = new Map(copies.map((path) => [relative(PSTACK, path), file(path)]));
+  const files = new Map(copies.map((path) => {
+    const name = relative(PSTACK, path);
+    const entry = file(path);
+    if (!name.startsWith("agents/") || !name.endsWith(".md")) return [name, entry];
+    const text = entry.bytes.toString("utf8");
+    const match = text.match(/^(---\r?\n)([\s\S]*?)(\r?\n---(?:\r?\n|$))/);
+    if (!match) return [name, entry];
+    const newline = match[1].endsWith("\r\n") ? "\r\n" : "\n";
+    const metadata = match[2]
+      .replace(/^model: claude-(opus|sonnet|haiku|fable)-.*-(low|medium|high|xhigh|max)(?:-fast)?\s*$/m, `model: $1${newline}effort: $2`)
+      .replace(/^is_background: (true|false)\s*$/m, "background: $1");
+    const converted = `${match[1]}${metadata}${match[3]}${text.slice(match[0].length)}`;
+    return [name, { ...entry, bytes: Buffer.from(converted) }];
+  }));
   const line =
     `Trong Claude Code, hãy đọc [adapter Claude Code](../../${ADAPTER}) một lần mỗi session trước khi làm theo skill này. ` +
+    `Claude Code thay \`\${CLAUDE_PLUGIN_ROOT}\` trong skill này bằng thư mục gốc plugin; \`<pstack>\` là đường dẫn đó. ` +
     "Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.";
   for (const [skill, { wrap }] of classes) {
     const path = `skills/${skill}/SKILL.md`;

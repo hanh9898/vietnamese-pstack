@@ -5,7 +5,7 @@ description: Cấu hình pstack dùng model nào cho mỗi vai trò và ở ngâ
 
 # Thiết lập pstack
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Ghi `~/.cursor/rules/pstack-models.mdc`, một rule luôn được áp dụng để đặt model của pstack cho mỗi vai trò.
 

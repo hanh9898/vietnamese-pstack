@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Bảo trì một formal verification skill
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Một phép kiểm tra hình thức chứng minh một tính chất của thứ mà nó mô tả. Khi code thay đổi mà việc kiểm chứng thì không, phép kiểm tra có thể tiếp tục pass trong khi nó mô tả code không còn tồn tại. Lần pass đó là trường hợp nguy hiểm, vì nó trông như một chứng minh. Skill này là vòng lặp bảo trì cho một verify skill mà `/create-formal-verification-skill` đã tạo, hoặc cho bất kỳ skill cục bộ nào của dự án chạy một model checker, prover, hoặc verifier cấp code với code được gọi tên. Skill cục bộ của dự án xử lý một thay đổi mà agent thực hiện trong khi dùng skill đó. Skill này xử lý các thay đổi đã bỏ qua nó: các lần merge, các chỉnh sửa thực hiện mà không có skill, và sự lệch tích tụ qua nhiều commit.
 

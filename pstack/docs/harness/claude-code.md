@@ -1,6 +1,10 @@
 # pstack trong Claude Code
 
-Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc file này một lần mỗi session, rồi ánh xạ từng tên Cursor trong một skill bằng các bảng bên dưới. `<pstack>` nghĩa là thư mục chứa `skills/` và `docs/`. Nếu một trường của Cursor không có dòng tương ứng, hãy bỏ nó và nói rõ. Không bao giờ truyền một trường hoặc giá trị mà schema của tool từ chối.
+Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc file này một lần mỗi session, rồi ánh xạ từng tên Cursor trong một skill bằng các bảng bên dưới. `<pstack>` nghĩa là thư mục gốc plugin `${CLAUDE_PLUGIN_ROOT}` chứa `skills/` và `docs/`; Claude Code thay biến này bằng thư mục cài đặt của phiên bản plugin hiện tại trong nội dung skill và agent. Nếu một trường của Cursor không có dòng tương ứng, hãy bỏ nó và nói rõ. Không bao giờ truyền một trường hoặc giá trị mà schema của tool từ chối.
+
+## Phiên bản plugin
+
+Khi phát hành thay đổi cho plugin, tăng `version` trong `pstack/plugin.json`, rồi sinh lại harness. Claude Code dùng version để quyết định có thay bản plugin đã cache hay không; nếu giữ nguyên version, người dùng có thể tiếp tục nhận skill cũ dù đã cập nhật marketplace.
 
 ## Tool
 
@@ -8,8 +12,9 @@ Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc 
 | --- | --- |
 | `Task` | `Agent` |
 | `AskQuestion` | `AskUserQuestion`. Ở chế độ `-p` nó không có, nên hãy hỏi bằng văn bản thường. |
-| Mở một todolist, hoặc chép các bước vào tool todolist | Dùng `TodoWrite` nếu session có. Nếu không, giữ danh sách trong câu trả lời và cập nhật nó ở mỗi giai đoạn. |
-| Chạy một skill pstack khác (`/name`, "skill **name**" hoặc "the **name** skill") | `Read` `<pstack>/skills/<name>/SKILL.md` và làm theo nó. Tool `Skill` từ chối phần lớn các skill pstack. Khi bạn bảo người dùng gõ nó, hãy viết `/pstack:<name>`. |
+| Mở một todolist, hoặc chép các bước vào tool todolist | Dùng `TaskCreate`, `TaskUpdate`, `TaskList`, và `TaskGet` nếu session có; `TodoWrite` có thể thay chúng khi task tools bị tắt. Nếu không có tool nào, giữ danh sách trong câu trả lời và cập nhật nó ở mỗi giai đoạn. |
+| Chạy một skill pstack khác trong công việc hiện tại | Nếu skill đặt `disable-model-invocation: true`, không gọi nó bằng `Skill`; dùng `Read` `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` và làm theo. Chỉ dùng `Skill` với tên `pstack:<name>` khi skill cho phép model gọi và được liệt kê trong tool. Nếu tool hoặc skill không có, dùng `Read` làm phương án dự phòng. |
+| Bảo người dùng chạy một skill pstack | Viết lệnh slash `/pstack:<name>`. `disable-model-invocation: true` ngăn Claude tự gọi skill, không ngăn người dùng gọi bằng lệnh slash. |
 | `Grep`, `Glob` | `Bash` với `rg` khi session không có `Grep` hoặc `Glob`. |
 
 ## Các trường của subagent
@@ -24,8 +29,8 @@ Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc 
 | `environment: "cloud"` | `isolation: "worktree"`. Gọi tên branch hoặc commit mà worker sẽ checkout. |
 | `environment: "local"` | Bỏ qua. |
 | `cloud_base_branch: <b>` | Bảo worker checkout `<b>` trước. |
-| `run_in_background: true` | Bỏ qua. Subagent chạy nền theo mặc định và thông báo cho bạn khi xong. |
-| `resume` | Khởi chạy một agent mới và dán kết quả trước đó vào brief của nó. |
+| `run_in_background: true` | Bỏ qua khi khởi chạy từ chat chính: Claude Code mặc định chạy custom subagent trong nền. |
+| `resume` | Gửi tiếp cho cùng agent ID bằng `SendMessage` để giữ toàn bộ lịch sử và state của nó. Chỉ khởi chạy agent mới kèm brief trước đó nếu không có agent ID Claude Code tương ứng; ID của Cursor không dùng được. |
 | `file_attachments` | Liệt kê các đường dẫn trong brief. |
 
 ## Model
@@ -37,6 +42,8 @@ Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc 
 | `auto` hoặc `inherit-parent` | Bỏ `model`. |
 | Rule `pstack-models.mdc`, `~/.cursor/rules/pstack-models.mdc` | `~/.claude/rules/pstack-models.md`. Claude Code nạp nó vào mọi session mới, nên các dòng vai trò của nó đã có sẵn trong context. Nếu chưa có, hãy đọc file. Nếu file hoặc dòng của vai trò bị thiếu, dùng slug mặc định của skill. |
 | Một giá trị vai trò `<model> <effort>`, như `opus high` | `model: "opus"` và `effort: "high"`. |
+
+Generator cũng chuyển frontmatter của agent từ `model: claude-...-<effort>[-fast]` sang model alias Claude Code cùng `effort`, và đổi `is_background` thành `background`.
 
 ## setup-pstack
 
