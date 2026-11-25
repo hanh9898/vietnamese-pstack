@@ -1,50 +1,50 @@
 ---
 name: blast-radius
-description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
+description: "Tìm những gì một thay đổi có thể làm hỏng ở chỗ khác trước khi nó được ship, vượt ra ngoài diff, và chứng minh sự thật duy nhất khiến nó an toàn bằng cách chạy code thật thay vì viết ra. Dùng cho 'blast radius of X', 'what could this break' (hoặc 'thay đổi này có thể làm hỏng gì'), hoặc khi review một diff nhỏ mà bạn không tin."
 disable-model-invocation: true
 ---
 
 # Blast radius
 
-Find what a change breaks somewhere else, before it ships. Use for "blast radius of X", "what could this break", or reviewing a small diff you don't trust yet.
+Tìm những gì một thay đổi làm hỏng ở chỗ khác, trước khi nó được ship. Dùng cho "blast radius of X", "what could this break", hoặc khi review một diff nhỏ mà bạn chưa tin.
 
-Companion to `how` and `why`. `how` tells you what the code does. `why` tells you why it's shaped that way. Blast radius tells you what it breaks somewhere else.
+Đi kèm với `how` và `why`. `how` cho bạn biết code làm gì. `why` cho bạn biết tại sao nó có hình dạng như vậy. Blast radius cho bạn biết nó làm hỏng gì ở chỗ khác.
 
-Listing the callers is not the job. The agent can grep those in a second. The job is the breakage grep won't show you.
+Liệt kê các caller không phải là công việc. Agent có thể grep chúng trong một giây. Công việc là những chỗ hỏng mà grep sẽ không cho bạn thấy.
 
-## Don't trust your own writeup
+## Đừng tin bài viết của chính bạn
 
-A blast-radius writeup that sounds right is worthless. It reads as convincing whether or not it's true. So don't hand back the writeup. Find the one or two facts the whole thing depends on and prove them by running code.
+Một bài viết blast radius nghe có vẻ đúng là vô giá trị. Nó đọc lên vẫn thuyết phục dù đúng hay không. Vậy nên đừng trả về bài viết. Tìm một hoặc hai sự thật mà toàn bộ phụ thuộc vào và chứng minh chúng bằng cách chạy code.
 
-### How sure are you
+### Bạn chắc chắn đến đâu
 
-For each fact the change's safety depends on, get it as far down this list as is cheap, and say where it stopped.
+Với mỗi sự thật mà sự an toàn của thay đổi phụ thuộc vào, hãy đưa nó xuống càng sâu trong danh sách này càng tốt khi còn rẻ, và nói nó dừng ở đâu.
 
-1. You said so. Worthless on its own.
-2. You pointed at the line. A real `file:line`, or the library's own source.
-3. You showed the bad case can't happen. You walked the failure step by step and it doesn't reach.
-4. You ran it. A script or test that calls the real code and fails loud if you're wrong.
-5. You reproduced it in the running app.
+1. Bạn nói vậy. Tự nó là vô giá trị.
+2. Bạn chỉ vào dòng code. Một `file:line` thật, hoặc chính source của thư viện.
+3. Bạn cho thấy trường hợp xấu không thể xảy ra. Bạn đi qua thất bại từng bước và nó không đến được.
+4. Bạn đã chạy nó. Một script hoặc test gọi code thật và thất bại ầm ĩ nếu bạn sai.
+5. Bạn đã tái hiện nó trong app đang chạy.
 
-Step 4 is usually one small script that imports the same library the app ships and calls the exact function you're worried about.
+Bước 4 thường là một script nhỏ import cùng thư viện mà app ship và gọi chính xác hàm bạn đang lo lắng.
 
-## Steps
+## Các bước
 
-1. Read the change. The diff, the symbols it adds, changes, and deletes, and what it now does differently, including the part the diff doesn't spell out. Pull the PR and its commits.
-2. Find the one fact it's safe because of. Most changes that look risky are safe because of a single fact, like "this call only drops already-dead cache entries and does nothing else". Find that fact. If it holds, most risky cases are cleared at once. Spend your time here, not on a long list of maybes.
-3. Look where grep stops. Read the source of the library you call, and check its pinned version and any local patch. Work out when things run: microtasks, unmount and teardown, Solid versus React. Follow what a symbol search misses: the JSON an API returns, a DB column, a wire format, another language reading the same bytes, a feature flag, code three hops downstream.
-4. Be honest about each risk. Give it a real chance of happening and a real cost if it does. Keep the risks you confirmed. List the ones you checked and cleared separately. Cite a real `file:line`, a search that finds nothing is still an answer, and never make up a caller or an API.
-5. Prove the one fact. Write a script or test that runs the real code, run it, and paste what happened.
-6. For a big or wide change, run it as an `arena`. Ask more than one model the same question and merge the answers. Different models catch different real bugs.
+1. Đọc thay đổi. Diff, các symbol nó thêm, đổi, và xóa, và những gì giờ nó làm khác đi, bao gồm cả phần diff không nói rõ. Lấy PR và các commit của nó.
+2. Tìm sự thật duy nhất khiến nó an toàn. Phần lớn các thay đổi trông có vẻ rủi ro đều an toàn nhờ một sự thật duy nhất, như "lệnh gọi này chỉ bỏ các mục cache vốn đã chết và không làm gì khác". Tìm sự thật đó. Nếu nó đứng vững, phần lớn các trường hợp rủi ro được gỡ bỏ cùng lúc. Dành thời gian ở đây, không phải cho một danh sách dài các khả năng.
+3. Nhìn vào nơi grep dừng lại. Đọc source của thư viện bạn gọi, và kiểm tra phiên bản được ghim và mọi bản vá cục bộ. Xác định khi nào mọi thứ chạy: microtask, unmount và teardown, Solid so với React. Lần theo những gì tìm kiếm symbol bỏ sót: JSON mà một API trả về, một cột DB, một định dạng truyền tải, một ngôn ngữ khác đọc cùng những byte đó, một feature flag, code cách ba bước ở phía sau.
+4. Trung thực về từng rủi ro. Cho nó một khả năng xảy ra thật và một cái giá thật nếu nó xảy ra. Giữ các rủi ro bạn đã xác nhận. Liệt kê riêng những cái bạn đã kiểm tra và gỡ bỏ. Trích dẫn một `file:line` thật, một tìm kiếm không ra gì vẫn là một câu trả lời, và không bao giờ bịa ra một caller hay một API.
+5. Chứng minh sự thật duy nhất đó. Viết một script hoặc test chạy code thật, chạy nó, và dán những gì đã xảy ra.
+6. Với một thay đổi lớn hoặc rộng, hãy chạy nó như một `arena`. Hỏi nhiều hơn một model cùng câu hỏi và gộp các câu trả lời. Các model khác nhau bắt được các bug thật khác nhau.
 
-## What to hand back
+## Những gì cần trả về
 
-- **What it does.** What changed, including the part that isn't obvious.
-- **The one fact it's safe because of.** State it, say which step you got it to, and show the proof. If you couldn't prove it, write unproven.
-- **Risks.** Each names how it breaks, the `file:line`, how likely and how bad, and how to check. Paste the proof for the ones that matter.
-- **Cleared.** What you checked and why it's fine.
-- **Before you merge.** The cheapest test or repro that catches the real bug, including the script you wrote.
+- **Nó làm gì.** Những gì đã thay đổi, bao gồm cả phần không hiển nhiên.
+- **Sự thật duy nhất khiến nó an toàn.** Nêu nó, nói bạn đã đưa nó đến bước nào, và cho xem bằng chứng. Nếu bạn không thể chứng minh nó, hãy viết là chưa được chứng minh.
+- **Rủi ro.** Mỗi rủi ro gọi tên cách nó hỏng, `file:line`, khả năng xảy ra và mức độ tệ, và cách kiểm tra. Dán bằng chứng cho những cái quan trọng.
+- **Đã gỡ bỏ.** Những gì bạn đã kiểm tra và tại sao nó ổn.
+- **Trước khi merge.** Test hoặc bản tái hiện rẻ nhất bắt được bug thật, bao gồm script bạn đã viết.
 
-Write it through `unslop`, cite real code, and strip anything private before it goes anywhere public.
+Viết nó qua `unslop`, trích dẫn code thật, và loại bỏ mọi thứ riêng tư trước khi nó đi đến bất kỳ nơi công khai nào.
 
-**Reply:** the writeup above, with the one safety fact either proven or marked unproven.
+**Câu trả lời:** bài viết ở trên, với sự thật an toàn duy nhất hoặc đã được chứng minh hoặc được đánh dấu là chưa được chứng minh.
