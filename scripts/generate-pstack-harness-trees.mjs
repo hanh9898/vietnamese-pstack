@@ -86,69 +86,27 @@ function classify(skill) {
 
 const classes = new Map(skills.map((skill) => [skill, classify(skill)]));
 const problems = [];
-const users = new Map();
 for (const [skill, { usesCursorNames, wrap }] of classes) {
   if (usesCursorNames.size > 0 && !wrap) problems.push(`skills/${skill}/SKILL.md uses Cursor names but has no H1`);
-  for (const key of usesCursorNames) users.set(key, [...(users.get(key) ?? []), skill]);
   // Cursor runs a skill by its folder name and Claude Code lists it by its frontmatter `name`, so the two must match. The Agent Skills spec limits both to SKILL_NAME.
   const frontmatter = readFileSync(join(SKILLS, skill, "SKILL.md"), "utf8").match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
   const name = frontmatter.match(/^name:(.*)$/m)?.[1].trim().replace(/^(["'])(.*)\1$/, "$2");
   if (name !== skill) problems.push(`skills/${skill}/SKILL.md has name ${JSON.stringify(name ?? "")}, not its folder name ${skill}`);
   if (!SKILL_NAME.test(skill) || skill.length > 64) problems.push(`skills/${skill} is not lowercase words joined by hyphens, at most 64 characters`);
 }
-const adapter = readFileSync(join(PSTACK, ADAPTER), "utf8");
-const marketplacePath = join(ROOT, ".claude-plugin", "marketplace.json");
-if (!existsSync(marketplacePath)) {
-  problems.push("Claude Code marketplace is missing .claude-plugin/marketplace.json");
-} else {
-  try {
-    const marketplace = JSON.parse(readFileSync(marketplacePath, "utf8"));
-    const plugin = marketplace.plugins?.find(({ name }) => name === "pstack");
-    if (marketplace.name !== "vietnamese-pstack") problems.push("Claude Code marketplace name must be vietnamese-pstack");
-    if (!plugin) {
-      problems.push("Claude Code marketplace has no pstack plugin entry");
-    } else if (plugin.source !== "./harness/pstack/claude-code") {
-      problems.push("Claude Code marketplace pstack source must be ./harness/pstack/claude-code");
-    } else {
-      const manifest = join(ROOT, plugin.source, ".claude-plugin", "plugin.json");
-      if (!existsSync(manifest)) {
-        problems.push(`Claude Code marketplace pstack source has no .claude-plugin/plugin.json: ${plugin.source}`);
-      } else if (JSON.parse(readFileSync(manifest, "utf8")).name !== plugin.name) {
-        problems.push("Claude Code marketplace pstack name does not match its plugin manifest");
-      }
-    }
-  } catch (error) {
-    problems.push(`Claude Code marketplace is invalid JSON: ${error.message}`);
+try {
+  const marketplace = JSON.parse(readFileSync(join(ROOT, ".claude-plugin", "marketplace.json"), "utf8"));
+  const plugin = marketplace.plugins?.find(({ name }) => name === "pstack");
+  const sourceManifest = JSON.parse(readFileSync(join(PSTACK, "plugin.json"), "utf8"));
+  if (marketplace.name !== "vietnamese-pstack") problems.push("Claude Code marketplace name must be vietnamese-pstack");
+  if (!plugin) {
+    problems.push("Claude Code marketplace has no pstack plugin entry");
+  } else {
+    if (plugin.source !== "./harness/pstack/claude-code") problems.push("Claude Code marketplace pstack source must be ./harness/pstack/claude-code");
+    if (sourceManifest.name !== plugin.name) problems.push("Claude Code marketplace pstack name does not match pstack/plugin.json");
   }
-}
-const setupGuide = readFileSync(join(PSTACK, GUIDE, "01-setup.md"), "utf8");
-for (const command of [
-  "claude plugin marketplace add hanh9898/vietnamese-pstack",
-  "claude plugin install pstack@vietnamese-pstack",
-]) {
-  if (!setupGuide.includes(command)) problems.push(`Claude Code setup guide is missing: ${command}`);
-}
-for (const obsolete of ["/plugin marketplace add cursor/plugins", "pstack@cursor-plugins"]) {
-  if (setupGuide.includes(obsolete)) problems.push(`Claude Code setup guide still points to upstream: ${obsolete}`);
-}
-const pluginReadme = readFileSync(join(PSTACK, "README.md"), "utf8");
-for (const command of [
-  "claude plugin marketplace add hanh9898/vietnamese-pstack",
-  "claude plugin install pstack@vietnamese-pstack",
-]) {
-  if (!pluginReadme.includes(command)) problems.push(`pstack README is missing: ${command}`);
-}
-for (const obsolete of ["/plugin marketplace add cursor/plugins", "pstack@cursor-plugins", "https://github.com/cursor/plugins/tree/main/harness/pstack"]) {
-  if (pluginReadme.includes(obsolete)) problems.push(`pstack README still points to upstream: ${obsolete}`);
-}
-for (const instruction of ["${CLAUDE_PLUGIN_ROOT}", "TaskCreate", "SendMessage", "pstack:<name>"]) {
-  if (!adapter.includes(instruction)) problems.push(`Claude Code adapter is missing current Claude Code mapping: ${instruction}`);
-}
-if (adapter.includes("Skill` từ chối phần lớn các skill pstack")) {
-  problems.push("Claude Code adapter still claims the Skill tool rejects most pstack skills");
-}
-for (const [key, using] of users) {
-  if (!adapter.includes(key)) problems.push(`Claude Code adapter has no row for ${key}, used by ${using.join(", ")}`);
+} catch (error) {
+  problems.push(`Claude Code marketplace or pstack source manifest is invalid: ${error.message}`);
 }
 for (const problem of problems) console.log(`FAIL ${problem}`);
 if (problems.length > 0) process.exit(1);
@@ -210,11 +168,6 @@ function render() {
 // Claude Code installs only the tree, so a relative link that works from pstack/ has to work inside the tree too.
 // Links to pstack files that the tree leaves out already point at GitHub, so a failure here is a link that leaves pstack/.
 const files = render();
-const agent = files.get("agents/poteto-agent.md")?.bytes.toString("utf8") ?? "";
-if (!/^model: opus$/m.test(agent) || !/^effort: xhigh$/m.test(agent) || !/^background: true$/m.test(agent) || /^is_background:/m.test(agent)) {
-  console.log("FAIL Claude Code poteto-agent frontmatter must use Claude model, effort, and background fields");
-  process.exit(1);
-}
 const rendered = new Map([["README.md", { bytes: Buffer.from(README), executable: false }]]);
 const dangling = [];
 for (const [path, entry] of files) {

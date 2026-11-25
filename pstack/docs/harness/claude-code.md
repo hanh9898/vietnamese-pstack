@@ -9,7 +9,8 @@ Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc 
 | `Task` | `Agent` |
 | `AskQuestion` | `AskUserQuestion`. Ở chế độ `-p` nó không có, nên hãy hỏi bằng văn bản thường. |
 | Mở một todolist, hoặc chép các bước vào tool todolist | Dùng `TaskCreate`, `TaskUpdate`, `TaskList`, và `TaskGet` nếu session có; `TodoWrite` có thể thay chúng khi task tools bị tắt. Nếu không có tool nào, giữ danh sách trong câu trả lời và cập nhật nó ở mỗi giai đoạn. |
-| Chạy một skill pstack khác (`/name`, "skill **name**" hoặc "the **name** skill") | Trong chat chính, dùng `Skill` với tên `pstack:<name>`. Trong context không có tool đó hoặc không liệt kê skill, dùng `Read` `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` và làm theo nó. Khi bạn bảo người dùng gõ lệnh, hãy viết `/pstack:<name>`. |
+| Chạy một skill pstack khác trong công việc hiện tại | Nếu skill đặt `disable-model-invocation: true`, không gọi nó bằng `Skill`; dùng `Read` `${CLAUDE_PLUGIN_ROOT}/skills/<name>/SKILL.md` và làm theo. Chỉ dùng `Skill` với tên `pstack:<name>` khi skill cho phép model gọi và được liệt kê trong tool. Nếu tool hoặc skill không có, dùng `Read` làm phương án dự phòng. |
+| Bảo người dùng chạy một skill pstack | Viết lệnh slash `/pstack:<name>`. `disable-model-invocation: true` ngăn Claude tự gọi skill, không ngăn người dùng gọi bằng lệnh slash. |
 | `Grep`, `Glob` | `Bash` với `rg` khi session không có `Grep` hoặc `Glob`. |
 
 ## Các trường của subagent
