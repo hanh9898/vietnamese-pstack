@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 
@@ -13,6 +13,11 @@ const plugin = marketplace.plugins.find(({ name }) => name === "pstack");
 assert.equal(marketplace.name, "vietnamese-pstack");
 assert.equal(plugin.source, "./harness/pstack/claude-code");
 assert.equal(JSON.parse(readFileSync(join(ROOT, "pstack", "plugin.json"), "utf8")).name, plugin.name);
+for (const path of ["pstack/README.md", "pstack/docs/guide/01-setup.md"]) {
+  const text = readFileSync(join(ROOT, path), "utf8");
+  assert.match(text, /claude plugin marketplace add hanh9898\/vietnamese-pstack/, `${path} marketplace source`);
+  assert.match(text, /claude plugin install pstack@vietnamese-pstack/, `${path} plugin id`);
+}
 
 function frontmatter(text) {
   const match = text.match(/^---\n([\s\S]*?)\n---/);
@@ -57,7 +62,10 @@ assert.match(userInvocation, /ngăn Claude tự gọi skill, không ngăn ngư�
 
 const fixture = mkdtempSync(join(tmpdir(), "vietnamese-pstack-generation-"));
 try {
-  cpSync(join(ROOT, "pstack"), join(fixture, "pstack"), { recursive: true });
+  cpSync(join(ROOT, "pstack"), join(fixture, "pstack"), {
+    recursive: true,
+    filter: (path) => basename(path) !== "node_modules",
+  });
   mkdirSync(join(fixture, "scripts"), { recursive: true });
   cpSync(join(ROOT, "scripts", "generate-pstack-harness-trees.mjs"), join(fixture, "scripts", "generate-pstack-harness-trees.mjs"));
   mkdirSync(join(fixture, ".claude-plugin"), { recursive: true });
@@ -87,4 +95,4 @@ try {
   rmSync(fixture, { recursive: true, force: true });
 }
 
-console.log("Claude Code marketplace, disabled skill routing, and generated agent metadata checks passed.");
+console.log("Claude Code marketplace, installation docs, disabled skill routing, and generated agent metadata checks passed.");

@@ -86,8 +86,10 @@ function classify(skill) {
 
 const classes = new Map(skills.map((skill) => [skill, classify(skill)]));
 const problems = [];
+const users = new Map();
 for (const [skill, { usesCursorNames, wrap }] of classes) {
   if (usesCursorNames.size > 0 && !wrap) problems.push(`skills/${skill}/SKILL.md uses Cursor names but has no H1`);
+  for (const key of usesCursorNames) users.set(key, [...(users.get(key) ?? []), skill]);
   // Cursor runs a skill by its folder name and Claude Code lists it by its frontmatter `name`, so the two must match. The Agent Skills spec limits both to SKILL_NAME.
   const frontmatter = readFileSync(join(SKILLS, skill, "SKILL.md"), "utf8").match(/^---\n([\s\S]*?)\n---/)?.[1] ?? "";
   const name = frontmatter.match(/^name:(.*)$/m)?.[1].trim().replace(/^(["'])(.*)\1$/, "$2");
@@ -107,6 +109,10 @@ try {
   }
 } catch (error) {
   problems.push(`Claude Code marketplace or pstack source manifest is invalid: ${error.message}`);
+}
+const adapter = readFileSync(join(PSTACK, ADAPTER), "utf8");
+for (const [key, using] of users) {
+  if (!adapter.includes(key)) problems.push(`Claude Code adapter has no row for ${key}, used by ${using.join(", ")}`);
 }
 for (const problem of problems) console.log(`FAIL ${problem}`);
 if (problems.length > 0) process.exit(1);
