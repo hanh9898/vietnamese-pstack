@@ -1,58 +1,58 @@
 ---
 name: maintain-formal-verification-skill
-description: "Bring a project's formal verification back in line with the code after the code changes: find the commits that touched verified code, update the model, harness, or properties to describe the code as it is now, rerun, and say whether each failure is drift in the verification or a bug in the code. Use for /maintain-formal-verification-skill, \"is the model still true to the code\", or after merges and refactors that touched verified code without rechecking it."
+description: "Đưa việc kiểm chứng hình thức của một dự án trở lại đồng bộ với code sau khi code thay đổi: tìm các commit đã chạm vào code được kiểm chứng, cập nhật model, harness, hoặc tính chất để mô tả code như hiện tại, chạy lại, và nói mỗi thất bại là sự lệch trong việc kiểm chứng hay một bug trong code. Dùng cho /maintain-formal-verification-skill, \"is the model still true to the code\" (hoặc \"model còn đúng với code không\"), hoặc sau các lần merge và refactor đã chạm vào code được kiểm chứng mà không kiểm tra lại nó."
 disable-model-invocation: true
 ---
 
-# Maintain a formal verification skill
+# Bảo trì một formal verification skill
 
-A formal check proves a property of what it describes. When the code changes and the verification does not, the check can keep passing while it describes code that no longer exists. That pass is the dangerous case, because it looks like a proof. This skill is the upkeep loop for a verify skill that `/create-formal-verification-skill` generated, or for any project-local skill that runs a model checker, prover, or code-level verifier against named code. The project-local skill handles a change that an agent makes while it uses that skill. This skill handles the changes that skipped it: merges, edits made without the skill, and drift that builds up across many commits.
+Một phép kiểm tra hình thức chứng minh một tính chất của thứ mà nó mô tả. Khi code thay đổi mà việc kiểm chứng thì không, phép kiểm tra có thể tiếp tục pass trong khi nó mô tả code không còn tồn tại. Lần pass đó là trường hợp nguy hiểm, vì nó trông như một chứng minh. Skill này là vòng lặp bảo trì cho một verify skill mà `/create-formal-verification-skill` đã tạo, hoặc cho bất kỳ skill cục bộ nào của dự án chạy một model checker, prover, hoặc verifier cấp code với code được gọi tên. Skill cục bộ của dự án xử lý một thay đổi mà agent thực hiện trong khi dùng skill đó. Skill này xử lý các thay đổi đã bỏ qua nó: các lần merge, các chỉnh sửa thực hiện mà không có skill, và sự lệch tích tụ qua nhiều commit.
 
-## Outcomes
+## Kết quả
 
-Give each check one outcome, and say which:
+Cho mỗi phép kiểm tra một kết quả, và nói là cái nào:
 
-- **in sync**: no change since the last sync alters what the check describes, and the check passes.
-- **updated**: the code changed, the verification now describes the new code, and the check passes.
-- **bug**: the verification describes the current code, and the code breaks the property. This is a finding about the code. It is not drift.
-- **blocked**: the check could not be brought back in line or could not run. Say exactly why.
+- **in sync**: không có thay đổi nào kể từ lần đồng bộ cuối làm thay đổi thứ mà phép kiểm tra mô tả, và phép kiểm tra pass.
+- **updated**: code đã thay đổi, việc kiểm chứng giờ mô tả code mới, và phép kiểm tra pass.
+- **bug**: việc kiểm chứng mô tả code hiện tại, và code phá vỡ tính chất. Đây là một phát hiện về code. Nó không phải sự lệch.
+- **blocked**: phép kiểm tra không thể được đưa trở lại đồng bộ hoặc không thể chạy. Nói chính xác lý do.
 
-A check can be both updated and bug: the update makes the verification describe the code again, and then the property fails on it.
+Một phép kiểm tra có thể vừa là updated vừa là bug: bản cập nhật làm việc kiểm chứng mô tả lại code, và rồi tính chất thất bại trên nó.
 
-## Edit scope
+## Phạm vi chỉnh sửa
 
-Edit only the verification: models, harnesses, property files, and the verify skill itself. Never edit product code during a run, unless the user asks you to. When a property fails on the current code, do not weaken the property or the model to make it pass. Report the failure.
+Chỉ sửa phần kiểm chứng: model, harness, file tính chất, và chính verify skill. Không bao giờ sửa code sản phẩm trong một lượt chạy, trừ khi người dùng yêu cầu. Khi một tính chất thất bại trên code hiện tại, đừng làm yếu tính chất hay model để nó pass. Báo cáo thất bại.
 
-## Pass
+## Lượt chạy
 
-1. **Find the checks.** A verify skill has no fixed name, so find it by what it does: a project skill that runs a model checker, a prover, or another verifier against named code. Read each one you find, or the one the user named. For each check, collect the property, the code it covers, the bounds and assumptions, the command that runs it, and the commit where it was last confirmed to describe the code. If no verify skill exists, stop and point at `/create-formal-verification-skill`. If the skill does not record a sync commit, use the last commit that changed the verification files, and say that you did.
+1. **Tìm các phép kiểm tra.** Một verify skill không có tên cố định, nên hãy tìm nó theo những gì nó làm: một skill của dự án chạy một model checker, một prover, hoặc một verifier khác với code được gọi tên. Đọc mỗi cái bạn tìm thấy, hoặc cái mà người dùng đã gọi tên. Với mỗi phép kiểm tra, thu thập tính chất, code nó bao phủ, các giới hạn và giả định, lệnh chạy nó, và commit mà tại đó nó được xác nhận lần cuối là mô tả đúng code. Nếu không có verify skill nào, hãy dừng và chỉ đến `/create-formal-verification-skill`. Nếu skill không ghi lại commit đồng bộ, hãy dùng commit cuối cùng đã thay đổi các file kiểm chứng, và nói rằng bạn đã làm vậy.
 
-2. **Run it as it is.** Run each check once before you change anything, and record the result. A pass here does not tell you that the code is correct. It tells you that the old description still holds. A failure here can be drift or a bug. Do not decide which until step 5.
+2. **Chạy nó như hiện có.** Chạy mỗi phép kiểm tra một lần trước khi bạn thay đổi bất cứ thứ gì, và ghi lại kết quả. Một lần pass ở đây không cho bạn biết rằng code đúng. Nó cho bạn biết rằng mô tả cũ vẫn đứng vững. Một thất bại ở đây có thể là sự lệch hoặc một bug. Đừng quyết định là cái nào cho đến bước 5.
 
-3. **Read every change to covered code.** Diff the covered files from the sync commit to the current commit, and read each commit message. Also look for code that moved: a covered function that is renamed, split, or moved to another file is still covered code. Also look for new code that touches the state that a check guards, such as a new function that writes the same fields. For each change, decide which of these it is:
-   - **No effect.** The change does not alter anything the verification describes, such as formatting, comments, or code paths that the verification does not cover. Check this against the model or harness, not against the commit message.
-   - **The verification no longer describes the code.** A step that was one indivisible action is now two, a branch was added or removed, a check moved, a new path reaches the guarded state, or a value now has a different range. The model or harness must change.
-   - **The promise changed on purpose.** The change alters what the code promises, and evidence in the change says that this is intended: the doc comment, the tests, the changelog, or the commit message. The property must change, and you must cite that evidence.
-   - **The promise may be broken.** The code changed, and no evidence says that the promise changed. Treat a failure that follows as a bug candidate.
+3. **Đọc mọi thay đổi đối với code được bao phủ.** Diff các file được bao phủ từ commit đồng bộ đến commit hiện tại, và đọc mỗi commit message. Cũng tìm code đã di chuyển: một hàm được bao phủ bị đổi tên, tách ra, hoặc chuyển sang file khác vẫn là code được bao phủ. Cũng tìm code mới chạm vào trạng thái mà một phép kiểm tra bảo vệ, như một hàm mới ghi vào cùng các field. Với mỗi thay đổi, quyết định nó là loại nào trong số này:
+   - **Không có tác động.** Thay đổi không làm thay đổi bất cứ thứ gì việc kiểm chứng mô tả, như định dạng, comment, hoặc các đường code mà việc kiểm chứng không bao phủ. Kiểm tra điều này với model hoặc harness, không phải với commit message.
+   - **Việc kiểm chứng không còn mô tả code.** Một bước vốn là một hành động không thể chia cắt giờ là hai, một nhánh được thêm hoặc bỏ, một phép kiểm tra đã di chuyển, một đường mới đến được trạng thái được bảo vệ, hoặc một giá trị giờ có một khoảng khác. Model hoặc harness phải thay đổi.
+   - **Lời hứa đã thay đổi có chủ đích.** Thay đổi làm thay đổi điều code hứa hẹn, và bằng chứng trong thay đổi nói rằng điều này là có chủ đích: doc comment, các test, changelog, hoặc commit message. Tính chất phải thay đổi, và bạn phải trích dẫn bằng chứng đó.
+   - **Lời hứa có thể đã bị phá vỡ.** Code đã thay đổi, và không có bằng chứng nào nói rằng lời hứa đã thay đổi. Coi một thất bại sau đó là ứng viên bug.
 
-4. **Update from the code, not from the result.** Change the model or harness so that each changed part again points to code that a reviewer can open, and keep one indivisible step in the code as one step in the verification. Write the update from the code before you rerun, and do not shape it by what makes the check pass. Change a property only for a promise that changed on purpose. Write down the old wording, the new wording, and the evidence. Keep the bounds unless the change makes them wrong. If you must reduce a bound, say so in the report.
+4. **Cập nhật từ code, không phải từ kết quả.** Thay đổi model hoặc harness để mỗi phần bị thay đổi lại chỉ đến code mà reviewer có thể mở ra, và giữ một bước không thể chia cắt trong code là một bước trong việc kiểm chứng. Viết bản cập nhật từ code trước khi chạy lại, và đừng định hình nó theo những gì làm phép kiểm tra pass. Chỉ thay đổi một tính chất cho một lời hứa đã thay đổi có chủ đích. Viết ra cách diễn đạt cũ, cách diễn đạt mới, và bằng chứng. Giữ các giới hạn trừ khi thay đổi làm chúng sai. Nếu bạn phải giảm một giới hạn, hãy nói vậy trong báo cáo.
 
-5. **Rerun and judge each result.**
-   - **Pass:** the check can now pass on a description that has lost the ability to fail. Break the new code the way the property guards against, such as removing a new check or reordering a new step, and confirm that the check catches it. Then drop the break.
-   - **Fail:** replay the counterexample against the real code, step by step. If a step cannot happen in the code, the verification is wrong. Fix the verification, and say what was wrong. If every step can happen, it is a bug. Name the commit that introduced it, tell the counterexample as a sequence of steps in the code's own words, and state the harm in one sentence. If a cheap test or reproduction against the real code shows the bug, add it to the report as evidence. Do not commit it to the product code.
+5. **Chạy lại và đánh giá mỗi kết quả.**
+   - **Pass:** phép kiểm tra giờ có thể pass trên một mô tả đã mất khả năng thất bại. Làm hỏng code mới theo cách mà tính chất bảo vệ chống lại, như xóa một phép kiểm tra mới hoặc đổi thứ tự một bước mới, và xác nhận rằng phép kiểm tra bắt được nó. Rồi bỏ chỗ làm hỏng.
+   - **Fail:** phát lại phản ví dụ trên code thật, từng bước một. Nếu một bước không thể xảy ra trong code, việc kiểm chứng sai. Sửa việc kiểm chứng, và nói điều gì đã sai. Nếu mọi bước đều có thể xảy ra, đó là một bug. Gọi tên commit đã đưa nó vào, kể phản ví dụ như một chuỗi bước bằng chính ngôn từ của code, và nêu tác hại trong một câu. Nếu một test hoặc bản tái hiện rẻ trên code thật cho thấy bug, hãy thêm nó vào báo cáo làm bằng chứng. Đừng commit nó vào code sản phẩm.
 
-6. **Update the verify skill.** Update the code that each check covers, the commands, the bounds, the assumptions, and the sync commit. Set the sync commit to the commit that you checked. Do not move the sync commit for a blocked check, and say so in the report. Then follow the verify skill once as the next agent would, so that you know its steps still run.
+6. **Cập nhật verify skill.** Cập nhật code mà mỗi phép kiểm tra bao phủ, các lệnh, các giới hạn, các giả định, và commit đồng bộ. Đặt commit đồng bộ thành commit mà bạn đã kiểm tra. Đừng dời commit đồng bộ cho một phép kiểm tra blocked, và nói vậy trong báo cáo. Rồi làm theo verify skill một lần như agent tiếp theo sẽ làm, để bạn biết các bước của nó vẫn chạy.
 
-## Report
+## Báo cáo
 
-Tell the user, for each check:
+Cho người dùng biết, với mỗi phép kiểm tra:
 
-- the outcome, and the commits that you read;
-- what changed in the verification and why, with a short reason for each change: the code changed shape, or the promise changed on purpose (with the evidence);
-- the rerun result, and the break that you used to show the updated check can still fail;
-- each bug, in plain words: the counterexample as steps in the code's words, the harm, and the commit that introduced it;
-- what the verification still does not cover, including new code that it should cover and does not.
+- kết quả, và các commit mà bạn đã đọc;
+- những gì đã thay đổi trong việc kiểm chứng và tại sao, với một lý do ngắn cho mỗi thay đổi: code đã đổi hình dạng, hoặc lời hứa đã thay đổi có chủ đích (kèm bằng chứng);
+- kết quả chạy lại, và chỗ làm hỏng mà bạn đã dùng để cho thấy phép kiểm tra đã cập nhật vẫn có thể thất bại;
+- mỗi bug, bằng lời lẽ đơn giản: phản ví dụ dưới dạng các bước bằng ngôn từ của code, tác hại, và commit đã đưa nó vào;
+- những gì việc kiểm chứng vẫn chưa bao phủ, bao gồm code mới mà nó nên bao phủ nhưng không.
 
-Say outright which failures were drift in the verification and which were bugs in the code. For a check that passed before you updated it and fails after, say that the old pass was on a stale description.
+Nói thẳng những thất bại nào là sự lệch trong việc kiểm chứng và những thất bại nào là bug trong code. Với một phép kiểm tra đã pass trước khi bạn cập nhật và thất bại sau đó, hãy nói rằng lần pass cũ là trên một mô tả đã lỗi thời.
 
-Put the verification updates in a change of their own, separate from any product fix.
+Đặt các bản cập nhật kiểm chứng trong một thay đổi riêng, tách biệt với mọi bản sửa sản phẩm.
