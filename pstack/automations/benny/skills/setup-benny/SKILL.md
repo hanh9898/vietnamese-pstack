@@ -1,39 +1,39 @@
 ---
 name: setup-benny
-description: Configure Benny and prepare its triage and repro automations. Use when installing Benny or changing its Slack, tracker, repository, routing, control, model, or budget settings.
+description: Cấu hình Benny và chuẩn bị các automation triage và tái hiện của nó. Dùng khi cài Benny hoặc thay đổi các cài đặt Slack, tracker, repository, định tuyến, control, model, hoặc ngân sách của nó.
 disable-model-invocation: true
 ---
 
-# Set up Benny
+# Thiết lập Benny
 
-Benny ships as a dormant automation pack inside pstack. The plugin manifest exposes only pstack's normal skill root; this file and the two operational files are not slash skills.
+Benny được phát hành dưới dạng một automation pack ngủ đông bên trong pstack. Plugin manifest chỉ cung cấp thư mục skill thông thường của pstack; file này và hai file vận hành không phải là slash skill.
 
-The human enters setup by pointing Cursor at the pack's `FOR_AGENTS.md`. The bootstrap flow copies the whole pack into the target repository, then reads this file directly at `.cursor/automations/benny/skills/setup-benny/SKILL.md`.
+Người dùng bắt đầu thiết lập bằng cách trỏ Cursor đến `FOR_AGENTS.md` của pack. Luồng bootstrap sao chép toàn bộ pack vào repository đích, rồi đọc trực tiếp file này tại `.cursor/automations/benny/skills/setup-benny/SKILL.md`.
 
-Benny needs external configuration and two live Cursor automations.
+Benny cần cấu hình bên ngoài và hai Cursor automation đang chạy.
 
-Do not create or update an automation until the user explicitly asks. Never put a secret value in plugin files, prompts, or committed configuration.
+Đừng tạo hay cập nhật một automation cho đến khi người dùng yêu cầu rõ ràng. Không bao giờ đặt giá trị secret vào file plugin, prompt, hay cấu hình đã commit.
 
-## 1. Copy the pack and enable shared pstack skills
+## 1. Sao chép pack và bật các skill pstack dùng chung
 
-Do this before asking for Benny configuration and before invoking the built-in `/automate` skill.
+Làm điều này trước khi hỏi cấu hình Benny và trước khi gọi skill có sẵn `/automate`.
 
-Ask which repository will run the automations. The source pack is the directory containing `FOR_AGENTS.md`. The destination is `<target-repository>/.cursor/automations/benny/`.
+Hỏi repository nào sẽ chạy các automation. Pack nguồn là thư mục chứa `FOR_AGENTS.md`. Đích là `<target-repository>/.cursor/automations/benny/`.
 
-Merge the entire source pack into the destination:
+Gộp toàn bộ pack nguồn vào đích:
 
-1. Create the destination when it is absent.
-2. Copy every source file to the same relative path.
-3. Preserve destination-only files. Never delete unrelated files during install or refresh.
-4. Keep user-owned configuration, feature maps, and routing maps outside the destination. Never overwrite them.
-5. When an existing source-managed file differs, inspect the diff and merge without discarding local edits. If ownership is ambiguous, stop and ask before replacing it.
-6. Verify that the destination contains `FOR_AGENTS.md`, this setup file, both operational files, their references, and the templates.
+1. Tạo đích khi nó chưa có.
+2. Sao chép mọi file nguồn đến cùng đường dẫn tương đối.
+3. Giữ lại các file chỉ có ở đích. Không bao giờ xóa file không liên quan khi cài đặt hoặc làm mới.
+4. Giữ cấu hình, feature map, và bản đồ định tuyến do người dùng sở hữu bên ngoài đích. Không bao giờ ghi đè chúng.
+5. Khi một file đã có do nguồn quản lý khác đi, hãy xem diff và gộp mà không bỏ đi các chỉnh sửa local. Nếu quyền sở hữu không rõ ràng, hãy dừng và hỏi trước khi thay thế nó.
+6. Xác minh rằng đích chứa `FOR_AGENTS.md`, file thiết lập này, cả hai file vận hành, các reference của chúng, và các template.
 
-If this file is already being read from the target destination, treat the copy as complete and run the same verification before continuing.
+Nếu file này đã được đọc từ đích, hãy coi việc sao chép là hoàn tất và chạy cùng phép xác minh trước khi tiếp tục.
 
-Add pstack to the target repository's `.cursor/settings.json`. If the file or `.cursor` directory does not exist, create it.
+Thêm pstack vào `.cursor/settings.json` của repository đích. Nếu file hoặc thư mục `.cursor` chưa tồn tại, hãy tạo nó.
 
-Merge this entry into the existing JSON or JSONC:
+Gộp mục này vào JSON hoặc JSONC đã có:
 
 ```json
 {
@@ -43,9 +43,9 @@ Merge this entry into the existing JSON or JSONC:
 }
 ```
 
-Preserve every unrelated top-level setting and every other plugin entry. If `plugins.pstack` already exists, change only its `enabled` value. Preserve comments and valid JSONC syntax when the file uses JSONC. Validate the file after editing it.
+Giữ lại mọi cài đặt cấp cao nhất không liên quan và mọi mục plugin khác. Nếu `plugins.pstack` đã tồn tại, chỉ thay đổi giá trị `enabled` của nó. Giữ comment và cú pháp JSONC hợp lệ khi file dùng JSONC. Kiểm tra tính hợp lệ của file sau khi sửa.
 
-Reload the target project or start a fresh agent rooted there. Verify that these shared pstack skills resolve from project scope:
+Tải lại project đích hoặc bắt đầu một agent mới có gốc ở đó. Xác minh rằng các skill pstack dùng chung sau được phân giải từ phạm vi project:
 
 - `why`
 - `tdd`
@@ -57,77 +57,77 @@ Reload the target project or start a fresh agent rooted there. Verify that these
 - `principle-fix-root-causes`
 - `principle-prove-it-works`
 
-Do not count a skill loaded from the current session or a user-scoped plugin. The check must show that a fresh agent in the target repository receives pstack through project settings.
+Đừng tính một skill được nạp từ session hiện tại hay một plugin ở phạm vi user. Phép kiểm tra phải cho thấy một agent mới trong repository đích nhận được pstack qua cài đặt project.
 
-If project-scoped plugin installation is unavailable or any shared dependency does not resolve, stop and explain the failure.
+Nếu việc cài plugin ở phạm vi project không có sẵn hoặc bất kỳ dependency dùng chung nào không phân giải được, hãy dừng và giải thích thất bại.
 
-The Benny files are read directly from `.cursor/automations/benny/`. Do not add that directory to a plugin manifest or expect its `SKILL.md` files to appear in the slash-skill list.
+Các file Benny được đọc trực tiếp từ `.cursor/automations/benny/`. Đừng thêm thư mục đó vào một plugin manifest hay mong đợi các file `SKILL.md` của nó xuất hiện trong danh sách slash skill.
 
-Tell the user that `.cursor/settings.json`, `.cursor/automations/benny/`, and any referenced secret-free configuration must be committed before either automation is enabled. Do not commit them unless the user asks.
+Cho người dùng biết rằng `.cursor/settings.json`, `.cursor/automations/benny/`, và mọi cấu hình không chứa secret được tham chiếu phải được commit trước khi bật bất kỳ automation nào. Đừng commit chúng trừ khi người dùng yêu cầu.
 
-Once this check passes, live automation prompts may read the committed operational files by their stable repository-relative paths. They must not embed a plugin cache path or copy the file contents.
+Khi phép kiểm tra này pass, các prompt automation đang chạy có thể đọc các file vận hành đã commit theo đường dẫn tương đối ổn định trong repository. Chúng không được nhúng đường dẫn cache của plugin hay sao chép nội dung file.
 
-## 2. Adapt the configuration
+## 2. Điều chỉnh cấu hình
 
-Open these copied examples:
+Mở các ví dụ đã sao chép sau:
 
 - `../../templates/configuration.example.yaml`
 - `../reproduce-and-fix-issues/references/feature-map.example.md`
 
-Create user-owned copies outside `.cursor/automations/benny/`. These are configuration files, not pack files. Example locations:
+Tạo các bản sao do người dùng sở hữu bên ngoài `.cursor/automations/benny/`. Đây là các file cấu hình, không phải file của pack. Ví dụ vị trí:
 
-- Project config, such as `.cursor/benny/configuration.yaml`
-- Project feature map, such as `.cursor/benny/feature-map.md`
-- Project routing map, such as `.cursor/benny/routing.md`
-- User config, such as `~/.config/benny/configuration.yaml`
-- User feature map, such as `~/.config/benny/feature-map.md`
+- Config project, như `.cursor/benny/configuration.yaml`
+- Feature map project, như `.cursor/benny/feature-map.md`
+- Bản đồ định tuyến project, như `.cursor/benny/routing.md`
+- Config user, như `~/.config/benny/configuration.yaml`
+- Feature map user, như `~/.config/benny/feature-map.md`
 
-Fill one feature-map section for every user-facing feature the automation may reproduce. Keep it at the user point of view. Do not freeze implementation details or current code paths in the map.
+Điền một phần feature map cho mọi feature hướng người dùng mà automation có thể tái hiện. Giữ nó ở góc nhìn người dùng. Đừng đóng băng chi tiết cài đặt hay đường code hiện tại trong map.
 
-Do not edit the copied examples. Pack refreshes may update source-managed files after conflict review, but they must never touch the user-owned copies.
+Đừng sửa các ví dụ đã sao chép. Các lần làm mới pack có thể cập nhật các file do nguồn quản lý sau khi xem xét xung đột, nhưng chúng không bao giờ được chạm vào các bản sao do người dùng sở hữu.
 
-Prefer committed, secret-free files in the target repository when a fresh automation checkout must read them. Otherwise paraphrase the required values into the live prompt. Reference a repository file only after the built-in `/automate` skill confirms that the file is committed in the repository where the automation runs.
+Ưu tiên các file đã commit, không chứa secret trong repository đích khi một checkout automation mới phải đọc chúng. Nếu không, hãy diễn giải các giá trị bắt buộc vào prompt đang chạy. Chỉ tham chiếu một file repository sau khi skill có sẵn `/automate` xác nhận rằng file đó đã được commit trong repository nơi automation chạy.
 
-Use stable repository-relative paths for committed pack and configuration files. Never reference the plugin source directory or a plugin cache path from a live automation.
+Dùng đường dẫn tương đối ổn định trong repository cho các file pack và cấu hình đã commit. Không bao giờ tham chiếu thư mục nguồn của plugin hay đường dẫn cache của plugin từ một automation đang chạy.
 
-## 3. Fill the required choices
+## 3. Điền các lựa chọn bắt buộc
 
-Ask for or confirm:
+Hỏi hoặc xác nhận:
 
-- Source Slack channel ID
-- Optional operations or status channel ID
-- Repository URL and default branch
-- Triage identity or Slack user ID
-- Issue tracker type, team, project, labels, and intake status
-- Tracker adapter skill or MCP actions
-- Optional routing map path
-- Required control skill name
-- Required user-facing feature-map path
-- Status emoji strings
-- Pull request URL format
-- Polling and effort budgets
-- Model slug for triage, repro, code work, and media review
+- ID channel Slack nguồn
+- ID channel vận hành hoặc trạng thái (tùy chọn)
+- URL repository và branch mặc định
+- Danh tính triage hoặc Slack user ID
+- Loại issue tracker, team, project, label, và trạng thái tiếp nhận
+- Skill adapter tracker hoặc các action MCP
+- Đường dẫn bản đồ định tuyến (tùy chọn)
+- Tên control skill bắt buộc
+- Đường dẫn feature map hướng người dùng bắt buộc
+- Các chuỗi emoji trạng thái
+- Định dạng URL pull request
+- Ngân sách polling và công sức
+- Model slug cho triage, tái hiện, công việc code, và xem xét media
 
-Use only model slugs shown as available in the user's Cursor model picker or supported model list. Do not guess a slug and do not carry over a private default.
+Chỉ dùng các model slug hiển thị là có sẵn trong model picker Cursor của người dùng hoặc danh sách model được hỗ trợ. Đừng đoán một slug và đừng mang theo một mặc định riêng tư.
 
-The source channel, triage identity, repository, tracker adapter, control skill, and feature map must be explicit. Fail setup if any required value stays ambiguous.
+Channel nguồn, danh tính triage, repository, adapter tracker, control skill, và feature map phải được nêu rõ. Cho việc thiết lập thất bại nếu bất kỳ giá trị bắt buộc nào vẫn còn mơ hồ.
 
-Use pstack's `unslop` skill on the final automation names, descriptions, and prompt shims before saving them.
+Dùng skill `unslop` của pstack cho tên, mô tả, và prompt shim cuối cùng của automation trước khi lưu chúng.
 
-## 4. Check integration capabilities
+## 4. Kiểm tra năng lực tích hợp
 
-The triage automation needs:
+Automation triage cần:
 
-- Read access to the configured source Slack channel and its threads
-- Thread-reply access in that channel
-- Attachment metadata and file download access when reports include media
-- Search, read, create, and update access through the configured issue-tracker adapter
+- Quyền đọc channel Slack nguồn đã cấu hình và các thread của nó
+- Quyền trả lời trong thread ở channel đó
+- Quyền đọc metadata file đính kèm và tải file khi báo cáo có media
+- Quyền tìm, đọc, tạo, và cập nhật qua adapter issue-tracker đã cấu hình
 
-The repro automation needs:
+Automation tái hiện cần:
 
-- Read access to the source thread
-- Thread-reply access in the source channel
-- Optional post and edit access in the configured operations channel
+- Quyền đọc thread nguồn
+- Quyền trả lời trong thread ở channel nguồn
+- Quyền đăng và sửa (tùy chọn) trong channel vận hành đã cấu hình
 - Repository read and history access
 - A pull request action that can open a draft pull request
 - The configured control-adapter skill
