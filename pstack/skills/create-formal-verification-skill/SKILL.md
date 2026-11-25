@@ -1,43 +1,43 @@
 ---
 name: create-formal-verification-skill
-description: "Generate a project-local skill that formally verifies the code where a bug costs the most and tests reach the least, in any language, with whichever verification tool fits. Use for /create-formal-verification-skill, \"model-check this race\", \"prove this invariant\", or when concurrency, retries, state machines, parsers, or unsafe code need more than tests."
+description: "Tạo một skill cục bộ cho dự án để kiểm chứng hình thức phần code mà một bug gây tốn kém nhất và test chạm đến ít nhất, bằng mọi ngôn ngữ, với công cụ kiểm chứng nào phù hợp. Dùng cho /create-formal-verification-skill, \"model-check this race\", \"prove this invariant\" (hoặc \"model-check race condition này\", \"chứng minh bất biến này\"), hoặc khi concurrency, retry, state machine, parser, hay code unsafe cần nhiều hơn test."
 disable-model-invocation: true
 ---
 
-# Create a formal verification skill
+# Tạo một formal verification skill
 
-A test checks the cases that someone thought to write. Formal verification checks every case in a stated scope: every order of steps in a model, every input up to a bound, or every input. This skill finds the part of the repo where that matters most, verifies one property of it, and leaves a project-local skill that lets the next agent check a change against that property. Write that skill for an agent who reads it cold, mid-change, and has never seen your work. The user must be able to trust the result and act on it without learning the verification language.
+Một test kiểm tra các trường hợp mà ai đó đã nghĩ ra để viết. Kiểm chứng hình thức kiểm tra mọi trường hợp trong một phạm vi đã nêu: mọi thứ tự các bước trong một model, mọi input đến một giới hạn, hoặc mọi input. Skill này tìm phần của repo nơi điều đó quan trọng nhất, kiểm chứng một tính chất của nó, và để lại một skill cục bộ cho dự án cho phép agent tiếp theo kiểm tra một thay đổi với tính chất đó. Viết skill đó cho một agent đọc nó từ đầu, giữa chừng một thay đổi, và chưa bao giờ thấy công việc của bạn. Người dùng phải có thể tin kết quả và hành động dựa trên nó mà không cần học ngôn ngữ kiểm chứng.
 
-## Choose the target from the code
+## Chọn mục tiêu từ code
 
-Answer from the codebase, and ask the user only what you cannot observe. If the user named an area or a bug, start there.
+Trả lời từ codebase, và chỉ hỏi người dùng những gì bạn không thể quan sát. Nếu người dùng đã gọi tên một khu vực hoặc một bug, hãy bắt đầu từ đó.
 
-A good target is a promise the code makes, where a break harms users and tests rarely reach the case that breaks it. Choose the strongest such target in the repo, not the one that is easiest to verify.
+Một mục tiêu tốt là một lời hứa mà code đưa ra, nơi việc phá vỡ nó gây hại cho người dùng và test hiếm khi chạm đến trường hợp phá vỡ nó. Chọn mục tiêu mạnh nhất như vậy trong repo, không phải cái dễ kiểm chứng nhất.
 
-## Let the question choose the tool
+## Để câu hỏi chọn công cụ
 
-Pick the tool that answers the question at the lowest cost: a model checker, a proof assistant, an SMT-backed verifier, or another tool. Whether events can happen in a bad order usually suits a model checker over a small model of the design, and TLA+ is the default for that in any language. Whether the code itself behaves for every input, as with memory safety, overflow, or a data-structure invariant, usually suits a verifier that runs on the code. If no verifier runs on this language, say so, and test the real code with generated inputs, not a hand model of the function. A property that must hold at every size, where a bound is not enough, can need a proof. Prefer a tool that the repo's developers can install and run, and tell the user why you chose it.
+Chọn công cụ trả lời câu hỏi với chi phí thấp nhất: một model checker, một proof assistant, một verifier dựa trên SMT, hoặc một công cụ khác. Câu hỏi liệu các sự kiện có thể xảy ra theo một thứ tự xấu hay không thường hợp với một model checker trên một model nhỏ của thiết kế, và TLA+ là mặc định cho điều đó ở mọi ngôn ngữ. Câu hỏi liệu chính code có hoạt động đúng với mọi input hay không, như an toàn bộ nhớ, tràn số, hoặc một bất biến của cấu trúc dữ liệu, thường hợp với một verifier chạy trên code. Nếu không có verifier nào chạy trên ngôn ngữ này, hãy nói vậy, và test code thật bằng các input được sinh ra, không phải một model viết tay của hàm. Một tính chất phải đúng ở mọi kích thước, nơi một giới hạn là không đủ, có thể cần một chứng minh. Ưu tiên một công cụ mà các developer của repo có thể cài và chạy, và cho người dùng biết tại sao bạn chọn nó.
 
-## What makes it good
+## Điều gì làm nó tốt
 
-- **True to the code.** Every part of the model or proof points to code that a reviewer can open. What the verification treats as one indivisible step is one indivisible step in the code. Names come from this repo.
-- **Able to fail.** A check that you have never seen fail proves nothing. Show each property failing on a broken variant of the code it guards, such as a removed check or a reordered step.
-- **Findings stay findings.** When the current code breaks the property, report it with the counterexample in the code's terms. Do not weaken the property or the model until it passes, and do not change product code unless the user asks.
-- **Honest about scope.** Say what is verified, under which bounds and assumptions, and what is left out. A pass covers the model or the bound, not the whole system.
-- **Readable without the tool.** State the property and the harm in one plain sentence each. Tell a counterexample as a short sequence of steps in the code's words.
-- **Cheap to rerun.** One command, a reproducible tool version, and a run short enough that the next agent will use it on every relevant change.
-- **Kept in step with the code.** Record which files and functions each check covers, and the commit at which you last confirmed that the verification describes them. When the covered code changes after that commit, the next agent can see that the verification needs another look.
+- **Đúng với code.** Mọi phần của model hoặc chứng minh đều chỉ đến code mà reviewer có thể mở ra. Những gì việc kiểm chứng coi là một bước không thể chia cắt thì là một bước không thể chia cắt trong code. Tên gọi đến từ repo này.
+- **Có thể thất bại.** Một phép kiểm tra bạn chưa bao giờ thấy thất bại thì không chứng minh được gì. Cho thấy mỗi tính chất thất bại trên một biến thể bị hỏng của code mà nó bảo vệ, như một phép kiểm tra bị xóa hoặc một bước bị đổi thứ tự.
+- **Phát hiện vẫn là phát hiện.** Khi code hiện tại phá vỡ tính chất, hãy báo cáo nó kèm phản ví dụ theo thuật ngữ của code. Đừng làm yếu tính chất hay model cho đến khi nó pass, và đừng thay đổi code sản phẩm trừ khi người dùng yêu cầu.
+- **Trung thực về phạm vi.** Nói những gì được kiểm chứng, dưới những giới hạn và giả định nào, và những gì bị bỏ ra ngoài. Một lần pass bao phủ model hoặc giới hạn, không phải toàn bộ hệ thống.
+- **Đọc được mà không cần công cụ.** Nêu tính chất và tác hại, mỗi cái trong một câu đơn giản. Kể một phản ví dụ như một chuỗi bước ngắn bằng ngôn từ của code.
+- **Rẻ để chạy lại.** Một lệnh, một phiên bản công cụ có thể tái tạo, và một lượt chạy đủ ngắn để agent tiếp theo sẽ dùng nó cho mọi thay đổi liên quan.
+- **Đồng bộ với code.** Ghi lại mỗi phép kiểm tra bao phủ những file và hàm nào, và commit mà tại đó bạn xác nhận lần cuối rằng việc kiểm chứng mô tả chúng. Khi code được bao phủ thay đổi sau commit đó, agent tiếp theo có thể thấy rằng việc kiểm chứng cần được xem lại.
 
-## Generate the verify skill
+## Tạo verify skill
 
-Write a project-local skill with frontmatter that names the area and says when to use it. Without frontmatter, the skill never registers. From the skill alone, the next agent must be able to tell whether a change touches the verified code, run the check, tell a real bug from a modeling error, and update the verification when a change is intended. Put the coverage record and the sync commit in the skill, and tell the next agent to move the sync commit forward only after it confirms that the verification describes the code at the new commit. Use this repo's real commands, paths, and nouns, and leave no placeholders.
+Viết một skill cục bộ cho dự án với frontmatter gọi tên khu vực và nói khi nào dùng nó. Không có frontmatter, skill không bao giờ được đăng ký. Chỉ từ skill, agent tiếp theo phải có thể biết một thay đổi có chạm vào code đã được kiểm chứng không, chạy phép kiểm tra, phân biệt một bug thật với một lỗi mô hình hóa, và cập nhật việc kiểm chứng khi một thay đổi là có chủ đích. Đặt bản ghi độ bao phủ và commit đồng bộ trong skill, và bảo agent tiếp theo chỉ dời commit đồng bộ về phía trước sau khi nó xác nhận rằng việc kiểm chứng mô tả code tại commit mới. Dùng lệnh, đường dẫn, và danh từ thật của repo này, và không để lại placeholder nào.
 
-If the check is a TLA+ model, tell the next agent to read every result with the pstack [`/statechart`](../statechart/SKILL.md) skill. It shows each invariant violation the checker finds as its shortest path in plain words. When the check passes, `/statechart` draws a chart of how the system moves between states. Refer to `/statechart` by name. Its commands, options, and file paths change between releases and machines, so copy none of them into the generated skill or its scripts.
+Nếu phép kiểm tra là một model TLA+, hãy bảo agent tiếp theo đọc mọi kết quả bằng skill pstack [`/statechart`](../statechart/SKILL.md). Nó cho thấy mỗi vi phạm bất biến mà checker tìm ra dưới dạng đường đi ngắn nhất bằng lời lẽ đơn giản. Khi phép kiểm tra pass, `/statechart` vẽ một biểu đồ về cách hệ thống di chuyển giữa các trạng thái. Tham chiếu `/statechart` bằng tên. Các lệnh, tùy chọn, và đường dẫn file của nó thay đổi giữa các bản phát hành và các máy, nên đừng sao chép cái nào vào skill được tạo hay các script của nó.
 
-## Prove it before you hand off
+## Chứng minh nó trước khi bàn giao
 
-Follow the generated skill once, as the next agent would, on a scratch change that breaks the property in the real code. It must catch the break. Then drop the scratch change and confirm that the check is back where it started: passing, or failing only on the findings you will report. A verify skill that was never run is a draft. If the skill misses the break or a step does not run, fix the skill or the verification, not the scratch change.
+Làm theo skill được tạo một lần, như agent tiếp theo sẽ làm, trên một thay đổi nháp phá vỡ tính chất trong code thật. Nó phải bắt được chỗ phá vỡ. Rồi bỏ thay đổi nháp và xác nhận rằng phép kiểm tra đã quay lại trạng thái ban đầu: pass, hoặc chỉ thất bại trên các phát hiện bạn sẽ báo cáo. Một verify skill chưa bao giờ được chạy là một bản nháp. Nếu skill bỏ sót chỗ phá vỡ hoặc một bước không chạy, hãy sửa skill hoặc việc kiểm chứng, không sửa thay đổi nháp.
 
-## Hand off
+## Bàn giao
 
-Tell the user what you verified, which tool you used and why, the bounds, what the check found in plain words, how to run it, and what it does not cover. Suggest a second target only if you found a close one. Point the user at `/maintain-formal-verification-skill` for bringing the verification back in line after changes that did not recheck it.
+Cho người dùng biết bạn đã kiểm chứng gì, bạn đã dùng công cụ nào và tại sao, các giới hạn, phép kiểm tra tìm ra gì bằng lời lẽ đơn giản, cách chạy nó, và những gì nó không bao phủ. Chỉ đề xuất một mục tiêu thứ hai nếu bạn đã tìm thấy một cái gần. Chỉ người dùng đến `/maintain-formal-verification-skill` để đưa việc kiểm chứng trở lại đồng bộ sau các thay đổi đã không kiểm tra lại nó.
