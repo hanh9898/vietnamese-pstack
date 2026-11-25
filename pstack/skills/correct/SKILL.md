@@ -1,32 +1,32 @@
 ---
 name: correct
-description: "Find the mistakes agents keep repeating in this repo and make each one impossible. Try architecture first, then types, then a lint whose error names the fix, then a test, and write docs last. Prove each check fails on a real past mistake. Repeat this each time the operator corrects you. Use for /correct."
+description: "Tìm những lỗi mà agent cứ lặp lại trong repo này và làm cho mỗi lỗi trở nên không thể xảy ra. Thử kiến trúc trước, rồi type, rồi một lint có thông báo lỗi gọi tên cách sửa, rồi một test, và viết tài liệu sau cùng. Chứng minh mỗi phép kiểm tra thất bại trên một lỗi thật trong quá khứ. Lặp lại việc này mỗi lần operator sửa bạn. Dùng cho /correct."
 disable-model-invocation: true
 ---
 
 # Correct
 
-The operator keeps correcting agents in this repo for the same mistakes. Change the repo so the next agent can't make them.
+Operator cứ phải sửa các agent trong repo này vì cùng những lỗi đó. Hãy thay đổi repo để agent tiếp theo không thể mắc chúng.
 
-Assume every contributor is an agent that sees only the files it opened, copies the nearest example, and takes the shortest path that compiles. Design the repo so a change that looks right from one file is right for the whole repo.
+Giả định mọi người đóng góp là một agent chỉ thấy những file nó đã mở, sao chép ví dụ gần nhất, và đi con đường ngắn nhất compile được. Thiết kế repo sao cho một thay đổi trông đúng từ một file thì đúng cho cả repo.
 
-## Find the mistake classes
+## Tìm các lớp lỗi
 
-First, read recent commits, reverts, review comments, agent instruction files, and comments that explain workarounds. Group the mistakes into classes. A class counts once it has happened twice.
+Trước hết, đọc các commit gần đây, các lần revert, comment review, file chỉ dẫn cho agent, và các comment giải thích cách lách. Gom các lỗi thành từng lớp. Một lớp được tính khi nó đã xảy ra hai lần.
 
-## Fix each class at the highest level that works
+## Sửa mỗi lớp ở cấp cao nhất có tác dụng
 
-1. **Eliminate it with architecture.** Give each piece of state one owner and each task one supported way. Hide internals so the wrong import fails. Replace hand-synced lists with one source of truth. Delete old ways and dead code an agent would copy.
-2. **Enforce it with types so the bad state can't be written.** If bad code still compiles, add a lint or CI check whose error names the file, type, or function to use instead. If the pattern is already common, fail only when a change adds more.
-3. **Test the behavior.** Fix or delete any test that still passes when the behavior it checks breaks, or that fails when only the internals change.
-4. **Write docs or agent rules last, only for judgment calls.** Nothing fails when an agent skips them.
+1. **Loại bỏ nó bằng kiến trúc.** Cho mỗi mẩu state một chủ sở hữu và mỗi việc một cách được hỗ trợ. Ẩn phần bên trong để import sai sẽ thất bại. Thay các danh sách đồng bộ bằng tay bằng một nguồn sự thật duy nhất. Xóa các cách cũ và code chết mà một agent sẽ sao chép.
+2. **Bắt buộc nó bằng type để state xấu không thể được viết ra.** Nếu code xấu vẫn compile, hãy thêm một lint hoặc phép kiểm tra CI có thông báo lỗi gọi tên file, type, hoặc hàm nên dùng thay thế. Nếu mẫu đó đã phổ biến, chỉ đánh trượt khi một thay đổi thêm nhiều hơn.
+3. **Test hành vi.** Sửa hoặc xóa mọi test vẫn pass khi hành vi nó kiểm tra bị hỏng, hoặc thất bại khi chỉ phần bên trong thay đổi.
+4. **Viết tài liệu hoặc quy tắc cho agent sau cùng, chỉ cho các quyết định cần phán đoán.** Không có gì thất bại khi một agent bỏ qua chúng.
 
-## Fix and prove
+## Sửa và chứng minh
 
-Then fix the most frequent classes now, one commit each. Prove each new check fails on a real past mistake. Run the same command locally and in CI. Exceptions go on the offending line with a reason, an expiry date, and a human's approval.
+Rồi sửa các lớp thường gặp nhất ngay bây giờ, mỗi lớp một commit. Chứng minh mỗi phép kiểm tra mới thất bại trên một lỗi thật trong quá khứ. Chạy cùng một lệnh ở máy local và trong CI. Các ngoại lệ được đặt trên chính dòng vi phạm kèm một lý do, một ngày hết hạn, và sự phê duyệt của một người.
 
-## Keep the rule table
+## Giữ bảng quy tắc
 
-Last, keep a table in the agent instruction file that pairs each rule with what enforces it. When the operator corrects you, fix the mistake and add the rule. If the rule was already there and nothing enforces it, that's a repeat, so fix it at the highest level in the same change. Drop a rule once its mistake can't happen.
+Cuối cùng, giữ một bảng trong file chỉ dẫn cho agent ghép mỗi quy tắc với thứ bắt buộc nó. Khi operator sửa bạn, hãy sửa lỗi và thêm quy tắc. Nếu quy tắc đã có ở đó mà không có gì bắt buộc nó, đó là một lần lặp lại, nên hãy sửa nó ở cấp cao nhất trong cùng thay đổi. Bỏ một quy tắc khi lỗi của nó không còn có thể xảy ra.
 
-**Reply:** each class with its evidence, the level you picked, and why a higher level didn't work.
+**Câu trả lời:** mỗi lớp kèm bằng chứng của nó, cấp bạn đã chọn, và tại sao một cấp cao hơn không có tác dụng.
