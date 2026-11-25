@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Tạo một verification skill
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Mọi dự án nghiêm túc đều cần một cách được viết script để điều khiển app thật và chứng minh hành vi: khởi chạy nó, chạy thử một feature theo cách người dùng làm, và thu bằng chứng. Skill này tạo ra điều đó dưới dạng một skill cục bộ của dự án (`.cursor/skills/verify-<app>/`) được may đo cho repo. Bạn viết output của bộ tạo cho agent tiếp theo, không phải cho con người: nó sẽ được đọc từ đầu, giữa chừng một task, bởi một agent chưa bao giờ thấy app.
 

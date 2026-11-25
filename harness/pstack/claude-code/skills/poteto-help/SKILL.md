@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Trợ giúp Poteto
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Trả lời câu hỏi của người dùng về pstack, đưa cho họ một prompt họ có thể gửi, và link đến file mà câu trả lời lấy từ đó. Với một câu hỏi trợ giúp, đừng bắt đầu làm việc. Người dùng hỏi làm thế nào, và một lượt chạy pstack tiêu tốn token thật, nên hãy để họ tự gửi prompt.
 

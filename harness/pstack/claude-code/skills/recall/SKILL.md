@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Recall
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 **Trước khi bắt đầu hoặc tiếp tục công việc, bạn dựng lại context làm việc gần đây của người dùng và trả về một bản tóm tắt ngắn gọn về hiện trạng và việc cần làm tiếp theo.**
 

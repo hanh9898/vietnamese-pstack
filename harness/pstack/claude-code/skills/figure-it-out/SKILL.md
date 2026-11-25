@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Figure it out
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Khi task không khớp playbook nào, hãy thiết kế một cái. Sản phẩm bàn giao trước bất kỳ dòng code nào là chính workflow: một chuỗi giai đoạn điều chỉnh mức nghiêm ngặt theo task, chạy phương pháp khoa học, và để lại một dấu vết quyết định mà con người có thể kiểm toán sau khi rời đi.
 

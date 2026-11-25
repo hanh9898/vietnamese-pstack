@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Bảo trì một verification skill
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Một feature map mục nát ngay khi app thay đổi. Skill này là vòng lặp bảo trì cho một skill được tạo bởi `/create-verification-skill` (hoặc bất kỳ verification skill cục bộ nào của dự án có feature map). Đơn vị của sự nghiêm ngặt là feature, không phải từng câu: bao phủ mọi file feature từ source và chạy thử mọi feature trực tiếp, mà không cần chạy terminal cho từng gạch đầu dòng.
 

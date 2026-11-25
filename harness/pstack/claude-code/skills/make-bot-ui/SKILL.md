@@ -8,7 +8,7 @@ disable-model-invocation: true
 ---
 # Cách làm một UI cho bot
 
-Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Claude Code thay `${CLAUDE_PLUGIN_ROOT}` trong skill này bằng thư mục gốc plugin; `<pstack>` là đường dẫn đó. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
 Xây một trang mà người dùng bấm vào. Một server trên máy tính này POST JSON đến một webhook routine. Bot thức dậy với JSON đó. Giữ sender key trên server. Đừng đặt sender key trong trình duyệt, trong chat, hay trong skill này.
 

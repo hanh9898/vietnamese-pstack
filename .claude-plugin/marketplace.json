@@ -1,0 +1,13 @@
+{
+  "name": "vietnamese-pstack",
+  "owner": {
+    "name": "hanh9898"
+  },
+  "description": "Bộ skill và quy trình agent pstack bằng tiếng Việt cho Claude Code.",
+  "plugins": [
+    {
+      "name": "pstack",
+      "source": "./harness/pstack/claude-code"
+    }
+  ]
+}
