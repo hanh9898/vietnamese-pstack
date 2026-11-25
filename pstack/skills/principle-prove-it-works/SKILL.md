@@ -1,11 +1,11 @@
 ---
 name: principle-prove-it-works
-description: "Apply after completing a task, before declaring done. Verify against the real artifact (run the feature, read the actual value, inspect the diff), not a proxy, self-report, or 'it compiles.'"
+description: "Áp dụng sau khi hoàn thành một task, trước khi tuyên bố xong. Kiểm chứng với artifact thật (chạy feature, đọc giá trị thật, xem diff), không phải một thứ đại diện, tự báo cáo, hay 'nó compile được.'"
 disable-model-invocation: true
 ---
 
 # Prove It Works
 
-Verify every output by checking the real thing directly: run the feature, read the actual value, inspect the diff. Proxies (file mtimes, self-reports, cached output, "it compiles") do not count. When a check fails, suspect the observation method before the system.
+Kiểm chứng mọi output bằng cách trực tiếp kiểm tra thứ thật: chạy feature, đọc giá trị thật, xem diff. Các thứ đại diện (mtime của file, tự báo cáo, output đã cache, "nó compile được") không được tính. Khi một phép kiểm tra thất bại, hãy nghi ngờ phương pháp quan sát trước khi nghi ngờ hệ thống.
 
-Script the check when you can. A deterministic script that reruns the comparison beats a one-time look. Keep its output where the human can see it, and commit it only when the trail must be auditable later.
+Viết script cho phép kiểm tra khi có thể. Một script tất định chạy lại phép so sánh thắng một lần nhìn duy nhất. Giữ output của nó ở nơi con người có thể thấy, và chỉ commit nó khi dấu vết phải kiểm toán được về sau.
