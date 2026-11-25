@@ -142,10 +142,15 @@ function render() {
     const name = relative(PSTACK, path);
     const entry = file(path);
     if (!name.startsWith("agents/") || !name.endsWith(".md")) return [name, entry];
-    const text = entry.bytes.toString("utf8")
-      .replace(/^model: claude-(opus|sonnet|haiku|fable)-.*-(low|medium|high|xhigh|max)(?:-fast)?\s*$/m, "model: $1\neffort: $2")
+    const text = entry.bytes.toString("utf8");
+    const match = text.match(/^(---\r?\n)([\s\S]*?)(\r?\n---(?:\r?\n|$))/);
+    if (!match) return [name, entry];
+    const newline = match[1].endsWith("\r\n") ? "\r\n" : "\n";
+    const metadata = match[2]
+      .replace(/^model: claude-(opus|sonnet|haiku|fable)-.*-(low|medium|high|xhigh|max)(?:-fast)?\s*$/m, `model: $1${newline}effort: $2`)
       .replace(/^is_background: (true|false)\s*$/m, "background: $1");
-    return [name, { ...entry, bytes: Buffer.from(text) }];
+    const converted = `${match[1]}${metadata}${match[3]}${text.slice(match[0].length)}`;
+    return [name, { ...entry, bytes: Buffer.from(converted) }];
   }));
   const line =
     `Trong Claude Code, hãy đọc [adapter Claude Code](../../${ADAPTER}) một lần mỗi session trước khi làm theo skill này. ` +

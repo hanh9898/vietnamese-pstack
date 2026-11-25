@@ -84,7 +84,18 @@ try {
   const sourceAgent = readFileSync(sourceAgentPath, "utf8");
   const fableAgent = sourceAgent.replace(/^model: claude-[^\r\n]+$/m, "model: claude-fable-5-2-high");
   assert.notEqual(fableAgent, sourceAgent);
-  writeFileSync(sourceAgentPath, fableAgent);
+  writeFileSync(sourceAgentPath, `${fableAgent}\n\nExample values:\n\n\`\`\`yaml\nmodel: claude-opus-5-5-high-fast\nis_background: false\n\`\`\`\n`);
+  writeFileSync(join(fixture, "pstack", "agents", "metadata-free.md"), [
+    "---",
+    "name: metadata-free",
+    "description: Example agent without model metadata",
+    "---",
+    "",
+    "Example values:",
+    "model: claude-opus-5-5-high-fast",
+    "is_background: true",
+    "",
+  ].join("\n"));
 
   const generated = spawnSync(process.execPath, [join(fixture, "scripts", "generate-pstack-harness-trees.mjs")], {
     cwd: fixture,
@@ -101,8 +112,15 @@ try {
   assert.equal(field(generatedAgent, "effort"), "high");
   assert.equal(field(generatedAgent, "background"), "true");
   assert.equal(field(generatedAgent, "is_background"), undefined);
+  assert.match(generatedAgent, /```yaml\nmodel: claude-opus-5-5-high-fast\nis_background: false\n```/);
+  const metadataFreeAgent = readFileSync(join(fixture, plugin.source, "agents", "metadata-free.md"), "utf8");
+  assert.equal(field(metadataFreeAgent, "model"), undefined);
+  assert.equal(field(metadataFreeAgent, "effort"), undefined);
+  assert.equal(field(metadataFreeAgent, "background"), undefined);
+  assert.equal(field(metadataFreeAgent, "is_background"), undefined);
+  assert.match(metadataFreeAgent, /model: claude-opus-5-5-high-fast\nis_background: true/);
 } finally {
   rmSync(fixture, { recursive: true, force: true });
 }
 
-console.log("Claude Code marketplace, installation docs, disabled skill routing, and generated agent metadata checks passed.");
+console.log("Claude Code marketplace, installation docs, plugin version, disabled skill routing, and generated agent metadata checks passed.");
