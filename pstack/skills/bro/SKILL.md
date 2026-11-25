@@ -1,7 +1,7 @@
 ---
 name: bro
-description: Restate the last message in plain human language, with no jargon.
+description: Nhắc lại tin nhắn cuối bằng ngôn ngữ bình dân, không thuật ngữ chuyên môn.
 disable-model-invocation: true
 ---
 
-Restate your last message. Stop using jargon and speak coherently. State it more simply and concisely, like one human talking to another.
+Nhắc lại tin nhắn cuối cùng của bạn. Thôi dùng thuật ngữ chuyên môn và nói cho mạch lạc. Nói nó đơn giản và ngắn gọn hơn, như một người đang nói chuyện với một người khác.
