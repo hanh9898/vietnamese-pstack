@@ -1,16 +1,16 @@
 ---
 name: principle-test-behavior-not-implementation
-description: "Apply when you write, change, or keep a test. Assert what the code's users can observe, so that the test fails when that behavior breaks and keeps passing when only the internals change."
+description: "Áp dụng khi bạn viết, thay đổi, hoặc giữ một test. Khẳng định những gì người dùng của code quan sát được, để test thất bại khi hành vi đó hỏng và vẫn pass khi chỉ phần bên trong thay đổi."
 disable-model-invocation: true
 ---
 
 # Test Behavior, Not Implementation
 
-A test is a claim about what users of the code can observe through its interface: return values, errors, state they can read back, and effects on outside systems. Private helpers, internal call order, and intermediate data are implementation.
+Một test là một khẳng định về những gì người dùng của code quan sát được qua interface của nó: giá trị trả về, lỗi, state họ có thể đọc lại, và tác động lên các hệ thống bên ngoài. Helper riêng tư, thứ tự gọi nội bộ, và dữ liệu trung gian là phần cài đặt.
 
-Judge each test against two imagined edits:
+Đánh giá mỗi test với hai chỉnh sửa tưởng tượng:
 
-- **Break the behavior** (a wrong value, a skipped or doubled effect). If the test still passes, it proves nothing. The usual causes are a loose assertion, an expected value computed by the code under test, and an assertion on data the test built itself.
-- **Change the internals** and keep every observable result. If the test fails, it is pinned to the implementation.
+- **Làm hỏng hành vi** (một giá trị sai, một tác động bị bỏ qua hoặc bị nhân đôi). Nếu test vẫn pass, nó không chứng minh được gì. Nguyên nhân thường gặp là một assertion lỏng lẻo, một giá trị mong đợi được tính bởi chính code đang được test, và một assertion trên dữ liệu do chính test tạo ra.
+- **Thay đổi phần bên trong** và giữ nguyên mọi kết quả quan sát được. Nếu test thất bại, nó bị ghim vào phần cài đặt.
 
-Keep a test that catches the first edit and survives the second. Rewrite or delete the rest. Drive the code through its public interface with a concrete input, and derive the expected value from the requirement. What an external service receives is behavior. A call to an internal helper is not. Pair "this never happens" with a case where it does happen. Assert the error type that callers branch on, not the message.
+Giữ test bắt được chỉnh sửa thứ nhất và sống sót qua chỉnh sửa thứ hai. Viết lại hoặc xóa phần còn lại. Điều khiển code qua interface công khai của nó với một input cụ thể, và suy ra giá trị mong đợi từ yêu cầu. Những gì một service bên ngoài nhận được là hành vi. Một lệnh gọi đến helper nội bộ thì không. Ghép "điều này không bao giờ xảy ra" với một trường hợp nó có xảy ra. Khẳng định loại lỗi mà caller rẽ nhánh theo, không phải thông điệp.
