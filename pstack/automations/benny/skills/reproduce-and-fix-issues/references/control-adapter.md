@@ -1,169 +1,169 @@
-# Control-adapter contract
+# Hợp đồng control adapter
 
-Benny does not know how to start or drive every app. The user must configure one control skill or adapter that implements this contract for the target app.
+Benny không biết cách khởi động hay điều khiển mọi app. Người dùng phải cấu hình một control skill hoặc adapter cài đặt hợp đồng này cho app đích.
 
-Set its skill name in `control.skill_name`.
+Đặt tên skill của nó trong `control.skill_name`.
 
-Set the completed user-facing feature map path in `control.feature_map_path`. Copy and fill [`feature-map.example.md`](./feature-map.example.md) outside `.cursor/automations/benny/` instead of editing the copied example.
+Đặt đường dẫn feature map hướng người dùng đã hoàn thiện trong `control.feature_map_path`. Sao chép và điền [`feature-map.example.md`](./feature-map.example.md) ra bên ngoài `.cursor/automations/benny/` thay vì sửa ví dụ đã sao chép.
 
-If the skill, feature map, or a required capability is absent, ambiguous, or incomplete, repro and fix work must fail closed.
+Nếu skill, feature map, hoặc một năng lực bắt buộc bị thiếu, mơ hồ, hoặc chưa hoàn chỉnh, công việc tái hiện và sửa phải thất bại theo hướng đóng (fail closed).
 
-## Required capabilities
+## Các năng lực bắt buộc
 
 ### Bring up
 
-Start the requested app revision in the requested test environment.
+Khởi động revision app được yêu cầu trong môi trường test được yêu cầu.
 
 Input:
 
-- Repository and revision
-- Build or start mode
-- Workspace, account, fixture, and feature-state requirements
-- Artifact directory
-- Completed feature-map path
+- Repository và revision
+- Chế độ build hoặc khởi động
+- Các yêu cầu về workspace, tài khoản, fixture, và trạng thái feature
+- Thư mục artifact
+- Đường dẫn feature map đã hoàn thiện
 
-Return:
+Trả về:
 
-- Session identifier
-- How the adapter confirmed the correct app and environment
-- Stable app markers
-- Running process or target details needed by later calls
-- Any missing capability
+- Định danh session
+- Cách adapter đã xác nhận đúng app và môi trường
+- Các dấu hiệu ổn định của app
+- Chi tiết process đang chạy hoặc đích mà các lời gọi sau cần
+- Mọi năng lực còn thiếu
 
-The adapter must distinguish the target app from a similar window, shell, or production instance.
+Adapter phải phân biệt app đích với một cửa sổ, shell, hoặc instance production tương tự.
 
 ### Drive UI
 
-Perform real user actions:
+Thực hiện các thao tác người dùng thật:
 
 - Click
-- Type
-- Press keys
-- Scroll
-- Drag
-- Resize
-- Navigate through app controls
+- Gõ
+- Nhấn phím
+- Cuộn
+- Kéo
+- Đổi kích thước
+- Điều hướng qua các control của app
 
-Prefer roles, labels, and stable selectors. Use coordinates only after a fresh screenshot.
+Ưu tiên role, nhãn, và selector ổn định. Chỉ dùng tọa độ sau một screenshot mới.
 
-Return each action and the observed state change.
+Trả về mỗi thao tác và sự thay đổi trạng thái quan sát được.
 
-Do not set internal state, call hidden app methods, write directly to storage, or inject DOM changes to create the symptom.
+Đừng đặt trạng thái nội bộ, gọi các method ẩn của app, ghi trực tiếp vào storage, hay chèn thay đổi DOM để tạo ra triệu chứng.
 
 ### Drive mapped features and states
 
-Read the relevant feature-map section before driving the app.
+Đọc phần feature map liên quan trước khi điều khiển app.
 
-The adapter must expose ways to:
+Adapter phải cung cấp cách để:
 
-- Navigate every mapped feature through the user-visible path.
-- Invoke the adapter action names listed for that feature.
-- Interact with default, hover, focus-visible, active, disabled, loading, empty, error, selected, open, expanded, and feature-specific states when they apply.
-- Arrange a state through safe fixture data, permissions, flags, service responses, or supported test controls.
-- Reset the feature for a second independent repro attempt.
-- Capture the screenshot, video, and read-only cross-check named by the feature map.
+- Điều hướng đến mọi feature trong map qua đường đi mà người dùng nhìn thấy.
+- Gọi các tên action adapter được liệt kê cho feature đó.
+- Tương tác với các trạng thái default, hover, focus-visible, active, disabled, loading, empty, error, selected, open, expanded, và các trạng thái riêng của feature khi chúng áp dụng.
+- Sắp đặt một trạng thái qua dữ liệu fixture an toàn, quyền, flag, response của service, hoặc các control test được hỗ trợ.
+- Reset feature cho lần thử tái hiện độc lập thứ hai.
+- Thu screenshot, video, và phép đối chiếu chỉ đọc mà feature map gọi tên.
 
-Use roles, accessible names, ARIA relationships, stable component markers, and purpose-named data attributes. Never use generated CSS or StyleX classes, dynamic hashes, child indexes, or brittle DOM position.
+Dùng role, accessible name, quan hệ ARIA, dấu hiệu component ổn định, và data attribute được đặt tên theo mục đích. Không bao giờ dùng class CSS hay StyleX được sinh ra, hash động, chỉ số con, hay vị trí DOM dễ vỡ.
 
-Arranging a precondition is not permission to inject the reported symptom. The repro itself must still come from real user interaction.
+Sắp đặt một điều kiện tiên quyết không phải là sự cho phép chèn triệu chứng được báo cáo. Bản thân bản tái hiện vẫn phải đến từ tương tác người dùng thật.
 
 ### Inspect state
 
-Read state to confirm what the UI shows.
+Đọc trạng thái để xác nhận những gì UI hiển thị.
 
-Examples:
+Ví dụ:
 
 - Accessibility tree
-- DOM or view hierarchy
-- Process state
-- Local logs
-- Network request status
-- App-exposed debug state
+- DOM hoặc cây view
+- Trạng thái process
+- Log local
+- Trạng thái request mạng
+- Trạng thái debug mà app cung cấp
 
-Inspection is read-only. If a query changes state, it belongs in `drive UI` and must represent a real user action.
+Việc kiểm tra là chỉ đọc. Nếu một truy vấn thay đổi trạng thái, nó thuộc về `drive UI` và phải thể hiện một thao tác người dùng thật.
 
 ### Screenshot
 
-Capture the current app state to a requested path.
+Thu trạng thái app hiện tại vào một đường dẫn được yêu cầu.
 
-Return:
+Trả về:
 
-- File path
-- Capture time
-- App marker or window title
-- Short description of what should be visible
+- Đường dẫn file
+- Thời điểm thu
+- Dấu hiệu app hoặc tiêu đề cửa sổ
+- Mô tả ngắn về những gì nên nhìn thấy
 
-The screenshot must show enough app chrome to prove that the correct app is under test.
+Screenshot phải cho thấy đủ phần khung của app để chứng minh đúng app đang được test.
 
 ### Recording
 
-Start and stop a screen recording around the full repro path.
+Bắt đầu và dừng ghi màn hình bao quanh toàn bộ đường đi tái hiện.
 
-Return:
+Trả về:
 
-- File path
-- Start and stop times
-- Captured window or region
-- Whether audio or sensitive overlays were omitted
+- Đường dẫn file
+- Thời điểm bắt đầu và dừng
+- Cửa sổ hoặc vùng được thu
+- Âm thanh hoặc các lớp phủ nhạy cảm có bị loại bỏ không
 
-The recording must show the discriminating final state, not only setup or a loading screen.
+Bản ghi phải cho thấy trạng thái cuối phân biệt, không chỉ phần thiết lập hay một màn hình loading.
 
 ### Cleanup
 
-Stop processes and sessions created by the adapter.
+Dừng các process và session do adapter tạo ra.
 
-Remove disposable:
+Xóa những thứ dùng một lần:
 
-- Browser or app profiles
-- Temporary workspaces
-- Test accounts or fixtures when the adapter created them
-- Debug ports and tunnels
-- Captures past their retention window
+- Profile trình duyệt hoặc app
+- Workspace tạm
+- Tài khoản test hoặc fixture khi adapter đã tạo chúng
+- Debug port và tunnel
+- Các bản thu đã quá thời hạn lưu giữ
 
-Return what was stopped, removed, retained, or left for a person.
+Trả về những gì đã được dừng, xóa, giữ lại, hoặc để lại cho một người.
 
-Cleanup must not delete user work.
+Cleanup không được xóa công việc của người dùng.
 
-## Adapter behavior
+## Hành vi của adapter
 
-The adapter must:
+Adapter phải:
 
-- Report capabilities before the repro starts.
-- Report which feature-map sections it can drive and which are blocked.
-- Use the same environment inputs for baseline and patched builds.
-- Surface startup failures as failures.
-- Bound retries.
-- Keep secrets out of logs and artifacts.
-- Keep captures outside the repository.
-- Support a fresh or reset state between the two repro attempts.
-- Avoid production changes unless the user explicitly configured a safe test action.
+- Báo cáo năng lực trước khi bắt đầu tái hiện.
+- Báo cáo những phần feature map nào nó có thể điều khiển và phần nào bị chặn.
+- Dùng cùng các input môi trường cho bản build baseline và bản đã patch.
+- Đưa lỗi khởi động lên thành thất bại.
+- Giới hạn số lần retry.
+- Giữ secret ngoài log và artifact.
+- Giữ các bản thu bên ngoài repository.
+- Hỗ trợ một trạng thái mới hoặc đã reset giữa hai lần thử tái hiện.
+- Tránh thay đổi production trừ khi người dùng đã cấu hình rõ ràng một action test an toàn.
 
-## Environment translation
+## Chuyển đổi môi trường
 
-Before declaring an environment block, restate the defect without platform-specific nouns and ask whether the same behavior can be tested safely in the available environment.
+Trước khi tuyên bố một môi trường bị chặn, hãy nhắc lại lỗi mà không dùng danh từ riêng của nền tảng và tự hỏi liệu cùng hành vi đó có thể được test an toàn trong môi trường có sẵn không.
 
-Examples:
+Ví dụ:
 
-- A named browser may mean any external browser.
-- A named key may mean the configured shortcut.
-- A named remote host may mean a delayed or disconnected remote target.
+- Một trình duyệt được gọi tên có thể nghĩa là bất kỳ trình duyệt bên ngoài nào.
+- Một phím được gọi tên có thể nghĩa là phím tắt đã cấu hình.
+- Một host từ xa được gọi tên có thể nghĩa là một đích từ xa bị trễ hoặc mất kết nối.
 
-Use a translated attempt only when it tests the same underlying behavior. Label it as translated evidence. Do not call it an exact repro when the missing environment is part of the defect.
+Chỉ dùng một lần thử đã chuyển đổi khi nó test cùng hành vi gốc. Gắn nhãn nó là bằng chứng đã chuyển đổi. Đừng gọi nó là bản tái hiện chính xác khi môi trường còn thiếu là một phần của lỗi.
 
-Hardware prompts, operating-system permission dialogs, device-only APIs, and unavailable account states may be real blocks.
+Các prompt phần cứng, dialog quyền của hệ điều hành, API chỉ có trên thiết bị, và trạng thái tài khoản không có sẵn có thể là những điểm chặn thật.
 
-## Setup check
+## Kiểm tra thiết lập
 
-Before enabling the repro automation, run one harmless adapter check:
+Trước khi bật automation tái hiện, hãy chạy một phép kiểm tra adapter vô hại:
 
-1. Bring up the app.
-2. Confirm the stable app marker.
-3. Load one completed feature-map section.
-4. Navigate to that feature through its user path.
-5. Exercise one disposable state through mapped adapter actions.
-6. Inspect the resulting state.
-7. Capture a screenshot.
-8. Record a short clip.
-9. Clean up.
+1. Khởi động app.
+2. Xác nhận dấu hiệu ổn định của app.
+3. Nạp một phần feature map đã hoàn thiện.
+4. Điều hướng đến feature đó qua đường đi người dùng của nó.
+5. Chạy thử một trạng thái dùng một lần qua các action adapter trong map.
+6. Kiểm tra trạng thái kết quả.
+7. Chụp một screenshot.
+8. Ghi một đoạn clip ngắn.
+9. Dọn dẹp.
 
-Enable repro work only when all nine steps succeed and no source-channel Slack post is involved.
+Chỉ bật công việc tái hiện khi cả chín bước đều thành công và không có bài đăng Slack nào vào channel nguồn.

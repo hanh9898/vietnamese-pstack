@@ -1,205 +1,205 @@
-# Feature-map example
+# Ví dụ feature map
 
-Map every user-facing feature Benny may reproduce. Read the relevant section before driving the app. Keep this map at the user point of view. Discover internals and current code paths at runtime instead of freezing them here.
+Map mọi feature hướng người dùng mà Benny có thể tái hiện. Đọc phần liên quan trước khi điều khiển app. Giữ map này ở góc nhìn người dùng. Khám phá phần nội bộ và đường dẫn code hiện tại lúc chạy thay vì đóng băng chúng ở đây.
 
-Copy this file outside `.cursor/automations/benny/`, for example to `.cursor/benny/feature-map.md`, and set `control.feature_map_path` to the copy. Pack refreshes must not overwrite it.
+Sao chép file này ra bên ngoài `.cursor/automations/benny/`, ví dụ đến `.cursor/benny/feature-map.md`, và đặt `control.feature_map_path` thành bản sao. Các lần làm mới pack không được ghi đè lên nó.
 
-## Per-feature template
+## Mẫu cho mỗi feature
 
 ### `<feature name>`
 
 `<one-line user-visible purpose>`
 
-#### How a user gets there
+#### Người dùng đến đó thế nào
 
-- Click path: `<screen> -> <menu, tab, or panel> -> <control>`
-- Keyboard shortcut: `<shortcut or none>`
+- Đường click: `<screen> -> <menu, tab, or panel> -> <control>`
+- Phím tắt: `<shortcut or none>`
 
-#### How the control adapter drives it
+#### Control adapter điều khiển nó thế nào
 
-- `<adapter action>` with `<inputs>` should `<visible result>`.
+- `<adapter action>` với `<inputs>` nên `<visible result>`.
 - Reset: `<how the adapter returns to a fresh state>`.
 
-#### Stable selectors
+#### Selector ổn định
 
 - `<role and accessible name>`
 - `<ARIA relationship>`
 - `<data-component or purpose-named data attribute>`
 
-Never use generated CSS or StyleX classes, dynamic hashes, child indexes, or brittle DOM position.
+Không bao giờ dùng class CSS hay StyleX được sinh ra, hash động, chỉ số con, hay vị trí DOM dễ vỡ.
 
-#### States to exercise
+#### Các trạng thái cần chạy thử
 
 - Default, hover, focus-visible, active, disabled
 - Loading, empty, error
 - Selected, open, expanded
 - `<relevant feature-specific variants>`
 
-Mark states that do not apply.
+Đánh dấu các trạng thái không áp dụng.
 
-#### Preconditions and setup
+#### Điều kiện tiên quyết và thiết lập
 
-- Auth: `<account state>`
-- Data: `<fixture>`
-- Permissions: `<role>`
-- Flags: `<flag or none>`
-- Services: `<required availability>`
+- Xác thực: `<account state>`
+- Dữ liệu: `<fixture>`
+- Quyền: `<role>`
+- Flag: `<flag or none>`
+- Service: `<required availability>`
 
-#### Evidence and cross-check
+#### Bằng chứng và đối chiếu
 
 - Screenshot: `<app identity, feature, and discriminating state>`
 - Video: `<entry path, interaction, and final state>`
-- Cross-check: `<read-only state or value that confirms the UI>`
+- Đối chiếu: `<read-only state or value that confirms the UI>`
 
 #### Gotchas
 
 - `<known dead end or wrong surface>`
 - `<safe environment translation>`
 
-## Fictional example
+## Ví dụ hư cấu
 
-These features belong to a fictional task app. They are examples, not required Benny features.
+Các feature này thuộc về một app quản lý task hư cấu. Chúng là ví dụ, không phải các feature bắt buộc của Benny.
 
 ### Sign in
 
-Lets a user enter the task app.
+Cho phép người dùng vào app quản lý task.
 
-#### How a user gets there
+#### Người dùng đến đó thế nào
 
-- Open the app and choose `Sign in`. No shortcut.
+- Mở app và chọn `Sign in`. Không có phím tắt.
 
-#### How the control adapter drives it
+#### Control adapter điều khiển nó thế nào
 
-- `open_app`, `click Sign in`, `fill credentials`, and `click Continue` should open the item list.
-- Reset by signing out and clearing the disposable session.
+- `open_app`, `click Sign in`, `fill credentials`, và `click Continue` nên mở danh sách item.
+- Reset bằng cách đăng xuất và xóa session dùng một lần.
 
-#### Stable selectors
+#### Selector ổn định
 
-- Button `Sign in`, textboxes `Email` and `Password`, `data-component="sign-in-form"`
+- Nút `Sign in`, các textbox `Email` và `Password`, `data-component="sign-in-form"`
 
-#### States to exercise
+#### Các trạng thái cần chạy thử
 
 - Default, focus-visible, submitting, disabled, loading, error
 
-#### Preconditions and setup
+#### Điều kiện tiên quyết và thiết lập
 
-- Disposable account and available authentication service
+- Tài khoản dùng một lần và service xác thực có sẵn
 
-#### Evidence and cross-check
+#### Bằng chứng và đối chiếu
 
-- Record landing page through item list. Check read-only session state.
+- Ghi từ trang đích đến danh sách item. Kiểm tra trạng thái session ở chế độ chỉ đọc.
 
 #### Gotchas
 
-- A marketing page is the wrong surface. A missing auth service is a block.
+- Một trang marketing là sai bề mặt. Thiếu service xác thực là một điểm chặn.
 
 ### Item list and detail
 
-Lets a user browse items and open one.
+Cho phép người dùng duyệt các item và mở một cái.
 
-#### How a user gets there
+#### Người dùng đến đó thế nào
 
-- Open the `Items` tab, then choose a row.
+- Mở tab `Items`, rồi chọn một dòng.
 
-#### How the control adapter drives it
+#### Control adapter điều khiển nó thế nào
 
-- `select_tab Items` and `click <fixture item>` should open its detail.
-- Reset by closing the detail and clearing selection.
+- `select_tab Items` và `click <fixture item>` nên mở chi tiết của nó.
+- Reset bằng cách đóng chi tiết và xóa lựa chọn.
 
-#### Stable selectors
+#### Selector ổn định
 
-- Tab and list named `Items`, fixture-named row, `data-component="item-detail"`
+- Tab và danh sách tên `Items`, dòng được đặt tên theo fixture, `data-component="item-detail"`
 
-#### States to exercise
+#### Các trạng thái cần chạy thử
 
 - Loading, empty, error, selected, open, expanded
 
-#### Preconditions and setup
+#### Điều kiện tiên quyết và thiết lập
 
-- Named fixture items, read permission, available item service
+- Các item fixture có tên, quyền đọc, service item có sẵn
 
-#### Evidence and cross-check
+#### Bằng chứng và đối chiếu
 
-- Show selection and matching detail title. Check selected-item ID.
+- Cho thấy lựa chọn và tiêu đề chi tiết khớp. Kiểm tra ID của item được chọn.
 
 #### Gotchas
 
-- Search results may look similar but use a different path.
+- Kết quả tìm kiếm có thể trông giống nhưng dùng một đường đi khác.
 
 ### Item editor
 
-Lets a user create or edit an item.
+Cho phép người dùng tạo hoặc sửa một item.
 
-#### How a user gets there
+#### Người dùng đến đó thế nào
 
-- Choose `Edit` from detail or `New item` from the list.
+- Chọn `Edit` từ chi tiết hoặc `New item` từ danh sách.
 
-#### How the control adapter drives it
+#### Control adapter điều khiển nó thế nào
 
-- `click Edit`, `fill <field>`, and `click Save` should update detail.
-- Reset by restoring the fixture.
+- `click Edit`, `fill <field>`, và `click Save` nên cập nhật chi tiết.
+- Reset bằng cách khôi phục fixture.
 
-#### Stable selectors
+#### Selector ổn định
 
-- Buttons `Edit`, `New item`, `Save`, form `Item editor`, label-linked fields
+- Các nút `Edit`, `New item`, `Save`, form `Item editor`, các field được liên kết với nhãn
 
-#### States to exercise
+#### Các trạng thái cần chạy thử
 
 - Default, focus-visible, dirty, validating, disabled, saving, error, success
 
-#### Preconditions and setup
+#### Điều kiện tiên quyết và thiết lập
 
-- Editable fixture, write permission, available save service
+- Fixture sửa được, quyền ghi, service lưu có sẵn
 
-#### Evidence and cross-check
+#### Bằng chứng và đối chiếu
 
-- Show field change through updated detail. Check the stored item value read-only.
+- Cho thấy thay đổi của field đến chi tiết đã cập nhật. Kiểm tra giá trị item được lưu ở chế độ chỉ đọc.
 
 #### Gotchas
 
-- Do not inject form state. A read-only detail field is not the editor.
+- Đừng chèn trạng thái form. Một field chi tiết chỉ đọc không phải là editor.
 
 ### Settings
 
-Lets a user change personal preferences.
+Cho phép người dùng thay đổi tùy chọn cá nhân.
 
-#### How a user gets there
+#### Người dùng đến đó thế nào
 
-- Open the profile menu, then choose `Settings`.
+- Mở menu profile, rồi chọn `Settings`.
 
-#### How the control adapter drives it
+#### Control adapter điều khiển nó thế nào
 
-- `open_menu Profile`, `click Settings`, and `toggle <preference>` should update the control.
-- Reset by restoring the starting preference.
+- `open_menu Profile`, `click Settings`, và `toggle <preference>` nên cập nhật control.
+- Reset bằng cách khôi phục tùy chọn ban đầu.
 
-#### Stable selectors
+#### Selector ổn định
 
-- Button `Profile`, menu item `Settings`, region `Settings`, purpose-named preference attribute
+- Nút `Profile`, mục menu `Settings`, vùng `Settings`, attribute tùy chọn được đặt tên theo mục đích
 
-#### States to exercise
+#### Các trạng thái cần chạy thử
 
 - Closed, open, selected, focus-visible, disabled, loading, error
 
-#### Preconditions and setup
+#### Điều kiện tiên quyết và thiết lập
 
-- Signed-in test account, known preferences, available preference service
+- Tài khoản test đã đăng nhập, các tùy chọn đã biết, service tùy chọn có sẵn
 
-#### Evidence and cross-check
+#### Bằng chứng và đối chiếu
 
-- Show the menu path and final control state. Check the preference value read-only.
+- Cho thấy đường đi qua menu và trạng thái control cuối cùng. Kiểm tra giá trị tùy chọn ở chế độ chỉ đọc.
 
 #### Gotchas
 
-- Operating-system settings are a different surface.
+- Cài đặt hệ điều hành là một bề mặt khác.
 
-## Completeness checklist
+## Danh sách kiểm tra đầy đủ
 
-- Every reproducible user-facing feature has a section.
-- Every section names a user path, adapter actions, and reset.
-- Selectors use roles, names, ARIA, stable component markers, or purpose-named attributes.
-- No selector uses generated classes or DOM position.
-- Relevant interaction, loading, empty, error, selected, and expanded states are covered.
-- Auth, fixtures, permissions, flags, and services are explicit.
-- Screenshot, video, and underlying cross-check requirements are explicit.
-- Wrong surfaces, dead ends, and safe environment translations are listed.
-- Implementation details remain runtime discoveries.
+- Mọi feature hướng người dùng có thể tái hiện đều có một phần.
+- Mọi phần đều gọi tên một đường đi người dùng, các action adapter, và cách reset.
+- Selector dùng role, tên, ARIA, dấu hiệu component ổn định, hoặc attribute được đặt tên theo mục đích.
+- Không selector nào dùng class được sinh ra hay vị trí DOM.
+- Các trạng thái tương tác, loading, empty, error, selected, và expanded liên quan đều được bao phủ.
+- Xác thực, fixture, quyền, flag, và service đều được nêu rõ.
+- Yêu cầu về screenshot, video, và phép đối chiếu bên dưới đều được nêu rõ.
+- Các bề mặt sai, ngõ cụt, và chuyển đổi môi trường an toàn đều được liệt kê.
+- Chi tiết cài đặt vẫn là những thứ được khám phá lúc chạy.
