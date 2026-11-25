@@ -12,7 +12,8 @@ const marketplace = JSON.parse(readFileSync(join(ROOT, ".claude-plugin", "market
 const plugin = marketplace.plugins.find(({ name }) => name === "pstack");
 assert.equal(marketplace.name, "vietnamese-pstack");
 assert.equal(plugin.source, "./harness/pstack/claude-code");
-assert.equal(JSON.parse(readFileSync(join(ROOT, "pstack", "plugin.json"), "utf8")).name, plugin.name);
+const sourcePlugin = JSON.parse(readFileSync(join(ROOT, "pstack", "plugin.json"), "utf8"));
+assert.equal(sourcePlugin.name, plugin.name);
 for (const path of ["pstack/README.md", "pstack/docs/guide/01-setup.md"]) {
   const text = readFileSync(join(ROOT, path), "utf8");
   assert.match(text, /claude plugin marketplace add hanh9898\/vietnamese-pstack/, `${path} marketplace source`);
@@ -87,7 +88,9 @@ try {
   assert.equal(generated.status, 0, `${generated.stdout}${generated.stderr}`);
 
   const generatedPlugin = join(fixture, plugin.source, ".claude-plugin", "plugin.json");
-  assert.equal(JSON.parse(readFileSync(generatedPlugin, "utf8")).name, plugin.name);
+  const generatedPluginManifest = JSON.parse(readFileSync(generatedPlugin, "utf8"));
+  assert.equal(generatedPluginManifest.name, plugin.name);
+  assert.equal(generatedPluginManifest.version, sourcePlugin.version);
   const generatedAgent = readFileSync(join(fixture, plugin.source, "agents", "poteto-agent.md"), "utf8");
   assert.equal(field(generatedAgent, "model"), "fable");
   assert.equal(field(generatedAgent, "effort"), "high");

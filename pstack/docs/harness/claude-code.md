@@ -2,6 +2,10 @@
 
 Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc file này một lần mỗi session, rồi ánh xạ từng tên Cursor trong một skill bằng các bảng bên dưới. `<pstack>` nghĩa là thư mục gốc plugin `${CLAUDE_PLUGIN_ROOT}` chứa `skills/` và `docs/`; Claude Code thay biến này bằng thư mục cài đặt của phiên bản plugin hiện tại trong nội dung skill và agent. Nếu một trường của Cursor không có dòng tương ứng, hãy bỏ nó và nói rõ. Không bao giờ truyền một trường hoặc giá trị mà schema của tool từ chối.
 
+## Phiên bản plugin
+
+Khi phát hành thay đổi cho plugin, tăng `version` trong `pstack/plugin.json`, rồi sinh lại harness. Claude Code dùng version để quyết định có thay bản plugin đã cache hay không; nếu giữ nguyên version, người dùng có thể tiếp tục nhận skill cũ dù đã cập nhật marketplace.
+
 ## Tool
 
 | Cursor | Claude Code |
