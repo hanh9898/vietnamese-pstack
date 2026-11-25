@@ -1,15 +1,15 @@
 ---
 name: principle-make-operations-idempotent
-description: "Apply when designing commands, lifecycle steps, or processing loops that run amid crashes, restarts, and retries. Converge to the same end state regardless of partial prior runs."
+description: "Áp dụng khi thiết kế lệnh, bước vòng đời, hoặc vòng lặp xử lý chạy giữa các lần crash, khởi động lại, và retry. Hội tụ về cùng một trạng thái cuối bất kể các lượt chạy trước dang dở."
 disable-model-invocation: true
 ---
 
 # Make Operations Idempotent
 
-Design every state-changing operation to converge to the correct state however many times it runs and wherever the previous run stopped.
+Thiết kế mọi thao tác thay đổi state để hội tụ về trạng thái đúng dù nó chạy bao nhiêu lần và dù lượt chạy trước dừng ở đâu.
 
-Derive each step from the state that exists, not from what the previous run meant to do. Read the current state, compare it to the goal, and apply only the difference.
+Suy ra mỗi bước từ state đang tồn tại, không phải từ điều lượt chạy trước định làm. Đọc state hiện tại, so sánh nó với mục tiêu, và chỉ áp dụng phần chênh lệch.
 
-Anything a run leaves behind (a lock, a temporary file, a half-written record, a claimed job) must be recognizable as stale by the next run, by evidence that holds wherever the previous run could have stopped. Write to a temporary path and rename it into place.
+Bất cứ thứ gì một lượt chạy để lại (một lock, một file tạm, một bản ghi viết dở, một job đã nhận) phải được lượt chạy tiếp theo nhận ra là cũ, bằng bằng chứng đứng vững ở bất kỳ điểm nào lượt chạy trước có thể đã dừng. Ghi vào một đường dẫn tạm và đổi tên nó vào đúng chỗ.
 
-The test: what happens if this runs twice? What if the previous run crashed at every possible point? If the answer depends on what was left behind, add a reconciliation step.
+Phép thử: điều gì xảy ra nếu cái này chạy hai lần? Nếu lượt chạy trước crash ở mọi điểm có thể thì sao? Nếu câu trả lời phụ thuộc vào những gì đã bị để lại, hãy thêm một bước hòa giải.

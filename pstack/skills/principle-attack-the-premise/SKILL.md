@@ -1,15 +1,15 @@
 ---
 name: principle-attack-the-premise
-description: "Apply when two or more fixes that share one premise have failed the same gate. Write the premise down and test it directly before you write another fix that assumes it."
+description: "Áp dụng khi hai hoặc nhiều bản sửa có chung một tiền đề đã thất bại ở cùng một cổng. Viết tiền đề đó ra và kiểm tra trực tiếp trước khi viết một bản sửa khác giả định nó."
 disable-model-invocation: true
 ---
 
 # Attack the Premise
 
-When two or more fixes that share one premise have failed the same gate, suspect the premise, not the fixes.
+Khi hai hoặc nhiều bản sửa có chung một tiền đề đã thất bại ở cùng một cổng, hãy nghi ngờ tiền đề, không phải các bản sửa.
 
-- Write the premise down: the one sentence every failed fix assumed.
-- Test it before the next fix. Find an observation that would come out differently if the premise were false, and make it. Look at how the failures are distributed, not only at how large they are.
-- If the evidence contradicts the premise, look for what the failures share that it did not predict. If one part always lands on the losing side, change what puts it there instead of adding a mechanism that cleans up after it.
+- Viết tiền đề ra: một câu mà mọi bản sửa thất bại đều đã giả định.
+- Kiểm tra nó trước bản sửa tiếp theo. Tìm một quan sát sẽ cho kết quả khác nếu tiền đề sai, và thực hiện nó. Xem các thất bại phân bố thế nào, không chỉ xem chúng lớn đến đâu.
+- Nếu bằng chứng mâu thuẫn với tiền đề, hãy tìm điểm chung của các thất bại mà tiền đề không dự đoán được. Nếu một phần luôn rơi vào phía thua, hãy thay đổi thứ đặt nó ở đó thay vì thêm một cơ chế dọn dẹp sau nó.
 
-Do not start the next fix before the premise is written down and tested.
+Đừng bắt đầu bản sửa tiếp theo trước khi tiền đề được viết ra và kiểm tra.

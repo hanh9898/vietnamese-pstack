@@ -1,14 +1,14 @@
 ---
 name: principle-fix-root-causes
-description: "Apply when debugging. Trace each symptom back to the first place the system went wrong and fix it there. A guard is a fix only when the state it handles is legitimate."
+description: "Áp dụng khi debug. Lần theo mỗi triệu chứng về nơi đầu tiên hệ thống đi sai và sửa nó ở đó. Một guard chỉ là bản sửa khi state mà nó xử lý là hợp lệ."
 disable-model-invocation: true
 ---
 
 # Fix Root Causes
 
-Fix the fault, not the place where it surfaced. The root cause is the first place the system did something it should not do, or failed to handle a state it should handle.
+Sửa lỗi gốc, không phải nơi nó lộ ra. Nguyên nhân gốc là nơi đầu tiên hệ thống làm điều nó không nên làm, hoặc không xử lý một state mà nó nên xử lý.
 
-- Reproduce first. Ask "why" until the answer is a wrong decision in the code. When stuck, instrument and read the actual state.
-- Ask whether the state that triggered the symptom is legitimate. If it is, handle it where the code broke. If it should never exist, a check there hides the bug, so find what produced it. Guards, retries, swallowed errors, clamped values, and discarded state are the usual ways to hide a bug.
-- Fix the pattern, not the instance. Find every place with the same fault.
-- If the deciding fact took a deep dig, propose the cheap, always-on signal that would have shown it at first look.
+- Tái hiện trước. Hỏi "tại sao" cho đến khi câu trả lời là một quyết định sai trong code. Khi bị kẹt, hãy gắn công cụ đo và đọc state thật.
+- Hỏi xem state đã kích hoạt triệu chứng có hợp lệ không. Nếu có, hãy xử lý nó ở nơi code bị hỏng. Nếu nó không bao giờ nên tồn tại, một phép kiểm tra ở đó sẽ che giấu bug, nên hãy tìm thứ đã tạo ra nó. Guard, retry, nuốt lỗi, kẹp giá trị, và bỏ state là những cách thường gặp để che giấu một bug.
+- Sửa cả mẫu, không phải một trường hợp. Tìm mọi nơi có cùng lỗi.
+- Nếu sự thật quyết định phải đào sâu mới tìm ra, hãy đề xuất một tín hiệu rẻ, luôn bật mà lẽ ra đã cho thấy nó ngay từ cái nhìn đầu tiên.
