@@ -1,29 +1,29 @@
 ---
 name: ketchup-video
-description: "Catch the user up like /ketchup, with a short subtitled video of slides for what happened and the waiting calls as text under it. Use for /ketchup-video."
+description: "Cập nhật cho người dùng như /ketchup, với một video ngắn có phụ đề gồm các slide cho những gì đã xảy ra và các quyết định đang chờ dưới dạng chữ bên dưới. Dùng cho /ketchup-video."
 disable-model-invocation: true
 ---
 
 # Ketchup video
 
-Follow [`/ketchup`](../ketchup/SKILL.md), but show what happened in a short subtitled video instead of its summary and visuals. Its window starts at the last message the user wrote before `/ketchup-video`, not before any earlier `/ketchup`. Writing and rendering the video, outside the repo, is the one exception to its read-only rule. The reply is ketchup's opening sentence, the embedded video, one line naming any work left that you can do yourself, and the action items. When the video shows a call's options, call each option by the name the video gives it. If the render fails, say so in one line and give only the calls.
+Làm theo [`/ketchup`](../ketchup/SKILL.md), nhưng thể hiện những gì đã xảy ra trong một video ngắn có phụ đề thay cho phần tóm tắt và hình ảnh của nó. Khoảng thời gian của nó bắt đầu từ tin nhắn cuối cùng người dùng viết trước `/ketchup-video`, không phải trước bất kỳ `/ketchup` nào trước đó. Viết và render video, bên ngoài repo, là ngoại lệ duy nhất đối với quy tắc chỉ đọc của nó. Câu trả lời là câu mở đầu của ketchup, video được nhúng, một dòng gọi tên mọi công việc còn lại mà bạn tự làm được, và các mục cần hành động. Khi video cho thấy các phương án của một quyết định, hãy gọi mỗi phương án bằng tên mà video đặt cho nó. Nếu render thất bại, hãy nói vậy trong một dòng và chỉ đưa ra các quyết định.
 
-## Slides
+## Slide
 
-Use the screenshots, recordings, diffs, and data the work produced, not the chat's prose about them. Before you draw, write the one sentence the user should leave with and one line per slide. Drop each slide that does not change what the user knows. Use at most 10 slides, and fewer is better. Neither note goes in the reply.
+Dùng các screenshot, recording, diff, và dữ liệu mà công việc đã tạo ra, không phải văn xuôi trong chat về chúng. Trước khi vẽ, hãy viết một câu mà người dùng nên mang về và mỗi slide một dòng. Bỏ mỗi slide không thay đổi điều người dùng biết. Dùng tối đa 10 slide, và ít hơn thì tốt hơn. Không ghi chú nào trong hai cái đó đi vào câu trả lời.
 
-Each slide makes one point. Build the slides on one picture and change it from slide to slide, rather than cut to an unrelated one. A color or shape means the same thing on every slide. Show the work in pictures, such as how a system works, a PR stack with each PR's state, a before and after of a fix, or options side by side. Point at what changed with arrows, highlights, and motion. A slide is never a bullet list, a status list, a table, or boxes with nothing connecting them.
+Mỗi slide nêu một điểm. Xây các slide trên một bức hình và thay đổi nó từ slide này sang slide khác, thay vì cắt sang một hình không liên quan. Một màu hoặc hình dạng mang cùng một ý nghĩa trên mọi slide. Thể hiện công việc bằng hình ảnh, như cách một hệ thống hoạt động, một stack PR với trạng thái của từng PR, trước và sau của một bản sửa, hoặc các phương án đặt cạnh nhau. Chỉ vào những gì đã thay đổi bằng mũi tên, đánh dấu, và chuyển động. Một slide không bao giờ là một danh sách gạch đầu dòng, một danh sách trạng thái, một bảng, hay các hộp không có gì nối với nhau.
 
-Keep text to the minimum. Put each label on the thing it names, in plain words a person would say, not tags like "Tests: pass". Never caption what a picture shows, and never give a fact twice, across slides or in the text under them.
+Giữ chữ ở mức tối thiểu. Đặt mỗi nhãn lên chính thứ nó gọi tên, bằng từ ngữ đơn giản mà một người sẽ nói, không phải các thẻ như "Tests: pass". Không bao giờ chú thích những gì một bức hình đã cho thấy, và không bao giờ đưa ra một sự thật hai lần, giữa các slide hay trong phần chữ bên dưới chúng.
 
-Show what came of each thing the user asked for, and whether it is done, still running, failed, or not checked. Never show something done that still waits on the user. Show any bug found and fixed on the way. If a visible change has no screenshot, say so on its slide and name what changed on screen. Draw only from facts you have. Never invent a number, and never draw a screen you did not capture.
+Cho thấy kết quả của mỗi thứ người dùng đã yêu cầu, và liệu nó đã xong, vẫn đang chạy, thất bại, hay chưa được kiểm tra. Không bao giờ thể hiện một thứ là đã xong khi nó vẫn đang chờ người dùng. Cho thấy mọi bug đã được tìm ra và sửa trên đường đi. Nếu một thay đổi nhìn thấy được không có screenshot, hãy nói vậy trên slide của nó và gọi tên những gì đã thay đổi trên màn hình. Chỉ vẽ từ những sự thật bạn có. Không bao giờ bịa ra một con số, và không bao giờ vẽ một màn hình bạn đã không chụp.
 
-## Subtitles
+## Phụ đề
 
-Give each slide one short subtitle line, about ten words, that says its point the way you would tell the user, from only what that slide shows. Say what the picture means rather than read out its labels. Put the subtitle in a strip below the slide, the same height on every slide and empty except for the subtitle, so it never covers the slide. Set it small, but readable when the video plays at chat size.
+Cho mỗi slide một dòng phụ đề ngắn, khoảng mười từ, nói lên điểm của nó theo cách bạn sẽ nói với người dùng, chỉ từ những gì slide đó cho thấy. Nói bức hình có nghĩa là gì thay vì đọc lên các nhãn của nó. Đặt phụ đề trong một dải bên dưới slide, cùng chiều cao trên mọi slide và trống ngoại trừ phụ đề, để nó không bao giờ che slide. Đặt cỡ chữ nhỏ, nhưng đọc được khi video phát ở kích thước chat.
 
 ## Render
 
-Render one silent landscape video, such as an mp4, with motion between slides. Every frame is the slide itself, edge to edge, above its subtitle strip. Make the frames from the slides, never by recording a screen, and burn each subtitle into its slide's frames so it stays on screen for the slide's whole hold. The hold is the time a slide is fully on screen, not counting the motion into or out of it. Hold each slide long enough to read the words it adds, at least one second for each three words. A slide adds its subtitle and each word that was not on the slide before it, including a label it changes. The first slide adds all its words. Words inside a screenshot do not count.
+Render một video ngang không tiếng, như mp4, có chuyển động giữa các slide. Mọi frame là chính slide đó, tràn viền, phía trên dải phụ đề của nó. Tạo các frame từ slide, không bao giờ bằng cách quay màn hình, và in cứng mỗi phụ đề vào các frame của slide đó để nó ở trên màn hình suốt thời gian giữ của slide. Thời gian giữ là thời gian một slide hoàn toàn ở trên màn hình, không tính chuyển động vào hoặc ra. Giữ mỗi slide đủ lâu để đọc các từ nó thêm vào, ít nhất một giây cho mỗi ba từ. Một slide thêm vào phụ đề của nó và mỗi từ không có trên slide trước, bao gồm cả một nhãn mà nó thay đổi. Slide đầu tiên thêm vào tất cả các từ của nó. Các từ bên trong một screenshot không được tính.
 
-Before you embed the video, check the rendered file. Look at one frame from each slide at chat size, and check that its subtitle is readable and covers nothing. Measure each hold by matching the file's frames to the slide, not with a still-frame detector, which counts the faint ends of a fade as still. Count the words each slide adds against its measured hold. Fix any slide you cannot read in that time, render again, and check again.
+Trước khi nhúng video, hãy kiểm tra file đã render. Xem một frame từ mỗi slide ở kích thước chat, và kiểm tra rằng phụ đề của nó đọc được và không che gì. Đo mỗi thời gian giữ bằng cách khớp các frame của file với slide, không dùng bộ phát hiện frame tĩnh, vốn đếm các đầu mờ của một hiệu ứng fade là tĩnh. Đếm số từ mỗi slide thêm vào so với thời gian giữ đã đo của nó. Sửa mọi slide bạn không thể đọc kịp trong thời gian đó, render lại, và kiểm tra lại.
