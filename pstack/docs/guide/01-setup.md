@@ -19,9 +19,9 @@ claude plugin disable --scope user pstack@cursor-plugins
 claude plugin uninstall --scope user pstack@cursor-plugins
 ```
 
-Nếu bản upstream được cài ở phạm vi khác, thay `user` bằng `project` hoặc `local`.
+Nếu bản upstream được cài ở phạm vi `project` hoặc `local`, thay `user` thành cùng phạm vi trong lệnh `disable`, `uninstall` ở trên và lệnh `install` bên dưới. Trong giao diện, chọn cùng phạm vi đó.
 
-Trong terminal, chạy `claude plugin marketplace add hanh9898/vietnamese-pstack`, rồi `claude plugin install pstack@vietnamese-pstack`. Trong một session đang mở, dùng `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack` và chọn phạm vi cài đặt trong bảng plugin. Claude Code thêm tiền tố cho lệnh của plugin; các slash command bên dưới dùng dạng Cursor, nên thêm `pstack:` trong Claude Code, ví dụ `/pstack:setup-pstack`. [Bộ chuyển đổi Claude Code](../harness/claude-code.md) đề cập các khác biệt còn lại.
+Trong terminal, chạy `claude plugin marketplace add hanh9898/vietnamese-pstack`, rồi `claude plugin install --scope user pstack@vietnamese-pstack`. Trong một session đang mở, dùng `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack` và chọn cùng phạm vi cài đặt trong bảng plugin. Claude Code thêm tiền tố cho lệnh của plugin; các slash command bên dưới dùng dạng Cursor, nên thêm `pstack:` trong Claude Code, ví dụ `/pstack:setup-pstack`. [Bộ chuyển đổi Claude Code](../harness/claude-code.md) đề cập các khác biệt còn lại.
 
 ## Chọn model
 

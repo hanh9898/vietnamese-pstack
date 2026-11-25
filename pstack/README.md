@@ -27,11 +27,11 @@ claude plugin disable --scope user pstack@cursor-plugins
 claude plugin uninstall --scope user pstack@cursor-plugins
 ```
 
-Nếu bản upstream được cài ở phạm vi khác, thay `user` bằng `project` hoặc `local`.
+Nếu bản upstream được cài ở phạm vi `project` hoặc `local`, thay `user` thành cùng phạm vi trong lệnh `disable`, `uninstall` ở trên và lệnh `install` bên dưới. Trong giao diện, chọn cùng phạm vi đó.
 
 ```bash
 claude plugin marketplace add hanh9898/vietnamese-pstack
-claude plugin install pstack@vietnamese-pstack
+claude plugin install --scope user pstack@vietnamese-pstack
 ```
 
 trong một session đang mở, bạn cũng có thể chạy `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack` và chọn phạm vi cài đặt trong bảng plugin. claude code tắt auto-update cho các marketplace bên thứ ba, nên pstack giữ nguyên phiên bản bạn đã cài. để bật nó, chạy `/plugin`, mở tab **marketplaces**, chọn `vietnamese-pstack` và chọn **enable auto-update**. để cập nhật thủ công một lần, chạy `claude plugin update pstack@vietnamese-pstack`.

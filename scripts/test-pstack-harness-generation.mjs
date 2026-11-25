@@ -17,9 +17,11 @@ assert.equal(sourcePlugin.name, plugin.name);
 for (const path of ["pstack/README.md", "pstack/docs/guide/01-setup.md", "pstack/skills/poteto-help/SKILL.md"]) {
   const text = readFileSync(join(ROOT, path), "utf8");
   assert.match(text, /claude plugin marketplace add hanh9898\/vietnamese-pstack/, `${path} marketplace source`);
-  assert.match(text, /claude plugin install pstack@vietnamese-pstack/, `${path} plugin id`);
+  assert.match(text, /claude plugin install --scope user pstack@vietnamese-pstack/, `${path} plugin scope`);
   assert.match(text, /claude plugin disable --scope user pstack@cursor-plugins/, `${path} upstream migration disable`);
   assert.match(text, /claude plugin uninstall --scope user pstack@cursor-plugins/, `${path} upstream migration uninstall`);
+  assert.match(text, /thay `user` thành cùng phạm vi trong lệnh `disable`, `uninstall` ở trên/,
+    `${path} migration scope guidance`);
   assert.doesNotMatch(text, /plugin marketplace add cursor\/plugins/, `${path} must use the Vietnamese marketplace`);
   assert.doesNotMatch(text, /plugin install pstack@cursor-plugins/, `${path} must not install upstream pstack`);
 }
