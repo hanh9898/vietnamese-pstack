@@ -1,70 +1,70 @@
 ---
 name: technical-writing
-description: "Layered technical-writing standard: Diátaxis structure, Google developer style sentences, STE instruction rules, Global English syntax. Use for /technical-writing or when writing or reviewing docs, RFCs, readmes, PR descriptions, or commit messages."
+description: "Tiêu chuẩn viết kỹ thuật nhiều lớp: cấu trúc Diátaxis, câu theo Google developer style, quy tắc chỉ dẫn STE, cú pháp Global English. Dùng cho /technical-writing hoặc khi viết hay review tài liệu, RFC, readme, mô tả PR, hoặc commit message."
 disable-model-invocation: true
 ---
 
-# Technical writing
+# Viết kỹ thuật
 
-Write so a tired engineer understands on the first read.
+Viết sao cho một kỹ sư đang mệt hiểu ngay lần đọc đầu tiên.
 
-- Cut every word that does no work.
-- Use the short, everyday word: "use", not "utilize".
-- When a rule makes a sentence worse, fix the sentence another way or leave it alone.
-- Write the real symbol, file, flag, or command name, not a synonym or a description of it.
-- Don't invent jargon. Use the words a developer would say out loud. Say what a named pattern means the first time.
+- Cắt mọi từ không làm việc gì.
+- Dùng từ ngắn, thông dụng hằng ngày: "dùng", không phải "sử dụng một cách tối ưu".
+- Khi một quy tắc làm câu tệ hơn, hãy sửa câu theo cách khác hoặc để nguyên.
+- Viết đúng tên symbol, file, flag, hoặc lệnh thật, không dùng từ đồng nghĩa hay mô tả của nó.
+- Đừng bịa ra thuật ngữ. Dùng những từ một developer sẽ nói thành lời. Nói một mẫu có tên nghĩa là gì ở lần đầu tiên.
 
-## Vary the rhythm
+## Thay đổi nhịp điệu
 
-- Mix sentence lengths. Split the sentence that carries two thoughts. Keep the long sentence that carries one.
-- Have a view in explanation. Keep reference dry.
-- Be specific. Not "schema changes can cause issues" but "a column rename fails the build".
+- Trộn các độ dài câu. Tách câu mang hai ý. Giữ câu dài mang một ý.
+- Có quan điểm trong phần giải thích. Giữ phần tham chiếu khô khan.
+- Cụ thể. Không phải "thay đổi schema có thể gây vấn đề" mà là "đổi tên một cột làm build thất bại".
 
-## Pick the mode first (Diátaxis)
+## Chọn chế độ trước (Diátaxis)
 
-One document, one mode. Don't mix modes. Split and link instead.
+Một tài liệu, một chế độ. Đừng trộn các chế độ. Thay vào đó hãy tách ra và liên kết.
 
-- **Tutorial: learning by doing.** Say what the learner will build. Every step produces a visible result, and you say what they should see. Explanation gets one clause and a link.
-- **How-to: steps to a goal.** Solve the reader's problem. Assume competence. Action only. Allow forks. Name the guide by the task.
-- **Reference: facts for lookup.** Only describe. Be dry, complete, and sure. Mirror the structure of the thing described.
-- **Explanation: understanding and why.** One bounded topic. Give context: design decisions, history, constraints, alternatives. Opinion is allowed here and nowhere else.
+- **Tutorial: học bằng cách làm.** Nói người học sẽ xây gì. Mỗi bước tạo ra một kết quả nhìn thấy được, và bạn nói họ nên thấy gì. Phần giải thích chỉ được một mệnh đề và một link.
+- **How-to: các bước để đạt một mục tiêu.** Giải quyết vấn đề của người đọc. Giả định họ có năng lực. Chỉ có hành động. Cho phép rẽ nhánh. Đặt tên hướng dẫn theo task.
+- **Reference: sự thật để tra cứu.** Chỉ mô tả. Khô khan, đầy đủ, và chắc chắn. Phản chiếu cấu trúc của thứ được mô tả.
+- **Explanation: hiểu biết và lý do.** Một chủ đề có giới hạn. Đưa ra context: quyết định thiết kế, lịch sử, ràng buộc, các phương án thay thế. Ý kiến được phép ở đây và không ở đâu khác.
 
-## Write sentences to the reader (Google developer style)
+## Viết câu hướng đến người đọc (Google developer style)
 
-- Talk to the reader as "you", in the present tense.
-- Say who does what. Passive is fine only when the actor is unknown or beside the point.
-- Write instructions as commands. Put the condition before the instruction and the common case first.
-- No buzzwords, no figurative language, no "please", and never "simply", "easy", or "quickly" in a procedure.
-- Don't pre-announce, and don't start consecutive sentences with the same phrase.
-- Link with words that say where the link goes.
-- Headings carry the point, in sentence case. One h1 per page, no skipped levels.
-- Numbered lists for sequences, bullets for everything else. Introduce a list with a complete sentence. Keep items parallel.
-- Code goes in code font. UI elements go in bold. Use serial commas. Drop "etc.".
+- Nói chuyện với người đọc bằng "bạn", ở thì hiện tại.
+- Nói ai làm gì. Thể bị động chỉ ổn khi chủ thể không rõ hoặc không liên quan.
+- Viết chỉ dẫn dưới dạng mệnh lệnh. Đặt điều kiện trước chỉ dẫn và trường hợp thường gặp trước.
+- Không dùng từ thời thượng, không dùng ngôn ngữ bóng bẩy, không "vui lòng", và không bao giờ dùng "chỉ cần", "dễ dàng", hay "nhanh chóng" trong một quy trình.
+- Đừng báo trước, và đừng bắt đầu các câu liên tiếp bằng cùng một cụm từ.
+- Liên kết bằng những từ nói link đi đến đâu.
+- Heading mang luận điểm, viết hoa kiểu câu. Mỗi trang một h1, không bỏ cấp.
+- Danh sách đánh số cho các chuỗi tuần tự, gạch đầu dòng cho mọi thứ khác. Giới thiệu một danh sách bằng một câu hoàn chỉnh. Giữ các mục song song nhau.
+- Code đặt trong font code. Các phần tử UI in đậm. Dùng dấu phẩy trước từ nối cuối trong một chuỗi liệt kê. Bỏ "v.v.".
 
-## Make statements load one at a time (STE rules)
+## Làm cho mỗi câu chỉ nạp một thứ một lúc (quy tắc STE)
 
-- One instruction per sentence. One thought per sentence everywhere else.
-- Split instructions longer than about 20 words and other sentences longer than about 25.
-- Put the warning or condition before the step it guards.
-- Keep "the" and "a".
-- Give each word one meaning, and pick one word per action.
-- Write procedures as direct commands, never as narration and never in the passive.
-- Avoid "-ing" words where you can.
+- Mỗi câu một chỉ dẫn. Mỗi câu một ý ở mọi chỗ khác.
+- Tách các chỉ dẫn dài hơn khoảng 20 từ và các câu khác dài hơn khoảng 25 từ.
+- Đặt cảnh báo hoặc điều kiện trước bước mà nó bảo vệ.
+- Giữ các mạo từ "the" và "a" khi viết tiếng Anh. Khi viết tiếng Việt, giữ các từ chỉ số lượng và loại như "các", "những", "một", "cái" khi chúng giúp câu rõ nghĩa.
+- Cho mỗi từ một nghĩa, và chọn một từ cho mỗi hành động.
+- Viết quy trình dưới dạng mệnh lệnh trực tiếp, không bao giờ dưới dạng kể chuyện và không bao giờ ở thể bị động.
+- Tránh các từ đuôi "-ing" trong tiếng Anh và các cụm danh động từ dài trong tiếng Việt ở nơi bạn có thể.
 
-## Leave no sentence open to two readings (Global English)
+## Không để câu nào có thể hiểu theo hai cách (Global English)
 
-- Keep words like "only" and "not" next to the word they change.
-- Break up long noun strings.
-- Make every "it", "they", and "this" point at one obvious thing. Never use "this" or "which" to point at a whole clause.
-- Don't drop verbs, or the small words that show structure, such as "that".
-- Repeat the article in a series when it prevents a misread. Say which parts "and" or "or" joins.
-- Use periods, not semicolons or em dashes. No slashes, and no "(s)". Make text in parentheses a full grammatical unit.
-- Call each thing by one name, everywhere.
-- Skip idioms, colloquialisms, Latin abbreviations, and metaphors.
+- Giữ các từ như "chỉ" và "không" ngay cạnh từ mà chúng bổ nghĩa.
+- Chia nhỏ các chuỗi danh từ dài.
+- Làm cho mọi "nó", "chúng", và "điều này" chỉ về một thứ hiển nhiên. Không bao giờ dùng "điều này" hay "mà" để chỉ cả một mệnh đề.
+- Đừng bỏ động từ, hoặc các từ nhỏ cho thấy cấu trúc, như "rằng" hay "mà".
+- Lặp lại từ chỉ loại trong một chuỗi khi nó ngăn hiểu sai. Nói rõ "và" hay "hoặc" nối những phần nào.
+- Dùng dấu chấm, không dùng dấu chấm phẩy hay gạch ngang dài. Không dùng dấu gạch chéo, và không dùng "(s)". Làm cho chữ trong ngoặc đơn thành một đơn vị ngữ pháp hoàn chỉnh.
+- Gọi mỗi thứ bằng một tên, ở mọi nơi.
+- Bỏ qua thành ngữ, khẩu ngữ, viết tắt tiếng Latin, và ẩn dụ.
 
-## Voice and repo specifics
+## Giọng văn và đặc thù của repo
 
-- Apply the **unslop** skill to every doc this skill touches. That skill owns the slop-pattern catalog: AI vocabulary, filler, hedging, formatting tells.
-- PR descriptions and commit messages are writing too. Every layer except Diátaxis applies to them. A PR body is a briefing that a reviewer can read in under a minute. Do not paste swarm logs, SHA lists, or metric tables. Link them.
-- Product UI strings are not documentation. Use your product's copy guidelines for those.
-- Indent code snippets with tabs. Write real paths. Make every count or tree claim true at the commit that lands it, and include the command that regenerates it.
+- Áp dụng skill **unslop** cho mọi tài liệu mà skill này chạm vào. Skill đó sở hữu danh mục các mẫu văn rác: từ vựng AI, chữ độn, rào đón, dấu hiệu định dạng.
+- Mô tả PR và commit message cũng là viết. Mọi lớp trừ Diátaxis đều áp dụng cho chúng. Thân PR là một bản tóm tắt mà reviewer có thể đọc trong chưa đầy một phút. Đừng dán log swarm, danh sách SHA, hay bảng số liệu. Hãy liên kết đến chúng.
+- Chuỗi UI của sản phẩm không phải tài liệu. Dùng hướng dẫn viết copy của sản phẩm cho chúng.
+- Thụt lề code snippet bằng tab. Viết đường dẫn thật. Làm cho mọi khẳng định về số lượng hay cây thư mục đúng tại commit land nó, và kèm lệnh tạo lại nó.
