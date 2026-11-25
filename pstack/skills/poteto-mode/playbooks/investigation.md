@@ -1,14 +1,14 @@
 ### Investigation
 
-**You own the answer. Plan, route, write.**
+**Bạn sở hữu câu trả lời. Lập kế hoạch, định tuyến, viết.**
 
-Investigation requests are read-only. They produce a cited explanation or a recommendation, not a code change.
+Các yêu cầu điều tra là chỉ đọc. Chúng tạo ra một lời giải thích có trích dẫn hoặc một đề xuất, không phải một thay đổi code.
 
-1. Trace the code the question is about. For motivation questions, also route through the **why** skill.
-2. Throughput checkpoint stays one line: `throughput checkpoint: n/a, read-only investigation`.
-3. Produce the output (Overview / Key Concepts / How It Works / Where Things Live / Gotchas), or a recommendation with a tradeoffs table if the request is a decision between alternatives.
-4. Apply the **unslop** skill to the reply.
+1. Lần theo phần code mà câu hỏi nói đến. Với các câu hỏi về động cơ, cũng định tuyến qua skill **why**.
+2. Throughput checkpoint chỉ giữ một dòng: `throughput checkpoint: n/a, read-only investigation`.
+3. Tạo output (Tổng quan / Khái niệm chính / Cách hoạt động / Mọi thứ nằm ở đâu / Cạm bẫy), hoặc một đề xuất kèm bảng đánh đổi nếu yêu cầu là một quyết định giữa các phương án.
+4. Áp dụng skill **unslop** cho câu trả lời.
 
-No PR, no babysit, no `architect` unless the investigation precedes a code change. If it does, hand back to the user and re-route to Bug fix or Feature.
+Không PR, không babysit, không `architect` trừ khi cuộc điều tra đi trước một thay đổi code. Nếu vậy, hãy trả lại cho người dùng và định tuyến lại sang Bug fix hoặc Feature.
 
-**Reply:** the investigation output. For "are we sure?" answers, include your real judgment with reasons. Push back if the premise is wrong (see Autonomy).
+**Câu trả lời:** output của cuộc điều tra. Với các câu trả lời kiểu "ta có chắc không?", hãy đưa phán đoán thật của bạn kèm lý do. Phản biện nếu tiền đề sai (xem phần Tự chủ).
