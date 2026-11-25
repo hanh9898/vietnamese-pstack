@@ -1,70 +1,70 @@
-# benny automation intent
+# ý định automation của benny
 
-## what i want to automate
+## điều tôi muốn tự động hóa
 
-i want two cursor automations that work together in one slack issue channel.
+tôi muốn hai cursor automation phối hợp với nhau trong một kênh slack báo cáo issue.
 
-### automation 1: triage issue reports
+### automation 1: phân loại báo cáo issue
 
-- trigger: when someone posts a new top-level report in my configured source slack channel, i want this automation to start on that report and keep its original thread coordinates.
-- behavior: i want it to read the thread and attachments, classify the report as a bug or performance issue, feature request, question or feedback, or reroute, and trace the likely owning layer before routing.
-- tracker: i want it to search my configured tracker for duplicates, update a confident duplicate, and create a ticket only for a clear net-new bug.
-- tools: i want slack thread read and reply access, my configured tracker integration, and my optional routing map.
-- outcome: i want exactly one reply in the source thread with a short verdict and `[benny:bug]`, `[benny:performance]`, or `[benny:other]`. a bug or performance marker may include the tracker url.
-- boundary: i never want this automation to post a root message in the source channel.
+- trigger: khi ai đó đăng một báo cáo cấp cao nhất mới trong kênh slack nguồn tôi đã cấu hình, tôi muốn automation này bắt đầu trên báo cáo đó và giữ nguyên tọa độ thread gốc của nó.
+- hành vi: tôi muốn nó đọc thread và tệp đính kèm, phân loại báo cáo là bug hoặc vấn đề performance, yêu cầu feature, câu hỏi hoặc góp ý, hoặc chuyển hướng, và lần theo lớp có khả năng sở hữu vấn đề trước khi định tuyến.
+- tracker: tôi muốn nó tìm trong tracker đã cấu hình để phát hiện trùng lặp, cập nhật một bản trùng chắc chắn, và chỉ tạo ticket cho một bug rõ ràng là hoàn toàn mới.
+- công cụ: tôi muốn quyền đọc và trả lời thread slack, tích hợp tracker đã cấu hình, và routing map tùy chọn của tôi.
+- kết quả: tôi muốn đúng một câu trả lời trong thread nguồn với một phán quyết ngắn và `[benny:bug]`, `[benny:performance]`, hoặc `[benny:other]`. một marker bug hoặc performance có thể kèm url của tracker.
+- ranh giới: tôi không bao giờ muốn automation này đăng một tin nhắn gốc trong kênh nguồn.
 
-### automation 2: reproduce and fix confirmed bugs
+### automation 2: tái hiện và sửa các bug đã xác nhận
 
-- trigger: i want this automation to start from the same new top-level report, or another supported trigger chosen during setup, then wait for the trusted triage marker in the original thread.
-- gates: i want it to stop when someone clearly owns the fix. if an existing pull request or merged commit may fix the report, i want verification instead of a competing change.
-- behavior: i want it to use my configured control adapter and feature map, reproduce the exact symptom twice through the real ui, and capture screenshots, video, and a read-only state cross-check.
-- fix: i want it to verify existing pull requests without authoring over them. after a confirmed repro, it may attempt one bounded root-cause fix, use tdd when the test is cheap, smoke the blast radius, and open a draft pull request only when before-and-after proof passes.
-- tools: i want slack thread read and reply access, repository and history access, draft pull request creation, my configured tracker, and my control adapter.
-- outcome: i want evidence and a verified result in the source or optional operations threads, plus an optional draft pull request. updates should be concise.
-- boundary: i never want this automation to post a root message in the source channel.
+- trigger: tôi muốn automation này bắt đầu từ cùng báo cáo cấp cao nhất mới đó, hoặc một trigger được hỗ trợ khác được chọn trong lúc setup, rồi chờ marker phân loại đáng tin trong thread gốc.
+- cổng: tôi muốn nó dừng khi rõ ràng đã có người sở hữu bản sửa. nếu một pull request hiện có hoặc một commit đã merge có thể sửa báo cáo, tôi muốn kiểm chứng thay vì một thay đổi cạnh tranh.
+- hành vi: tôi muốn nó dùng control adapter và feature map đã cấu hình, tái hiện đúng triệu chứng hai lần qua ui thật, và thu screenshot, video, và một lần đối chiếu state chỉ đọc.
+- bản sửa: tôi muốn nó kiểm chứng các pull request hiện có mà không viết đè lên chúng. sau một lần tái hiện đã xác nhận, nó có thể thử một bản sửa nguyên nhân gốc có giới hạn, dùng tdd khi test rẻ, smoke test blast radius, và chỉ mở một draft pull request khi bằng chứng trước và sau pass.
+- công cụ: tôi muốn quyền đọc và trả lời thread slack, quyền truy cập repository và lịch sử, tạo draft pull request, tracker đã cấu hình, và control adapter của tôi.
+- kết quả: tôi muốn bằng chứng và một kết quả đã kiểm chứng trong thread nguồn hoặc các thread vận hành tùy chọn, cùng một draft pull request tùy chọn. các cập nhật nên ngắn gọn.
+- ranh giới: tôi không bao giờ muốn automation này đăng một tin nhắn gốc trong kênh nguồn.
 
-### shared rules
+### quy tắc chung
 
-- i want the source channel and root thread coordinates to stay immutable for the whole run.
-- i treat utility and debug bots as evidence, not delegation or fix ownership.
-- i allow subagents to help, but they cannot post to slack or receive slack credentials.
-- i want this entire pack committed at `.cursor/automations/benny/` in the target repository. its `SKILL.md` files are direct automation instructions, not registered plugin skills.
-- i want pstack enabled through the target repository's committed `.cursor/settings.json` only for shared dependencies such as `why`, `tdd`, `unslop`, and the required principle skills.
-- i want each live automation prompt to read its committed operational file directly. i do not want plugin cache paths, copied excerpts, or slash-skill discovery.
-- i keep user-owned configuration, feature maps, routing maps, and secrets outside `.cursor/automations/benny/` so pack refreshes cannot overwrite them.
-- i want both automations to fail closed when channel coordinates, tracker access, the control adapter, or the feature map are missing or uncertain.
-- i want draft pull requests only. do not merge or deploy.
+- tôi muốn kênh nguồn và tọa độ thread gốc giữ bất biến trong suốt lượt chạy.
+- tôi coi các bot tiện ích và bot debug là bằng chứng, không phải sự giao việc hay quyền sở hữu bản sửa.
+- tôi cho phép subagent giúp đỡ, nhưng chúng không thể đăng lên slack hoặc nhận thông tin xác thực slack.
+- tôi muốn toàn bộ gói này được commit tại `.cursor/automations/benny/` trong repository đích. các file `SKILL.md` của nó là hướng dẫn automation trực tiếp, không phải plugin skill đã đăng ký.
+- tôi muốn pstack được bật qua `.cursor/settings.json` đã commit của repository đích chỉ cho các dependency dùng chung như `why`, `tdd`, `unslop`, và các principle skill bắt buộc.
+- tôi muốn mỗi prompt automation đang chạy đọc trực tiếp file vận hành đã commit của nó. tôi không muốn đường dẫn cache của plugin, các đoạn trích đã sao chép, hay việc khám phá slash skill.
+- tôi giữ cấu hình do người dùng sở hữu, feature map, routing map, và secret bên ngoài `.cursor/automations/benny/` để việc làm mới gói không thể ghi đè chúng.
+- tôi muốn cả hai automation thất bại theo hướng đóng khi tọa độ kênh, quyền truy cập tracker, control adapter, hoặc feature map bị thiếu hoặc không chắc chắn.
+- tôi chỉ muốn draft pull request. không merge hay deploy.
 
-### my configuration
+### cấu hình của tôi
 
-- source slack channel: `<channel>`
-- optional operations channel: `<channel or none>`
-- repository and default branch: `<repo>`, `<branch>`
+- kênh slack nguồn: `<channel>`
+- kênh vận hành tùy chọn: `<channel or none>`
+- repository và default branch: `<repo>`, `<branch>`
 - tracker: `<type, team, project, labels, intake status>`
 - routing map: `<path or none>`
-- triage identity: `<slack identity>`
+- danh tính triage: `<slack identity>`
 - control skill: `<configured skill or adapter>`
 - feature map: `<committed same-repo path outside the copied pack, or behavior to paraphrase>`
-- models: `<triage, reproduce, code, media review>`
-- status emoji strings: `<seen, reproducing, reproduced, blocked, fixing, failed, pull request opened>`
-- budgets: `<polling, verdict wait, follow-up, repro, rejection, fix>`
-- optional bot token capability: `<none, file download, or editable operations status>`
+- model: `<triage, reproduce, code, media review>`
+- chuỗi emoji trạng thái: `<seen, reproducing, reproduced, blocked, fixing, failed, pull request opened>`
+- ngân sách: `<polling, verdict wait, follow-up, repro, rejection, fix>`
+- khả năng bot token tùy chọn: `<none, file download, or editable operations status>`
 
-start from [`configuration.example.yaml`](./templates/configuration.example.yaml) and [`feature-map.example.md`](./skills/reproduce-and-fix-issues/references/feature-map.example.md). copy and fill them outside this pack, for example under `.cursor/benny/`. keep secret values in a secret manager or environment.
+bắt đầu từ [`configuration.example.yaml`](./templates/configuration.example.yaml) và [`feature-map.example.md`](./skills/reproduce-and-fix-issues/references/feature-map.example.md). sao chép và điền chúng bên ngoài gói này, ví dụ trong `.cursor/benny/`. giữ các giá trị secret trong một secret manager hoặc biến môi trường.
 
-## for the agent
+## dành cho agent
 
-the human enters setup by pointing cursor at this file. do not look for or invoke a discovered benny slash skill.
+người dùng bắt đầu setup bằng cách chỉ cursor vào file này. đừng tìm hay gọi một slash skill benny được khám phá.
 
-1. ask which repository will run the automations.
-2. treat the directory containing this `FOR_AGENTS.md` as the source pack.
-3. merge the entire source pack into `<target-repository>/.cursor/automations/benny/`.
-4. preserve every destination-only file. never delete unrelated files or overwrite user-owned configuration, feature maps, or routing maps.
-5. when an existing destination file at a source-managed path differs, review the diff and merge without discarding local edits. if ownership is ambiguous, stop and ask before replacing it.
-6. verify that the copied `FOR_AGENTS.md` and `skills/setup-benny/SKILL.md` exist in the target repository.
-7. read and follow `.cursor/automations/benny/skills/setup-benny/SKILL.md` directly from the target repository.
+1. hỏi repository nào sẽ chạy các automation.
+2. coi thư mục chứa `FOR_AGENTS.md` này là gói nguồn.
+3. hợp nhất toàn bộ gói nguồn vào `<target-repository>/.cursor/automations/benny/`.
+4. giữ lại mọi file chỉ có ở đích. không bao giờ xóa các file không liên quan hoặc ghi đè cấu hình, feature map, hay routing map do người dùng sở hữu.
+5. khi một file đích hiện có tại một đường dẫn do nguồn quản lý khác đi, hãy review diff và hợp nhất mà không bỏ chỉnh sửa cục bộ. nếu quyền sở hữu không rõ ràng, hãy dừng lại và hỏi trước khi thay thế nó.
+6. kiểm chứng rằng `FOR_AGENTS.md` và `skills/setup-benny/SKILL.md` đã chép tồn tại trong repository đích.
+7. đọc và làm theo `.cursor/automations/benny/skills/setup-benny/SKILL.md` trực tiếp từ repository đích.
 
-i want you to merge this entry into the target repository's `.cursor/settings.json`:
+tôi muốn bạn hợp nhất mục này vào `.cursor/settings.json` của repository đích:
 
 ```json
 {
@@ -74,16 +74,16 @@ i want you to merge this entry into the target repository's `.cursor/settings.js
 }
 ```
 
-preserve every unrelated setting and plugin. preserve comments and valid jsonc syntax when the existing file uses jsonc.
+giữ lại mọi setting và plugin không liên quan. giữ lại comment và cú pháp jsonc hợp lệ khi file hiện có dùng jsonc.
 
-i want verification from a fresh agent rooted in the target repository. confirm that pstack's `why`, `tdd`, `unslop`, and the principle skills used by benny resolve in project scope. do not count skills loaded from the current session or a user-scoped install.
+tôi muốn kiểm chứng từ một agent mới có gốc tại repository đích. xác nhận rằng `why`, `tdd`, `unslop` của pstack, và các principle skill mà benny dùng được phân giải trong phạm vi dự án. không tính các skill được nạp từ session hiện tại hoặc từ một bản cài đặt phạm vi người dùng.
 
-if project-scoped plugins are unavailable or any shared dependency does not resolve, stop and explain what failed. do not add `.cursor/automations/benny/skills/` to a plugin manifest or expect its files to appear in the slash-skill list.
+nếu plugin phạm vi dự án không khả dụng hoặc bất kỳ dependency dùng chung nào không phân giải được, hãy dừng lại và giải thích điều gì đã thất bại. đừng thêm `.cursor/automations/benny/skills/` vào manifest của plugin hoặc chờ các file của nó xuất hiện trong danh sách slash skill.
 
-tell me that `.cursor/settings.json`, `.cursor/automations/benny/`, and any referenced secret-free configuration must be committed before either automation is enabled. do not create or update an automation until i explicitly ask.
+hãy nói với tôi rằng `.cursor/settings.json`, `.cursor/automations/benny/`, và mọi cấu hình không chứa secret được tham chiếu phải được commit trước khi bật bất kỳ automation nào. đừng tạo hay cập nhật một automation cho đến khi tôi yêu cầu rõ ràng.
 
-for first-time creation, use built-in `/automate` once for triage and once for repro and fix. complete the draft review, approval, readiness check, and Automations editor handoff for the first automation before starting the second.
+với lần tạo đầu tiên, dùng `/automate` có sẵn một lần cho triage và một lần cho repro và fix. hoàn tất việc review bản nháp, phê duyệt, kiểm tra sẵn sàng, và bàn giao sang Automations editor cho automation đầu tiên trước khi bắt đầu automation thứ hai.
 
-paraphrase this intent and the finished configuration into each draft. the triage prompt must read and follow `.cursor/automations/benny/skills/triage-issue-reports/SKILL.md`. the repro prompt must read and follow `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md`. use these repo-relative paths only after `/automate` confirms they are committed in the repository where the automation will run.
+diễn giải ý định này và cấu hình đã hoàn thiện vào mỗi bản nháp. prompt triage phải đọc và làm theo `.cursor/automations/benny/skills/triage-issue-reports/SKILL.md`. prompt repro phải đọc và làm theo `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md`. chỉ dùng các đường dẫn tương đối theo repo này sau khi `/automate` xác nhận chúng đã được commit trong repository nơi automation sẽ chạy.
 
-for existing automations, do not use `/automate` to inspect or update them. validate the configuration, then use the concise field checklist in the copied setup file so i can edit each automation directly in its editor. do not create duplicates.
+với các automation hiện có, đừng dùng `/automate` để xem xét hay cập nhật chúng. validate cấu hình, rồi dùng checklist trường ngắn gọn trong file setup đã chép để tôi có thể sửa từng automation trực tiếp trong editor của nó. đừng tạo bản trùng lặp.

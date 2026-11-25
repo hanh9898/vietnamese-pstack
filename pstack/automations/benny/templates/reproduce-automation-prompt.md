@@ -1,10 +1,10 @@
-# Reproduce automation prompt
+# Prompt cho automation tái hiện
 
-> Source material for the copied setup workflow. Paraphrase this intent into a built-in `automate` draft after `automate` confirms that the copied pack is committed in the repository where the automation will run.
+> Tài liệu nguồn cho quy trình setup đã chép. Diễn giải ý định này thành một bản nháp `automate` có sẵn sau khi `automate` xác nhận rằng gói đã chép được commit trong repository nơi automation sẽ chạy.
 
-Read and follow `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md` for this run.
+Đọc và làm theo `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md` cho lượt chạy này.
 
-Configuration source. Include this repository-relative path only when it is committed in the same target repository. Otherwise paraphrase the configured values. Never use a plugin source or cache path:
+Nguồn cấu hình. Chỉ đưa vào đường dẫn tương đối theo repository này khi nó được commit trong cùng repository đích. Nếu không, hãy diễn giải các giá trị đã cấu hình. Không bao giờ dùng đường dẫn nguồn plugin hoặc đường dẫn cache:
 
 ```text
 {{BENNY_CONFIG_PATH}}
@@ -20,14 +20,14 @@ Trigger:
 }
 ```
 
-The creation intent should describe this as a new top-level report in the configured source Slack channel. It should include the configured repository, default branch, issue tracker, control adapter, feature map, and draft pull request capability.
+Ý định tạo automation nên mô tả đây là một báo cáo cấp cao nhất mới trong kênh Slack nguồn đã cấu hình. Nó nên bao gồm repository, default branch, issue tracker, control adapter, feature map đã cấu hình, và khả năng tạo draft pull request.
 
-Treat the source channel and root thread timestamp as immutable. If either is missing or does not match configuration, stop without posting.
+Coi kênh nguồn và timestamp của thread gốc là bất biến. Nếu một trong hai bị thiếu hoặc không khớp với cấu hình, hãy dừng lại mà không đăng bài.
 
-Wait for a configured triage marker from the configured triage identity in this exact thread. Proceed only for `[benny:bug]` or `[benny:performance]`.
+Chờ một marker phân loại đã cấu hình từ danh tính triage đã cấu hình trong đúng thread này. Chỉ tiếp tục với `[benny:bug]` hoặc `[benny:performance]`.
 
-Require the configured control-adapter skill before attempting a repro. Reproduce the exact discriminating symptom twice through the real UI. Verify existing pull requests or commits without authoring over them. Attempt a bounded fix only after a confirmed repro and the operational file's fix gate.
+Yêu cầu skill control-adapter đã cấu hình trước khi thử tái hiện. Tái hiện đúng triệu chứng phân biệt hai lần qua UI thật. Kiểm chứng các pull request hoặc commit hiện có mà không viết đè lên chúng. Chỉ thử một bản sửa có giới hạn sau một lần tái hiện đã xác nhận và qua cổng sửa lỗi của file vận hành.
 
-The coordinator is the only Slack poster. Every child prompt must forbid `SendSlackMessage`, `PostToSlack`, `chat.postMessage`, and all other Slack writes. Children return findings only.
+Coordinator là bên duy nhất đăng lên Slack. Mọi prompt cho agent con phải cấm `SendSlackMessage`, `PostToSlack`, `chat.postMessage`, và mọi hành động ghi lên Slack khác. Agent con chỉ trả về phát hiện.
 
-Never post a root message in the source channel.
+Không bao giờ đăng một tin nhắn gốc trong kênh nguồn.
