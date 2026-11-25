@@ -17,6 +17,8 @@ for (const path of ["pstack/README.md", "pstack/docs/guide/01-setup.md"]) {
   const text = readFileSync(join(ROOT, path), "utf8");
   assert.match(text, /claude plugin marketplace add hanh9898\/vietnamese-pstack/, `${path} marketplace source`);
   assert.match(text, /claude plugin install pstack@vietnamese-pstack/, `${path} plugin id`);
+  assert.match(text, /claude plugin disable --scope user pstack@cursor-plugins/, `${path} upstream migration disable`);
+  assert.match(text, /claude plugin uninstall --scope user pstack@cursor-plugins/, `${path} upstream migration uninstall`);
 }
 
 function frontmatter(text) {

@@ -20,6 +20,15 @@ hãy fork nó. cải tiến nó. biến nó thành của bạn. PR luôn đượ
 
 trong claude code:
 
+Nếu trước đây bạn đã cài pstack upstream từ `cursor/plugins`, hãy tắt rồi gỡ plugin đó trước khi cài bản tiếng Việt bên dưới. Cả hai plugin cung cấp lệnh dưới namespace `/pstack:`, nên bật cùng lúc có thể làm trùng lệnh. Với cài đặt user:
+
+```bash
+claude plugin disable --scope user pstack@cursor-plugins
+claude plugin uninstall --scope user pstack@cursor-plugins
+```
+
+Nếu bản upstream được cài ở phạm vi khác, thay `user` bằng `project` hoặc `local`.
+
 ```bash
 claude plugin marketplace add hanh9898/vietnamese-pstack
 claude plugin install pstack@vietnamese-pstack

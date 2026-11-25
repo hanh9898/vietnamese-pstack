@@ -12,6 +12,15 @@ Trong một chat Cursor, chạy:
 
 Cursor xác nhận plugin đã được cài.
 
+Nếu trước đây bạn đã cài pstack upstream từ `cursor/plugins`, hãy tắt rồi gỡ plugin đó trước khi cài bản tiếng Việt bên dưới. Cả hai plugin cung cấp lệnh dưới namespace `/pstack:`, nên bật cùng lúc có thể làm trùng lệnh. Với cài đặt user:
+
+```bash
+claude plugin disable --scope user pstack@cursor-plugins
+claude plugin uninstall --scope user pstack@cursor-plugins
+```
+
+Nếu bản upstream được cài ở phạm vi khác, thay `user` bằng `project` hoặc `local`.
+
 Trong terminal, chạy `claude plugin marketplace add hanh9898/vietnamese-pstack`, rồi `claude plugin install pstack@vietnamese-pstack`. Trong một session đang mở, dùng `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack` và chọn phạm vi cài đặt trong bảng plugin. Claude Code thêm tiền tố cho lệnh của plugin; các slash command bên dưới dùng dạng Cursor, nên thêm `pstack:` trong Claude Code, ví dụ `/pstack:setup-pstack`. [Bộ chuyển đổi Claude Code](../harness/claude-code.md) đề cập các khác biệt còn lại.
 
 ## Chọn model
