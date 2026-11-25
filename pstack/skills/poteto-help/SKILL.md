@@ -1,163 +1,163 @@
 ---
 name: poteto-help
-description: Guides users through pstack setup, /poteto-mode, and picking the skill, playbook, or principle for a task. Type /poteto-help with a question.
+description: Hướng dẫn người dùng qua việc thiết lập pstack, /poteto-mode, và chọn skill, playbook, hoặc nguyên tắc cho một task. Gõ /poteto-help kèm một câu hỏi.
 disable-model-invocation: true
 ---
 
-# Poteto help
+# Trợ giúp Poteto
 
-Answer the user's question about pstack, hand them a prompt they can send, and link the file the answer came from. For a help question, don't start the work. The user asked how, and a pstack run spends real tokens, so let them send the prompt.
+Trả lời câu hỏi của người dùng về pstack, đưa cho họ một prompt họ có thể gửi, và link đến file mà câu trả lời lấy từ đó. Với một câu hỏi trợ giúp, đừng bắt đầu làm việc. Người dùng hỏi làm thế nào, và một lượt chạy pstack tiêu tốn token thật, nên hãy để họ tự gửi prompt.
 
-A message that asks for work, such as "use pstack to fix this bug", is not a help question. Read [`poteto-mode`](../poteto-mode/SKILL.md), do the work under it, and mention once that a Custom Mode keeps it on.
+Một tin nhắn yêu cầu làm việc, như "dùng pstack để sửa bug này", không phải là một câu hỏi trợ giúp. Đọc [`poteto-mode`](../poteto-mode/SKILL.md), làm việc theo nó, và nhắc một lần rằng một Custom Mode giữ nó luôn bật.
 
-This file maps questions to the skills and guide pages that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. The links here point into the installed plugin, which the user may not be able to open, so give the user the file's public copy: `https://github.com/cursor/plugins/blob/main/pstack/` followed by its path.
+File này ánh xạ các câu hỏi đến các skill và trang hướng dẫn chứa câu trả lời. Các file đó sở hữu chi tiết. Đọc file bạn định tuyến đến trước khi trích dẫn nó, và tin nó khi nó không khớp với bản đồ này. Các link ở đây trỏ vào plugin đã cài, mà người dùng có thể không mở được, nên hãy đưa cho người dùng bản công khai của file: `https://github.com/hanh9898/vietnamese-pstack/blob/main/pstack/` theo sau là đường dẫn của nó.
 
-## Find out what they need
+## Tìm hiểu họ cần gì
 
-Infer the need from the message and the conversation. A named situation, such as "which skill reviews a PR?", goes straight to its section. If the need is still unclear, ask one multiple-choice question with these options, then answer only the section they pick:
+Suy ra nhu cầu từ tin nhắn và cuộc hội thoại. Một tình huống được gọi tên, như "skill nào review một PR?", đi thẳng đến phần của nó. Nếu nhu cầu vẫn chưa rõ, hãy hỏi một câu hỏi trắc nghiệm với các lựa chọn này, rồi chỉ trả lời phần họ chọn:
 
-- Get set up
-- Start a task with `/poteto-mode`
-- Pick a skill for a situation
-- Fix a run that went wrong
-- Make pstack my own
+- Thiết lập
+- Bắt đầu một task với `/poteto-mode`
+- Chọn một skill cho một tình huống
+- Sửa một lượt chạy bị sai
+- Biến pstack thành của riêng tôi
 
-Check the state that changes the answer, and mention it only when it does:
+Kiểm tra trạng thái làm thay đổi câu trả lời, và chỉ nhắc đến nó khi nó làm thay đổi:
 
-- No `~/.cursor/rules/pstack-models.mdc` means `/setup-pstack` hasn't run for this user, so every role uses its default model.
-- No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app. Mention `/create-verification-skill` when the question is about proving a change works.
-- No formal verification skill in the project means no property is checked past what tests reach. Mention `/create-formal-verification-skill` when the question is about a race, an invariant, or another case tests rarely hit. When one exists and the code it covers changed after the commit it records as last in sync, mention `/maintain-formal-verification-skill` if the question touches that code.
+- Không có `~/.cursor/rules/pstack-models.mdc` nghĩa là `/setup-pstack` chưa chạy cho người dùng này, nên mọi vai trò dùng model mặc định của nó.
+- Không có skill `verify-*` hay harness app nào khác trong dự án nghĩa là agent không có cách nào được viết script để điều khiển app. Nhắc đến `/create-verification-skill` khi câu hỏi là về việc chứng minh một thay đổi hoạt động.
+- Không có formal verification skill trong dự án nghĩa là không có tính chất nào được kiểm tra vượt quá những gì test chạm đến. Nhắc đến `/create-formal-verification-skill` khi câu hỏi là về một race condition, một bất biến, hoặc một trường hợp khác mà test hiếm khi chạm đến. Khi đã có một cái và code nó bao phủ đã thay đổi sau commit mà nó ghi là lần đồng bộ cuối, hãy nhắc đến `/maintain-formal-verification-skill` nếu câu hỏi chạm đến code đó.
 
-When the model rule is missing and it matters, ask whether the user wants to pick a model for each role and a reasoning budget now. It matters when the user is new, the question is about setup or cost, or the answer depends on which models run. Ask at most once per chat. If the need is also unclear, ask both questions together. Offer two choices:
+Khi thiếu rule model và điều đó quan trọng, hãy hỏi người dùng có muốn chọn model cho mỗi vai trò và một ngân sách reasoning ngay bây giờ không. Nó quan trọng khi người dùng mới, câu hỏi là về thiết lập hoặc chi phí, hoặc câu trả lời phụ thuộc vào model nào chạy. Hỏi tối đa một lần mỗi chat. Nếu nhu cầu cũng chưa rõ, hãy hỏi cả hai câu cùng lúc. Đưa ra hai lựa chọn:
 
-- Now: give them `/setup-pstack` to type, and answer their question too.
-- Later: answer their question, and add one line saying every role keeps its default model until they run `/setup-pstack`.
+- Bây giờ: đưa cho họ `/setup-pstack` để gõ, và cũng trả lời câu hỏi của họ.
+- Để sau: trả lời câu hỏi của họ, và thêm một dòng nói rằng mọi vai trò giữ model mặc định cho đến khi họ chạy `/setup-pstack`.
 
-## Get set up
+## Thiết lập
 
-1. Install with `/add-plugin pstack` in chat, or from Customize in the sidebar.
-2. Run [`/setup-pstack`](../setup-pstack/SKILL.md). It asks for a reasoning budget, maps a model to each role, and writes a rule. The rule applies to new chats. Then it offers once each to generate a verification skill and a formal verification skill for the project, unless the project already has one.
-3. Start a real task with `/poteto-mode`, a goal, and a check that can pass or fail.
+1. Cài bằng `/add-plugin pstack` trong chat, hoặc từ Customize trên thanh bên.
+2. Chạy [`/setup-pstack`](../setup-pstack/SKILL.md). Nó hỏi một ngân sách reasoning, ánh xạ một model cho mỗi vai trò, và ghi một rule. Rule áp dụng cho các chat mới. Sau đó nó đề xuất mỗi thứ một lần: tạo một verification skill và một formal verification skill cho dự án, trừ khi dự án đã có.
+3. Bắt đầu một task thật với `/poteto-mode`, một mục tiêu, và một phép kiểm tra có thể pass hoặc fail.
 
-Installing changes nothing until the user invokes a skill. Only `/setup-pstack` loads from the user's words. The [README](../../README.md) and [guide page 1](../../docs/guide/01-setup.md) have the details. Offer to word their first prompt with them, per [`references/prompting.md`](references/prompting.md).
+Việc cài đặt không thay đổi gì cho đến khi người dùng gọi một skill. Chỉ `/setup-pstack` được nạp từ lời của người dùng. [README](../../README.md) và [trang hướng dẫn 1](../../docs/guide/01-setup.md) có chi tiết. Đề nghị cùng họ viết prompt đầu tiên, theo [`references/prompting.md`](references/prompting.md).
 
-If cost is the worry, say where the tokens go and how to spend fewer. pstack spends extra tokens on subagents and review panels. Rerun `/setup-pstack` and pick a smaller budget or cheaper models. A role set to `auto` or `inherit-parent` runs on the chat's model, which saves tokens when the chat runs on Auto or a cheaper model. A shorter panel list runs fewer subagents, one for each entry. Save `/poteto-mode` for work that needs rigor.
+Nếu chi phí là mối lo, hãy nói token đi đâu và làm sao tiêu ít hơn. pstack tiêu thêm token cho subagent và panel review. Chạy lại `/setup-pstack` và chọn một ngân sách nhỏ hơn hoặc model rẻ hơn. Một vai trò đặt là `auto` hoặc `inherit-parent` chạy trên model của chat, giúp tiết kiệm token khi chat chạy trên Auto hoặc một model rẻ hơn. Một danh sách panel ngắn hơn chạy ít subagent hơn, mỗi mục một cái. Để dành `/poteto-mode` cho công việc cần sự nghiêm ngặt.
 
-pstack is built for Cursor, and it also installs in Claude Code with `/plugin marketplace add cursor/plugins`, then `/plugin install pstack@cursor-plugins`. There, each command takes a `pstack:` prefix, such as `/pstack:poteto-mode`. The [Claude Code adapter](../../docs/harness/claude-code.md) maps the Cursor names, and a step that needs a Cursor-only feature, such as Bugbot or Automations, is skipped with a one-line note.
+pstack được xây dựng cho Cursor, và nó cũng cài được trong Claude Code với `/plugin marketplace add cursor/plugins`, rồi `/plugin install pstack@cursor-plugins`. Ở đó, mỗi lệnh có tiền tố `pstack:`, như `/pstack:poteto-mode`. [Adapter Claude Code](../../docs/harness/claude-code.md) ánh xạ các tên Cursor, và một bước cần một tính năng chỉ có trên Cursor, như Bugbot hoặc Automations, sẽ được bỏ qua kèm một ghi chú một dòng.
 
-Other tools can read the skills, because they use the Agent Skills format. But most workflow skills, including `/poteto-mode`, `/how`, and `/teach`, spawn Cursor subagents, some with per-role models, and Custom Modes and `/loop` are Cursor features, so those parts may not work there.
+Các công cụ khác có thể đọc các skill, vì chúng dùng định dạng Agent Skills. Nhưng hầu hết các skill quy trình, bao gồm `/poteto-mode`, `/how`, và `/teach`, khởi chạy subagent của Cursor, một số với model theo vai trò, và Custom Modes cùng `/loop` là tính năng của Cursor, nên những phần đó có thể không hoạt động ở đó.
 
-## Start a task with `/poteto-mode`
+## Bắt đầu một task với `/poteto-mode`
 
-`/poteto-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep. Read [`references/prompting.md`](references/prompting.md) before you help word one. [Guide page 2](../../docs/guide/02-poteto-mode.md) has examples.
+`/poteto-mode` khớp task với một playbook, sao chép các bước của playbook vào todo list, và chạy các skill khác khi các bước cần đến. Một prompt tốt nêu mục tiêu và cách biết khi nào đã xong. Nó không liệt kê skill, vì một chuỗi viết tay có xu hướng bỏ hoặc đổi thứ tự các bước mà playbook sẽ giữ. Đọc [`references/prompting.md`](references/prompting.md) trước khi bạn giúp viết một prompt. [Trang hướng dẫn 2](../../docs/guide/02-poteto-mode.md) có ví dụ.
 
-Whether `/poteto-mode` stays on depends on how the user starts it:
+Việc `/poteto-mode` có luôn bật hay không phụ thuộc vào cách người dùng bắt đầu nó:
 
-- Enter on `/poteto-mode` attaches the skill to one message. It fades as the chat moves on.
-- Option+Enter on Mac or Alt+Enter on Windows, or Use as Mode from the skill entry, makes it a Custom Mode. It stays in context every turn until the user exits the mode, and it stays out of casual turns.
-- Cursor's docs list Custom Modes in the Agents Window and the CLI. Elsewhere, start each new task with `/poteto-mode`.
+- Enter trên `/poteto-mode` gắn skill vào một tin nhắn. Nó mờ dần khi chat tiếp diễn.
+- Option+Enter trên Mac hoặc Alt+Enter trên Windows, hoặc Use as Mode từ mục skill, biến nó thành một Custom Mode. Nó ở trong context mọi lượt cho đến khi người dùng thoát mode, và nó đứng ngoài các lượt trò chuyện thông thường.
+- Tài liệu của Cursor liệt kê Custom Modes trong Agents Window và CLI. Ở nơi khác, hãy bắt đầu mỗi task mới bằng `/poteto-mode`.
 
-Link [Cursor's skills docs](https://cursor.com/docs/skills) when this comes up. Mid-chat, "new task" makes the mode match a fresh playbook. `/poteto-mode` already uses `poteto-agent` for the subagents its playbook steps spawn. To get the same style from a subagent of your own, spawn it with `subagent_type: "poteto-agent"`.
+Link đến [tài liệu skill của Cursor](https://cursor.com/docs/skills) khi chủ đề này xuất hiện. Giữa chat, "new task" (hoặc "task mới") khiến mode khớp một playbook mới. `/poteto-mode` đã dùng `poteto-agent` cho các subagent mà các bước playbook của nó khởi chạy. Để có cùng phong cách từ một subagent của riêng bạn, hãy khởi chạy nó với `subagent_type: "poteto-agent"`.
 
-## Pick a skill
+## Chọn một skill
 
-The default answer is `/poteto-mode`, which runs most of the others when its steps need them. Name a skill directly when the user wants more or less of something than the playbook gives. Read the skill before you recommend it, and give one example prompt.
+Câu trả lời mặc định là `/poteto-mode`, chạy hầu hết các skill khác khi các bước của nó cần đến. Gọi tên trực tiếp một skill khi người dùng muốn nhiều hơn hoặc ít hơn một điều gì đó so với những gì playbook đưa ra. Đọc skill trước khi bạn đề xuất nó, và đưa ra một prompt ví dụ.
 
-| The user wants to | Skill |
+| Người dùng muốn | Skill |
 |---|---|
-| Do any non-trivial task with rigor | [`/poteto-mode`](../poteto-mode/SKILL.md) |
-| Check that the agent understood their goal and the problem before it starts | [`/in-your-own-words`](../in-your-own-words/SKILL.md) |
-| Get a prompt rewritten deeper, not bigger, before sending it: what a top professional would add, their raw material and methods, and an outside check. It returns the prompt and doesn't do the task | [`/sharpen`](../sharpen/SKILL.md) |
-| Learn the expert words for what they're building, including words borrowed from neighboring fields, with every cited source checked, and get their description rewritten with them | [`/reframe`](../reframe/SKILL.md) |
-| Know how code works now, or where new code should live | [`/how`](../how/SKILL.md) |
-| Know why code is shaped this way, or where a number came from | [`/why`](../why/SKILL.md) |
-| Understand a change or subsystem, explained plainly | [`/teach`](../teach/SKILL.md) |
-| Catch up on their own recent work on a topic | [`/recall`](../recall/SKILL.md) |
-| Catch up on what changed in this chat since their last message, in plain words and small visuals, with every item waiting on them listed and decidable from the reply alone | [`/ketchup`](../ketchup/SKILL.md) |
-| Catch up like `/ketchup`, in a short subtitled video of slides, with the waiting calls as text under it | [`/ketchup-video`](../ketchup-video/SKILL.md) |
-| Know what a small diff could break outside itself | [`/blast-radius`](../blast-radius/SKILL.md) |
-| Settle types and module shape before code that crosses a function boundary | [`/architect`](../architect/SKILL.md) |
-| Get several attempts at one brief, merged into the best one | [`/arena`](../arena/SKILL.md) |
-| Run parallel checks over slices, or race workers, as cloud agents | [`/swarm`](../swarm/SKILL.md) |
-| Have different models review a diff and try to break it | [`/interrogate`](../interrogate/SKILL.md) |
-| Fix a bug test-first when a cheap local test exists | [`/tdd`](../tdd/SKILL.md) |
-| Apply TypeScript rules to `.ts` or `.tsx` work | [`/typescript-best-practices`](../typescript-best-practices/SKILL.md) |
-| Strip comments before review, using a reviewer that didn't write them | [`/no-comments`](../no-comments/SKILL.md) |
-| Clean AI tells out of prose | [`/unslop`](../unslop/SKILL.md) |
-| Write docs, an RFC, a README, a PR description, or a commit message to a standard | [`/technical-writing`](../technical-writing/SKILL.md) |
-| Hear the last reply again in plain words | [`/bro`](../bro/SKILL.md) |
-| Give agents a scripted way to drive the app and prove behavior | [`/create-verification-skill`](../create-verification-skill/SKILL.md) |
-| Bring a verification skill and its feature map back in line with the app | [`/maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
-| Formally verify a race, invariant, or other property that tests rarely reach | [`/create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) |
-| Bring a formal verification back in line after the code it covers changed, and learn whether a failure is drift or a bug | [`/maintain-formal-verification-skill`](../maintain-formal-verification-skill/SKILL.md) |
-| Show a PM or designer what the user sees as a chart checked by a TLA+ model, with the shortest path to each state that breaks a rule | [`/statechart`](../statechart/SKILL.md) |
-| Vet a performance number before reporting or acting on it | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
-| Run a large or cross-cutting change, or one to review after stepping away | [`/figure-it-out`](../figure-it-out/SKILL.md) |
-| Keep a decision log during a run, and review it afterward | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |
-| Pick a model for each role and a reasoning budget | [`/setup-pstack`](../setup-pstack/SKILL.md) |
-| Turn their own working habits into a personal mode skill | [`/automate-me`](../automate-me/SKILL.md) |
-| Turn what a finished task taught into skill edits | [`/reflect`](../reflect/SKILL.md) |
-| Stop agents from repeating the same mistakes in this repo | [`/correct`](../correct/SKILL.md) |
-| Build a page whose buttons wake a Grok Bot over a webhook | [`/make-bot-ui`](../make-bot-ui/SKILL.md) |
-| Find their way around pstack | `/poteto-help` |
+| Làm bất kỳ task không tầm thường nào một cách nghiêm ngặt | [`/poteto-mode`](../poteto-mode/SKILL.md) |
+| Kiểm tra agent đã hiểu mục tiêu và vấn đề của họ trước khi bắt đầu | [`/in-your-own-words`](../in-your-own-words/SKILL.md) |
+| Viết lại một prompt sâu hơn, không phải dài hơn, trước khi gửi: những gì một chuyên gia hàng đầu sẽ thêm vào, nguyên liệu thô và phương pháp của họ, và một phép kiểm tra bên ngoài. Nó trả về prompt và không làm task | [`/sharpen`](../sharpen/SKILL.md) |
+| Học các thuật ngữ chuyên môn cho thứ họ đang xây dựng, kể cả từ mượn từ các lĩnh vực lân cận, với mọi nguồn được trích dẫn đều đã kiểm tra, và viết lại mô tả của họ bằng chúng | [`/reframe`](../reframe/SKILL.md) |
+| Biết code hiện hoạt động thế nào, hoặc code mới nên nằm ở đâu | [`/how`](../how/SKILL.md) |
+| Biết tại sao code có hình dạng như vậy, hoặc một con số đến từ đâu | [`/why`](../why/SKILL.md) |
+| Hiểu một thay đổi hoặc subsystem, được giải thích đơn giản | [`/teach`](../teach/SKILL.md) |
+| Nắm lại công việc gần đây của chính họ về một chủ đề | [`/recall`](../recall/SKILL.md) |
+| Nắm lại những gì đã thay đổi trong chat này kể từ tin nhắn cuối của họ, bằng lời lẽ đơn giản và hình minh họa nhỏ, với mọi mục đang chờ họ được liệt kê và có thể quyết định chỉ từ câu trả lời | [`/ketchup`](../ketchup/SKILL.md) |
+| Nắm lại như `/ketchup`, trong một video slide ngắn có phụ đề, với các quyết định đang chờ dưới dạng chữ bên dưới | [`/ketchup-video`](../ketchup-video/SKILL.md) |
+| Biết một diff nhỏ có thể làm hỏng gì bên ngoài nó | [`/blast-radius`](../blast-radius/SKILL.md) |
+| Chốt type và hình dạng module trước khi viết code vượt qua ranh giới hàm | [`/architect`](../architect/SKILL.md) |
+| Có nhiều lần thử cho cùng một brief, được gộp thành cái tốt nhất | [`/arena`](../arena/SKILL.md) |
+| Chạy các phép kiểm tra song song trên các lát cắt, hoặc cho các worker đua nhau, dưới dạng cloud agent | [`/swarm`](../swarm/SKILL.md) |
+| Để các model khác nhau review một diff và cố làm hỏng nó | [`/interrogate`](../interrogate/SKILL.md) |
+| Sửa một bug theo kiểu test trước khi có một test local rẻ | [`/tdd`](../tdd/SKILL.md) |
+| Áp dụng các quy tắc TypeScript cho công việc với `.ts` hoặc `.tsx` | [`/typescript-best-practices`](../typescript-best-practices/SKILL.md) |
+| Bỏ comment trước khi review, dùng một reviewer không phải người viết chúng | [`/no-comments`](../no-comments/SKILL.md) |
+| Làm sạch các dấu hiệu AI khỏi văn bản | [`/unslop`](../unslop/SKILL.md) |
+| Viết tài liệu, một RFC, một README, một mô tả PR, hoặc một commit message theo chuẩn | [`/technical-writing`](../technical-writing/SKILL.md) |
+| Nghe lại câu trả lời cuối bằng lời lẽ đơn giản | [`/bro`](../bro/SKILL.md) |
+| Cho agent một cách được viết script để điều khiển app và chứng minh hành vi | [`/create-verification-skill`](../create-verification-skill/SKILL.md) |
+| Đưa một verification skill và feature map của nó trở lại đồng bộ với app | [`/maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
+| Kiểm chứng hình thức một race condition, bất biến, hoặc tính chất khác mà test hiếm khi chạm đến | [`/create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) |
+| Đưa một kiểm chứng hình thức trở lại đồng bộ sau khi code nó bao phủ thay đổi, và biết một thất bại là sự lệch hay một bug | [`/maintain-formal-verification-skill`](../maintain-formal-verification-skill/SKILL.md) |
+| Cho một PM hoặc designer thấy những gì người dùng thấy dưới dạng một biểu đồ được kiểm tra bởi một model TLA+, với đường ngắn nhất đến mỗi trạng thái phá vỡ một quy tắc | [`/statechart`](../statechart/SKILL.md) |
+| Thẩm định một con số hiệu năng trước khi báo cáo hoặc hành động dựa trên nó | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
+| Chạy một thay đổi lớn hoặc xuyên suốt, hoặc một thay đổi cần review sau khi rời đi | [`/figure-it-out`](../figure-it-out/SKILL.md) |
+| Giữ một log quyết định trong một lượt chạy, và review nó sau đó | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |
+| Chọn model cho mỗi vai trò và một ngân sách reasoning | [`/setup-pstack`](../setup-pstack/SKILL.md) |
+| Biến thói quen làm việc của chính họ thành một mode skill cá nhân | [`/automate-me`](../automate-me/SKILL.md) |
+| Biến những gì một task đã xong dạy được thành các chỉnh sửa skill | [`/reflect`](../reflect/SKILL.md) |
+| Ngăn agent lặp lại cùng các lỗi trong repo này | [`/correct`](../correct/SKILL.md) |
+| Xây một trang có các nút đánh thức một Grok Bot qua webhook | [`/make-bot-ui`](../make-bot-ui/SKILL.md) |
+| Tìm đường trong pstack | `/poteto-help` |
 
-If a skill directory next to this one is missing from the table, read its frontmatter and route by its description. The `principle-*` directories are covered under principles below.
+Nếu một thư mục skill cạnh thư mục này không có trong bảng, hãy đọc frontmatter của nó và định tuyến theo description. Các thư mục `principle-*` được bao phủ trong phần nguyên tắc bên dưới.
 
-Close calls:
+Các trường hợp sát nhau:
 
-- `/how` explains what the code does. `/why` explains the reasons. `/teach` runs one or both and explains the result plainly.
-- `/arena` gives every worker the same brief and merges the best parts. `/swarm` splits work into slices or a race and returns one report.
-- `/interrogate` reviews the diff. `/blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
-- `/recall` rebuilds context across recent chats. `/ketchup` covers only this chat since the user's last message. Resuming one specific chat or branch is the Session pickup playbook.
-- `/figure-it-out` designs one rigorous run. The Autonomous run playbook drives one task to a finish condition.
+- `/how` giải thích code làm gì. `/why` giải thích lý do. `/teach` chạy một hoặc cả hai và giải thích kết quả một cách đơn giản.
+- `/arena` đưa cho mọi worker cùng một brief và gộp các phần tốt nhất. `/swarm` chia công việc thành các lát cắt hoặc một cuộc đua và trả về một báo cáo.
+- `/interrogate` review diff. `/blast-radius` tìm chỗ hỏng bên ngoài diff và chứng minh một sự thật khiến thay đổi an toàn.
+- `/recall` dựng lại context qua các chat gần đây. `/ketchup` chỉ bao phủ chat này kể từ tin nhắn cuối của người dùng. Tiếp tục một chat hoặc branch cụ thể là playbook Session pickup.
+- `/figure-it-out` thiết kế một lượt chạy nghiêm ngặt. Playbook Autonomous run đẩy một task đến một điều kiện kết thúc.
 
-Not in pstack:
+Không có trong pstack:
 
-- `/deslop`, `control-cli`, and `control-ui` ship in the `cursor-team-kit` plugin.
-- `/loop` and `/create-skill` are Cursor built-ins.
-- pstack has no `/orchestrate` skill. If the slash menu shows `/orchestrate`, another plugin provides it.
+- `/deslop`, `control-cli`, và `control-ui` đi kèm plugin `cursor-team-kit`.
+- `/loop` và `/create-skill` là tính năng có sẵn của Cursor.
+- pstack không có skill `/orchestrate`. Nếu menu slash hiển thị `/orchestrate`, một plugin khác cung cấp nó.
 
-## Playbooks and principles
+## Playbook và nguyên tắc
 
-Playbooks are step lists inside `/poteto-mode`, not skills, so they have no slash command. Inside `/poteto-mode`, describing the task picks one, and these phrases name one directly:
+Playbook là các danh sách bước bên trong `/poteto-mode`, không phải skill, nên chúng không có lệnh slash. Bên trong `/poteto-mode`, mô tả task sẽ chọn một cái, và các cụm từ sau gọi tên trực tiếp một cái:
 
-- "babysit this pr" or "check on pr 123" runs Babysit. It drives the PR to merge-ready and stops there. It doesn't merge unless the user asks to merge, land, or ship.
-- "land the stack" runs Shipping.
-- "take over this branch" runs Session pickup.
-- "pause safely" runs Pause safely.
-- "full autopilot on this queue" runs Autopilot-full. "autopilot, don't merge" runs Autopilot-stack.
-- "run the eval playbook" runs Eval.
+- "babysit this pr" hoặc "check on pr 123" chạy Babysit. Nó đưa PR đến trạng thái sẵn sàng merge và dừng ở đó. Nó không merge trừ khi người dùng yêu cầu merge, land, hoặc ship.
+- "land the stack" chạy Shipping.
+- "take over this branch" chạy Session pickup.
+- "pause safely" chạy Pause safely.
+- "full autopilot on this queue" chạy Autopilot-full. "autopilot, don't merge" chạy Autopilot-stack.
+- "run the eval playbook" chạy Eval.
 
-Without `/poteto-mode`, a phrase such as "babysit this pr" can start Cursor's own skill for the same job instead. The Playbooks section of [`poteto-mode`](../poteto-mode/SKILL.md) lists every playbook. [Guide page 6](../../docs/guide/06-verify-and-ship.md) covers opening, babysitting, and landing a PR.
+Khi không có `/poteto-mode`, một cụm từ như "babysit this pr" có thể khởi động skill riêng của Cursor cho cùng việc đó. Phần Playbook của [`poteto-mode`](../poteto-mode/SKILL.md) liệt kê mọi playbook. [Trang hướng dẫn 6](../../docs/guide/06-verify-and-ship.md) bao gồm việc mở, babysit, và land một PR.
 
-pstack has no planning skill. Cursor's Plan Mode works alongside it. For work that spans phases or stacked PRs, asking `/poteto-mode` for a plan runs the [Multi-phase plan playbook](../poteto-mode/playbooks/multi-phase-plan.md), which writes the plan and doesn't implement it. For a design question, the Prototype playbook or `/architect` settles it in code first.
+pstack không có skill lập kế hoạch. Plan Mode của Cursor hoạt động cùng với nó. Với công việc trải qua nhiều giai đoạn hoặc các PR xếp chồng, yêu cầu `/poteto-mode` lập một kế hoạch sẽ chạy [playbook Multi-phase plan](../poteto-mode/playbooks/multi-phase-plan.md), playbook này viết kế hoạch và không cài đặt nó. Với một câu hỏi thiết kế, playbook Prototype hoặc `/architect` chốt nó trong code trước.
 
-Principles are one-rule skills that `/poteto-mode` reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/principle-<name>` still loads one on demand. [Guide page 8](../../docs/guide/08-principles.md) lists them.
+Nguyên tắc là các skill một quy tắc mà `/poteto-mode` đọc và trích dẫn trong câu trả lời của nó. Người dùng hiếm khi gọi một cái. Thay vào đó họ điều hướng bằng tên, như trong "áp dụng prove it works. cho tôi xem output thật." Gõ `/principle-<name>` vẫn nạp một cái theo yêu cầu. [Trang hướng dẫn 8](../../docs/guide/08-principles.md) liệt kê chúng.
 
-## Fix a run that went wrong
+## Sửa một lượt chạy bị sai
 
-| Symptom | Fix |
+| Triệu chứng | Cách sửa |
 |---|---|
-| The mode stopped applying after a few turns | It was started with Enter. Start it as a Custom Mode, or start each task with `/poteto-mode`. |
-| A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. |
-| A new model choice had no effect | The rule from `/setup-pstack` applies to new chats. Start one. |
-| Runs cost more than expected | See the cost paragraph under Get set up. |
-| A skill didn't load on its own | Only `/setup-pstack` loads from the user's words. The others load when the user types them or when `/poteto-mode` runs them, and it doesn't run every skill. |
-| Parallel agents overwrote each other | Give each agent its own worktree, or run them as cloud agents, which each get their own machine. |
-| An overnight run moved but finished nothing | `/loop` needs a check that can pass or fail, not a duration. See [guide page 7](../../docs/guide/07-overnight.md). |
-| The reply claims success from a green build | Ask for the real command, flow, stored value, or profile. That's the prove-it-works principle. |
+| Mode ngừng áp dụng sau vài lượt | Nó được bắt đầu bằng Enter. Bắt đầu nó như một Custom Mode, hoặc bắt đầu mỗi task bằng `/poteto-mode`. |
+| Một câu hỏi bị coi là bước tiếp theo của task trước | Nói "new task" (hoặc "task mới"), hoặc nói lượt này không cần mode. |
+| Một lựa chọn model mới không có tác dụng | Rule từ `/setup-pstack` áp dụng cho các chat mới. Bắt đầu một chat mới. |
+| Các lượt chạy tốn hơn dự kiến | Xem đoạn về chi phí trong phần Thiết lập. |
+| Một skill không tự nạp | Chỉ `/setup-pstack` được nạp từ lời của người dùng. Các skill khác được nạp khi người dùng gõ chúng hoặc khi `/poteto-mode` chạy chúng, và nó không chạy mọi skill. |
+| Các agent song song ghi đè lên nhau | Cho mỗi agent một worktree riêng, hoặc chạy chúng dưới dạng cloud agent, mỗi cái có máy riêng. |
+| Một lượt chạy qua đêm có tiến triển nhưng không hoàn thành gì | `/loop` cần một phép kiểm tra có thể pass hoặc fail, không phải một khoảng thời gian. Xem [trang hướng dẫn 7](../../docs/guide/07-overnight.md). |
+| Câu trả lời tuyên bố thành công dựa trên một build xanh | Yêu cầu lệnh, luồng, giá trị được lưu, hoặc profile thật. Đó là nguyên tắc prove-it-works. |
 
-For a run that drifts, [`references/prompting.md`](references/prompting.md) has one-line steers. [Guide page 10](../../docs/guide/10-recipes-and-pitfalls.md) has more pitfalls and the recipes worth copying.
+Với một lượt chạy bị trôi, [`references/prompting.md`](references/prompting.md) có các câu điều hướng một dòng. [Trang hướng dẫn 10](../../docs/guide/10-recipes-and-pitfalls.md) có thêm các cạm bẫy và các công thức đáng sao chép.
 
-## Make pstack my own
+## Biến pstack thành của riêng tôi
 
-- [`/automate-me`](../automate-me/SKILL.md) drafts a personal mode skill from the user's own history, to use alongside `/poteto-mode`.
-- [`/reflect`](../reflect/SKILL.md) after a session turns its lessons into skill edits the user approves.
-- `/poteto-mode write a skill for <workflow>` runs the authoring playbook. The eval playbook tests a skill change blind.
-- Fix a misbehaving skill in its own PR, not inside the feature work where it went wrong.
+- [`/automate-me`](../automate-me/SKILL.md) soạn một mode skill cá nhân từ chính lịch sử của người dùng, để dùng cùng với `/poteto-mode`.
+- [`/reflect`](../reflect/SKILL.md) sau một session biến các bài học của nó thành các chỉnh sửa skill mà người dùng phê duyệt.
+- `/poteto-mode write a skill for <workflow>` (hoặc `/poteto-mode viết một skill cho <workflow>`) chạy playbook viết skill. Playbook eval test một thay đổi skill theo kiểu mù.
+- Sửa một skill hoạt động sai trong PR riêng của nó, không phải bên trong công việc feature nơi nó đã sai.
 
-[Guide page 9](../../docs/guide/09-make-it-yours.md) covers each of these.
+[Trang hướng dẫn 9](../../docs/guide/09-make-it-yours.md) bao gồm từng điều này.
 
-## Reply
+## Trả lời
 
-Lead with the answer. Give at most one example prompt in a code block, adapted from [`references/recipes.md`](references/recipes.md) when one fits, then the link to that file. Keep it short unless the user asked for the whole map.
+Bắt đầu bằng câu trả lời. Đưa ra tối đa một prompt ví dụ trong một code block, điều chỉnh từ [`references/recipes.md`](references/recipes.md) khi có cái phù hợp, rồi link đến file đó. Giữ ngắn gọn trừ khi người dùng yêu cầu toàn bộ bản đồ.
