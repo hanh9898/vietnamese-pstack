@@ -128,138 +128,138 @@ Automation tái hiện cần:
 - Quyền đọc thread nguồn
 - Quyền trả lời trong thread ở channel nguồn
 - Quyền đăng và sửa (tùy chọn) trong channel vận hành đã cấu hình
-- Repository read and history access
-- A pull request action that can open a draft pull request
-- The configured control-adapter skill
+- Quyền đọc repository và lịch sử
+- Một action pull request có thể mở draft pull request
+- Skill control-adapter đã cấu hình
 
-Prefer configured Cursor Slack actions for reads and posts. The optional `BENNY_SLACK_BOT_TOKEN` may fill a narrow gap such as editing one operations status message or downloading an attachment. Store the value in a secret manager or environment, not in YAML.
+Ưu tiên các action Slack của Cursor đã cấu hình cho việc đọc và đăng. `BENNY_SLACK_BOT_TOKEN` tùy chọn có thể lấp một khoảng trống hẹp như sửa một tin nhắn trạng thái vận hành hoặc tải một file đính kèm. Lưu giá trị trong một secret manager hoặc biến môi trường, không phải trong YAML.
 
-Do not use undocumented integration endpoints.
+Đừng dùng các endpoint tích hợp không được ghi trong tài liệu.
 
-## 5. Prepare the routing map
+## 5. Chuẩn bị bản đồ định tuyến
 
-If the user wants reroutes or owner pings:
+Nếu người dùng muốn định tuyến lại hoặc ping owner:
 
-1. Copy `../triage-issue-reports/references/routing.example.md` outside `.cursor/automations/benny/`.
-2. Replace every placeholder with public or organization-local values.
-3. Keep owner pings off by default.
-4. Allow a ping only for a configured feature owner or a confirmed likely regression author.
+1. Sao chép `../triage-issue-reports/references/routing.example.md` ra bên ngoài `.cursor/automations/benny/`.
+2. Thay thế mọi placeholder bằng giá trị công khai hoặc nội bộ của tổ chức.
+3. Giữ tắt ping owner theo mặc định.
+4. Chỉ cho phép ping một feature owner đã cấu hình hoặc một tác giả có khả năng gây hồi quy đã được xác nhận.
 
-If no routing map is configured, triage may classify a report but must not guess a destination or owner.
+Nếu không có bản đồ định tuyến nào được cấu hình, triage có thể phân loại một báo cáo nhưng không được đoán đích đến hay owner.
 
-## 6. Verify the control adapter
+## 6. Kiểm chứng control adapter
 
-Read `../reproduce-and-fix-issues/references/control-adapter.md` and the user's completed feature map.
+Đọc `../reproduce-and-fix-issues/references/control-adapter.md` và feature map đã hoàn thiện của người dùng.
 
-Confirm that the named skill can:
+Xác nhận rằng skill được gọi tên có thể:
 
-- Bring up the target app
-- Navigate every mapped feature through the real UI
-- Exercise mapped states through declared adapter actions
-- Inspect state without forcing the result
-- Capture screenshots
-- Start and stop a recording
-- Clean up its processes and temporary data
+- Khởi động app đích
+- Điều hướng đến mọi feature trong map qua UI thật
+- Chạy thử các trạng thái trong map qua các action adapter đã khai báo
+- Kiểm tra trạng thái mà không ép buộc kết quả
+- Chụp screenshot
+- Bắt đầu và dừng ghi màn hình
+- Dọn dẹp các process và dữ liệu tạm của nó
 
-If any capability is missing, leave the repro automation disabled. It must fail closed rather than claim a reproduction it did not perform.
+Nếu thiếu bất kỳ năng lực nào, hãy để automation tái hiện ở trạng thái tắt. Nó phải fail closed thay vì tuyên bố một bản tái hiện mà nó không thực hiện.
 
-## 7. Prepare the live automations
+## 7. Chuẩn bị các automation đang chạy
 
-Ask whether this is first-time creation or configuration of existing automations.
+Hỏi xem đây là lần tạo đầu tiên hay cấu hình các automation đã có.
 
-Read `../../FOR_AGENTS.md` from the copied pack as the primary user-intent source for either path. Use it to understand the two triggers, tools, instructions, outcomes, and shared rules.
+Đọc `../../FOR_AGENTS.md` từ pack đã sao chép làm nguồn ý định người dùng chính cho cả hai trường hợp. Dùng nó để hiểu hai trigger, công cụ, chỉ dẫn, kết quả, và các quy tắc chung.
 
-### First-time creation
+### Tạo lần đầu
 
-Create one automation at a time.
+Tạo từng automation một.
 
-For each automation:
+Với mỗi automation:
 
-1. Read the matching copied prompt template as secondary internal source material.
-2. Turn `FOR_AGENTS.md`, the finished Benny configuration, and the template intent into a complete natural-language request.
-3. Tell the live prompt to read and follow its exact committed operational file under `.cursor/automations/benny/`.
-4. Use the stable repository-relative path, not a plugin source or cache path. Do not copy the operational file contents into the live prompt.
-5. Read and follow the built-in `automate` skill.
-6. Let `automate` discover Slack channels, the repository, and connected integrations.
-7. Let `automate` confirm that the copied pack and any referenced configuration files are committed in the same repository where the automation will run.
-8. Let `automate` show its draft table, obtain approval, ask readiness, and open the Automations editor.
-9. Finish the editor handoff for this automation before starting the next one.
+1. Đọc prompt template tương ứng đã sao chép làm tài liệu nguồn nội bộ thứ cấp.
+2. Biến `FOR_AGENTS.md`, cấu hình Benny đã hoàn thiện, và ý định của template thành một yêu cầu ngôn ngữ tự nhiên hoàn chỉnh.
+3. Bảo prompt đang chạy đọc và làm theo chính xác file vận hành đã commit của nó dưới `.cursor/automations/benny/`.
+4. Dùng đường dẫn tương đối ổn định trong repository, không phải đường dẫn nguồn hay cache của plugin. Đừng sao chép nội dung file vận hành vào prompt đang chạy.
+5. Đọc và làm theo skill có sẵn `automate`.
+6. Để `automate` khám phá các channel Slack, repository, và các tích hợp đã kết nối.
+7. Để `automate` xác nhận rằng pack đã sao chép và mọi file cấu hình được tham chiếu đã được commit trong cùng repository nơi automation sẽ chạy.
+8. Để `automate` hiển thị bảng nháp của nó, nhận phê duyệt, hỏi mức sẵn sàng, và mở trình soạn Automations.
+9. Hoàn tất việc bàn giao trình soạn cho automation này trước khi bắt đầu cái tiếp theo.
 
-Give `automate` this complete triage intent, filled from configuration:
+Đưa cho `automate` ý định triage hoàn chỉnh này, được điền từ cấu hình:
 
-- Name `benny-triage`.
-- Read and follow `.cursor/automations/benny/skills/triage-issue-reports/SKILL.md` for every run.
-- Trigger on each new top-level report in the configured source Slack channel.
-- Read the triggering thread and reply only inside it.
-- Use the configured issue-tracker integration.
-- Classify, inspect evidence, trace cause, dedupe, and create only clear new bugs.
-- End one thread-only verdict with the configured `[benny:bug]`, `[benny:performance]`, or `[benny:other]` marker and optional tracker URL.
-- Never post a source-channel root message.
+- Tên `benny-triage`.
+- Đọc và làm theo `.cursor/automations/benny/skills/triage-issue-reports/SKILL.md` cho mọi lượt chạy.
+- Kích hoạt trên mỗi báo cáo cấp cao nhất mới trong channel Slack nguồn đã cấu hình.
+- Đọc thread kích hoạt và chỉ trả lời bên trong nó.
+- Dùng tích hợp issue-tracker đã cấu hình.
+- Phân loại, kiểm tra bằng chứng, lần theo nguyên nhân, khử trùng lặp, và chỉ tạo các bug mới rõ ràng.
+- Kết thúc một phán quyết chỉ trong thread bằng marker `[benny:bug]`, `[benny:performance]`, hoặc `[benny:other]` đã cấu hình và URL tracker tùy chọn.
+- Không bao giờ đăng tin nhắn gốc trong channel nguồn.
 
-After the triage editor handoff is complete, give `automate` this complete repro and fix intent:
+Sau khi việc bàn giao trình soạn triage hoàn tất, đưa cho `automate` ý định tái hiện và sửa hoàn chỉnh này:
 
-- Name `benny-reproduce`.
-- Read and follow `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md` for every run.
-- Trigger on the same new top-level reports in the configured source Slack channel.
-- Use the configured repository and default branch.
-- Read the source thread and reply only inside it.
-- Include pull request creation and the configured tracker, control-adapter, and feature-map requirements. Paraphrase mapped user paths and states unless `automate` confirms an eligible committed file in the same repository.
-- Wait for a trusted triage marker before acting.
-- Reproduce the exact symptom twice through the mapped real UI and capture evidence.
-- Verify an existing fix without authoring over it.
-- Attempt an optional bounded fix only after confirmed repro, then open a draft pull request when proof and checks pass.
-- Never post a source-channel root message.
+- Tên `benny-reproduce`.
+- Đọc và làm theo `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md` cho mọi lượt chạy.
+- Kích hoạt trên cùng các báo cáo cấp cao nhất mới trong channel Slack nguồn đã cấu hình.
+- Dùng repository và branch mặc định đã cấu hình.
+- Đọc thread nguồn và chỉ trả lời bên trong nó.
+- Bao gồm việc tạo pull request và các yêu cầu về tracker, control-adapter, và feature map đã cấu hình. Diễn giải các đường đi và trạng thái người dùng trong map trừ khi `automate` xác nhận một file đã commit đủ điều kiện trong cùng repository.
+- Chờ một triage marker đáng tin trước khi hành động.
+- Tái hiện chính xác triệu chứng hai lần qua UI thật trong map và thu bằng chứng.
+- Kiểm chứng một bản sửa đã có mà không viết đè lên nó.
+- Chỉ thử một bản sửa có giới hạn tùy chọn sau bản tái hiện đã xác nhận, rồi mở một draft pull request khi bằng chứng và các phép kiểm tra pass.
+- Không bao giờ đăng tin nhắn gốc trong channel nguồn.
 
-Do not duplicate `automate`'s Slack, repository, integration, completeness, authentication, draft-review, approval, readiness, or editor-handoff work.
+Đừng lặp lại công việc của `automate` về Slack, repository, tích hợp, tính đầy đủ, xác thực, review bản nháp, phê duyệt, mức sẵn sàng, hay bàn giao trình soạn.
 
-### Existing automations
+### Automation đã có
 
-The built-in `automate` skill is creation-only. Do not use it to search for, inspect, or update existing automations.
+Skill có sẵn `automate` chỉ dùng để tạo. Đừng dùng nó để tìm, kiểm tra, hay cập nhật các automation đã có.
 
-Finish configuration, routing, control-adapter, and feature-map validation. Then give the user this concise editor checklist.
+Hoàn tất việc kiểm tra cấu hình, định tuyến, control-adapter, và feature map. Rồi đưa cho người dùng danh sách kiểm tra trình soạn ngắn gọn này.
 
-For the existing triage automation, update:
+Với automation triage đã có, cập nhật:
 
-- Name and description
-- Direct instruction to read `.cursor/automations/benny/skills/triage-issue-reports/SKILL.md`
-- New top-level Slack report trigger and source channel
-- Slack thread read and reply capabilities
-- Issue-tracker integration
-- Paraphrased triage instructions, thread-only rule, and Benny verdict markers
+- Tên và mô tả
+- Chỉ dẫn trực tiếp đọc `.cursor/automations/benny/skills/triage-issue-reports/SKILL.md`
+- Trigger báo cáo Slack cấp cao nhất mới và channel nguồn
+- Năng lực đọc và trả lời thread Slack
+- Tích hợp issue-tracker
+- Chỉ dẫn triage đã diễn giải, quy tắc chỉ trong thread, và các marker phán quyết Benny
 
-For the existing repro automation, update:
+Với automation tái hiện đã có, cập nhật:
 
-- Name and description
-- Direct instruction to read `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md`
-- Matching Slack trigger and source channel
-- Repository and default branch
-- Slack thread read and reply capabilities
-- Pull request action
-- Tracker, control-adapter, and feature-map requirements
-- Paraphrased marker wait, evidence, verification, and bounded-fix instructions
+- Tên và mô tả
+- Chỉ dẫn trực tiếp đọc `.cursor/automations/benny/skills/reproduce-and-fix-issues/SKILL.md`
+- Trigger Slack tương ứng và channel nguồn
+- Repository và branch mặc định
+- Năng lực đọc và trả lời thread Slack
+- Action pull request
+- Các yêu cầu về tracker, control-adapter, và feature map
+- Chỉ dẫn đã diễn giải về chờ marker, bằng chứng, kiểm chứng, và bản sửa có giới hạn
 
-Ask the user to update each existing automation directly in its Automations editor. Do not create replacements or duplicates.
+Yêu cầu người dùng cập nhật trực tiếp từng automation đã có trong trình soạn Automations của nó. Đừng tạo bản thay thế hay bản trùng lặp.
 
-### Creation boundary
+### Ranh giới tạo
 
-Never call a direct automation backend service or backend automation tool. Never use a browser URL that carries draft fields. Never build or open a Cursor protocol deep link. For new automations, the only finish path is the built-in `automate` skill's reviewed Automations editor handoff.
+Không bao giờ gọi trực tiếp một service backend automation hay công cụ automation backend. Không bao giờ dùng một URL trình duyệt mang các field nháp. Không bao giờ xây dựng hay mở một deep link giao thức Cursor. Với automation mới, con đường hoàn tất duy nhất là việc bàn giao trình soạn Automations đã được review của skill có sẵn `automate`.
 
-Do not enable either automation until the thread-safety test passes after the editor save.
+Đừng bật automation nào cho đến khi bài test an toàn thread pass sau khi lưu trong trình soạn.
 
-## 8. Test thread safety
+## 8. Test an toàn thread
 
-Use a test channel or a harmless test report.
+Dùng một channel test hoặc một báo cáo test vô hại.
 
-Before testing, confirm that the target repository's `.cursor/settings.json`, `.cursor/automations/benny/`, and every referenced secret-free configuration file are committed on the branch used by the automation checkout. Confirm that both live prompts point at their exact committed operational files. If any check fails, stop. Tell the user that the automation cannot be enabled yet.
+Trước khi test, xác nhận rằng `.cursor/settings.json`, `.cursor/automations/benny/`, và mọi file cấu hình không chứa secret được tham chiếu của repository đích đã được commit trên branch mà checkout automation dùng. Xác nhận rằng cả hai prompt đang chạy đều trỏ đến chính xác các file vận hành đã commit của chúng. Nếu bất kỳ phép kiểm tra nào thất bại, hãy dừng. Cho người dùng biết rằng automation chưa thể được bật.
 
-Verify:
+Xác minh:
 
-1. Triage stores the root `thread_ts` and posts exactly one verdict as a reply.
-2. The verdict contains one configured marker.
-3. Repro accepts the marker only from the configured triage identity.
-4. Repro keeps the same immutable source coordinates.
-5. No source-channel root message appears.
-6. A delegated worker cannot use any Slack write action.
-7. Missing coordinates, a deleted parent, or a failed preflight produces no post and no tracker issue.
+1. Triage lưu `thread_ts` gốc và đăng đúng một phán quyết dưới dạng reply.
+2. Phán quyết chứa một marker đã cấu hình.
+3. Repro chỉ chấp nhận marker từ danh tính triage đã cấu hình.
+4. Repro giữ cùng các tọa độ nguồn bất biến.
+5. Không có tin nhắn gốc nào xuất hiện trong channel nguồn.
+6. Một worker được ủy quyền không thể dùng bất kỳ action ghi Slack nào.
+7. Tọa độ bị thiếu, tin nhắn cha bị xóa, hoặc preflight thất bại không tạo ra bài đăng nào và không có issue tracker nào.
 
-Enable normal traffic only after all seven checks pass.
+Chỉ bật lưu lượng bình thường sau khi cả bảy phép kiểm tra pass.
