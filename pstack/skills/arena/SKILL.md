@@ -1,48 +1,48 @@
 ---
 name: arena
-description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+description: "Khởi chạy N ứng viên song song cho cùng một task, chọn một bản nền, ghép những phần mạnh nhất của các bản thua vào nó. Dùng cho /arena, 'arena this', 'throw it in the arena' (hoặc 'cho vào arena'), hoặc khi một lần thử duy nhất cho một artifact không tầm thường sẽ khóa chặt một hình dạng sai."
 disable-model-invocation: true
 ---
 
 # Arena
 
-Open a todolist with one entry per phase (Frame, Fan out, Cross-judge, Pick, Graft, Verify) before launching anything.
+Mở một todolist với mỗi giai đoạn một mục (Đóng khung, Tỏa ra, Chấm chéo, Chọn, Ghép, Kiểm chứng) trước khi khởi chạy bất cứ thứ gì.
 
-## Phase A: Frame
+## Phase A: Đóng khung
 
-Every candidate gets the same prompt, so the prompt is the contract.
+Mọi ứng viên nhận cùng một prompt, nên prompt là hợp đồng.
 
-1. State the artifact each candidate is producing.
-2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners from the `arena runners` line in `~/.cursor/rules/pstack-models.mdc`, by default `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, and `gemini-4-neon-xhigh`. An `auto` or `inherit-parent` entry is the parent model, so omit `model` and spawn `generalPurpose`. If the Task tool rejects a slug, use the nearest valid slug of the same family or drop the seat, keep at least two runners, and say so. Families go by prefix, and the longest match wins: `claude-fable-*`, `claude-*`, and `gemini-*`, after dropping a leading `cursor-`. Any other slug's family is its text before the first hyphen. Spawn more for multiple design directions, and repeat one model when the work is generation-bound, not judgment-sensitive. Pick each subagent's reasoning level per the Subagents section of the **poteto-mode** skill.
-4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
+1. Nêu artifact mà mỗi ứng viên đang tạo ra.
+2. Suy ra rubric, 3-6 tiêu chí cụ thể có thể chấm điểm cho thành công trông như thế nào trên *task này*. Nó là công cụ của người chọn ở Phase D. Các ứng viên chỉ thấy task.
+3. Chọn các runner từ dòng `arena runners` trong `~/.cursor/rules/pstack-models.mdc`, mặc định là `claude-fable-5-2-high`, `claude-opus-5-5-high-fast`, và `gemini-4-neon-xhigh`. Một mục `auto` hoặc `inherit-parent` là model của cha, nên bỏ `model` và khởi chạy `generalPurpose`. Nếu tool Task từ chối một slug, hãy dùng slug hợp lệ gần nhất cùng họ hoặc bỏ ghế đó, giữ ít nhất hai runner, và nói vậy. Họ được xác định theo tiền tố, và khớp dài nhất thắng: `claude-fable-*`, `claude-*`, và `gemini-*`, sau khi bỏ tiền tố `cursor-` ở đầu. Họ của mọi slug khác là phần chữ trước dấu gạch nối đầu tiên. Khởi chạy nhiều hơn cho nhiều hướng thiết kế, và lặp lại một model khi công việc bị giới hạn bởi việc tạo sinh, không nhạy cảm với phán đoán. Chọn mức suy luận của từng subagent theo phần Subagent của skill **poteto-mode**.
+4. Cho mỗi ứng viên vị trí output riêng (một git worktree khi có thể, nếu không thì `/tmp/arena-<slug>/candidate-<n>/`), theo principle skill **separate-before-serializing-shared-state**.
 
-## Phase B: Fan out
+## Phase B: Tỏa ra
 
-Spawn all N subagents in one message with `run_in_background: true`, each with the task, the path to the shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected.
+Khởi chạy cả N subagent trong một tin nhắn với `run_in_background: true`, mỗi cái với task, đường dẫn đến phần nền tảng chung, đường dẫn output riêng của nó, và chỉ dẫn tạo ra artifact cùng một lý giải ngắn gọi tên các phương án nó đã cân nhắc và những gì nó đã loại bỏ.
 
-If a candidate produces no output, proceed with N-1 and note the dropout.
+Nếu một ứng viên không tạo ra output, tiếp tục với N-1 và ghi chú ứng viên bỏ cuộc.
 
-## Phase C: Cross-judge
+## Phase C: Chấm chéo
 
-After all Phase B candidates complete, spawn one readonly judge from the `arena cross-judge pool` line in `~/.cursor/rules/pstack-models.mdc`, by default `claude-opus-5-5-high-fast`, `gemini-4-neon-xhigh`. The judge is never from the parent's vendor, and Fable counts as Claude for that check, so use the first entry from another vendor. An `auto` or `inherit-parent` entry is the parent model. If you do not know the parent's model, use the first real slug and say that the vendor check did not run. If the Task tool rejects a slug, use the nearest valid slug of the same family, then the next such entry, or skip the judge, and say so. While you read in Phase D, the judge scores each candidate, by path label, on each rubric criterion and recommends a base.
+Sau khi mọi ứng viên của Phase B hoàn thành, khởi chạy một giám khảo chỉ đọc từ dòng `arena cross-judge pool` trong `~/.cursor/rules/pstack-models.mdc`, mặc định là `claude-opus-5-5-high-fast`, `gemini-4-neon-xhigh`. Giám khảo không bao giờ đến từ cùng nhà cung cấp với cha, và Fable được tính là Claude trong phép kiểm tra đó, nên hãy dùng mục đầu tiên từ một nhà cung cấp khác. Một mục `auto` hoặc `inherit-parent` là model của cha. Nếu bạn không biết model của cha, hãy dùng slug thật đầu tiên và nói rằng phép kiểm tra nhà cung cấp đã không chạy. Nếu tool Task từ chối một slug, hãy dùng slug hợp lệ gần nhất cùng họ, rồi đến mục kế tiếp như vậy, hoặc bỏ qua giám khảo, và nói vậy. Trong khi bạn đọc ở Phase D, giám khảo chấm điểm từng ứng viên, theo nhãn đường dẫn, trên từng tiêu chí của rubric và đề xuất một bản nền.
 
-## Phase D: Pick a base
+## Phase D: Chọn bản nền
 
-Read every candidate end to end before picking. Score each against the rubric criterion by criterion, not on holistic feel, and compare with the cross-judge when Phase C ran one. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
+Đọc mọi ứng viên từ đầu đến cuối trước khi chọn. Chấm điểm từng cái theo rubric, từng tiêu chí một, không theo cảm giác tổng thể, và so sánh với giám khảo chấm chéo khi Phase C có chạy. Đồng thuận về bản nền xác nhận lựa chọn. Bất đồng nghĩa là một trong hai bên bị thiên lệch hoặc rubric mơ hồ. Đọc cả hai lý giải trước khi quyết định.
 
-Pick the base a future maintainer can extend most easily without breaking invariants. When two feel tied, prefer the cleaner boundary or smaller API, per the Laziness Protocol.
+Chọn bản nền mà một người bảo trì tương lai có thể mở rộng dễ nhất mà không phá vỡ bất biến. Khi hai bản có cảm giác ngang nhau, ưu tiên ranh giới gọn hơn hoặc API nhỏ hơn, theo Laziness Protocol.
 
-## Phase E: Graft
+## Phase E: Ghép
 
-Walk each losing candidate once more for what is worth porting into the base, usually one or two things per candidate, not most of it. Fold each graft in by hand, per the **redesign-from-first-principles** principle skill, so the result stays coherent under one mental model. Don't paste mechanically.
+Đi qua mỗi ứng viên thua thêm một lần nữa để tìm những gì đáng đưa vào bản nền, thường là một hoặc hai thứ mỗi ứng viên, không phải phần lớn. Gộp từng phần ghép bằng tay, theo principle skill **redesign-from-first-principles**, để kết quả vẫn mạch lạc dưới một mô hình tư duy. Đừng dán một cách máy móc.
 
-If the candidates converge on one shape, that is strong agreement. Note it and ship the consensus shape. No graft is needed. If they wildly diverge, Phase A was under-specified. Reframe and re-run rather than averaging the divergence.
+Nếu các ứng viên hội tụ về một hình dạng, đó là sự đồng thuận mạnh. Ghi chú nó và ship hình dạng đồng thuận đó. Không cần ghép gì. Nếu chúng phân kỳ dữ dội, Phase A đã được đặc tả chưa đủ. Đóng khung lại và chạy lại thay vì lấy trung bình sự phân kỳ.
 
-## Phase F: Verify
+## Phase F: Kiểm chứng
 
-Verify the synthesized artifact like any other output, per the **prove-it-works** principle skill. If verification finds a problem the arena missed, either Phase A was wrong (re-frame and re-run) or a candidate caught it and you missed the graft (go back to Phase E). Don't paper over it.
+Kiểm chứng artifact đã tổng hợp như mọi output khác, theo principle skill **prove-it-works**. Nếu việc kiểm chứng tìm ra một vấn đề mà arena đã bỏ sót, thì hoặc Phase A sai (đóng khung lại và chạy lại) hoặc một ứng viên đã bắt được nó và bạn bỏ sót phần ghép (quay lại Phase E). Đừng che lấp nó.
 
-## Outputs
+## Output
 
-One synthesized artifact, with a short synthesis note alongside naming the base and why, the cross-judge's verdict or that Phase C skipped the judge, each graft with its source candidate, what was rejected and why, any convergence or dropouts, and the verification result.
+Một artifact đã tổng hợp, kèm một ghi chú tổng hợp ngắn gọi tên bản nền và lý do, phán quyết của giám khảo chấm chéo hoặc việc Phase C đã bỏ qua giám khảo, mỗi phần ghép cùng ứng viên nguồn của nó, những gì bị loại bỏ và lý do, mọi sự hội tụ hoặc ứng viên bỏ cuộc, và kết quả kiểm chứng.
