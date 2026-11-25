@@ -45,7 +45,14 @@ Việc cài đặt không thay đổi gì cho đến khi người dùng gọi m�
 
 Nếu chi phí là mối lo, hãy nói token đi đâu và làm sao tiêu ít hơn. pstack tiêu thêm token cho subagent và panel review. Chạy lại `/setup-pstack` và chọn một ngân sách nhỏ hơn hoặc model rẻ hơn. Một vai trò đặt là `auto` hoặc `inherit-parent` chạy trên model của chat, giúp tiết kiệm token khi chat chạy trên Auto hoặc một model rẻ hơn. Một danh sách panel ngắn hơn chạy ít subagent hơn, mỗi mục một cái. Để dành `/poteto-mode` cho công việc cần sự nghiêm ngặt.
 
-pstack được xây dựng cho Cursor, và nó cũng cài được trong Claude Code với `/plugin marketplace add cursor/plugins`, rồi `/plugin install pstack@cursor-plugins`. Ở đó, mỗi lệnh có tiền tố `pstack:`, như `/pstack:poteto-mode`. [Adapter Claude Code](../../docs/harness/claude-code.md) ánh xạ các tên Cursor, và một bước cần một tính năng chỉ có trên Cursor, như Bugbot hoặc Automations, sẽ được bỏ qua kèm một ghi chú một dòng.
+pstack được xây dựng cho Cursor. Trong Claude Code, trong terminal chạy `claude plugin marketplace add hanh9898/vietnamese-pstack`, rồi `claude plugin install pstack@vietnamese-pstack`; trong một session đang mở, dùng `/plugin marketplace add hanh9898/vietnamese-pstack`, rồi `/plugin install pstack@vietnamese-pstack`. Nếu đã cài upstream từ `cursor/plugins`, trước tiên tắt rồi gỡ `pstack@cursor-plugins` để tránh trùng namespace `/pstack:`:
+
+```bash
+claude plugin disable --scope user pstack@cursor-plugins
+claude plugin uninstall --scope user pstack@cursor-plugins
+```
+
+Nếu bản upstream được cài ở phạm vi khác, thay `user` bằng `project` hoặc `local`. Ở Claude Code, mỗi lệnh có tiền tố `pstack:`, như `/pstack:poteto-mode`. [Adapter Claude Code](../../docs/harness/claude-code.md) ánh xạ các tên Cursor, và một bước cần một tính năng chỉ có trên Cursor, như Bugbot hoặc Automations, sẽ được bỏ qua kèm một ghi chú một dòng.
 
 Các công cụ khác có thể đọc các skill, vì chúng dùng định dạng Agent Skills. Nhưng hầu hết các skill quy trình, bao gồm `/poteto-mode`, `/how`, và `/teach`, khởi chạy subagent của Cursor, một số với model theo vai trò, và Custom Modes cùng `/loop` là tính năng của Cursor, nên những phần đó có thể không hoạt động ở đó.
 
