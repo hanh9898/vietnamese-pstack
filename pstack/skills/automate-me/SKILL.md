@@ -1,104 +1,103 @@
 ---
 name: automate-me
-description: "Use for \"automate me\", \"create/update/refresh my -mode skill\", \"turn/capture my preferences or working style into a skill\", or wanting agents to follow how the user works. Drafts or revises a personal -mode skill via create-skill + unslop, optionally pulling fresh evidence from recent transcripts."
+description: "Dùng cho \"automate me\", \"create/update/refresh my -mode skill\", \"turn/capture my preferences or working style into a skill\" (hoặc \"tự động hóa tôi\", \"tạo/cập nhật -mode skill của tôi\", \"biến thói quen làm việc của tôi thành skill\"), hoặc khi muốn agent làm theo cách người dùng làm việc. Soạn thảo hoặc chỉnh sửa một -mode skill cá nhân qua create-skill + unslop, có thể lấy bằng chứng mới từ các transcript gần đây."
 disable-model-invocation: true
 ---
 
 # Automate me
 
-A guided flow for turning the user's working conventions into a skill agents will follow. The output is one `-mode` skill tailored to them (e.g. `jay-mode`, `priya-mode`).
+Một luồng có hướng dẫn để biến các quy ước làm việc của người dùng thành một skill mà agent sẽ làm theo. Output là một skill `-mode` được may đo cho họ (ví dụ `jay-mode`, `priya-mode`).
 
-This skill orchestrates three others: an inline mining pass (see step 1), Cursor's built-in `create-skill` (authoring), and the **unslop** skill (prose discipline). It sequences them. It doesn't replace them.
+Skill này điều phối ba skill khác: một lượt khai thác nội tuyến (xem bước 1), skill `create-skill` có sẵn của Cursor (soạn thảo), và skill **unslop** (kỷ luật văn xuôi). Nó sắp xếp thứ tự chúng. Nó không thay thế chúng.
 
-## Flow
+## Luồng
 
-### 0. Check for an existing skill
+### 0. Kiểm tra skill hiện có
 
-Look recursively for `.cursor/skills/**/*-mode/SKILL.md` and `~/.cursor/skills/*-mode/SKILL.md` matching the user's handle. Mode skills can live in a personal category directory (`.cursor/skills/<handle>/`), not only at the top level. If one exists, confirm intent with `AskQuestion` (unless they already said "update my skill" or similar):
+Tìm đệ quy `.cursor/skills/**/*-mode/SKILL.md` và `~/.cursor/skills/*-mode/SKILL.md` khớp với handle của người dùng. Mode skill có thể nằm trong một thư mục phân loại cá nhân (`.cursor/skills/<handle>/`), không chỉ ở cấp trên cùng. Nếu có một cái, hãy xác nhận ý định bằng `AskQuestion` (trừ khi họ đã nói "update my skill" hoặc tương tự):
 
-- Update the existing skill (default for repeat runs)
-- Start fresh (rare, ask why before doing it)
+- Cập nhật skill hiện có (mặc định cho các lần chạy lặp lại)
+- Bắt đầu lại từ đầu (hiếm, hỏi lý do trước khi làm)
 
-Update mode changes the rest of the flow:
-- Step 1 mines only history since the skill was last edited (`git log -1 --format=%cI <path>`).
-- Step 2 asks what's changed or missing, not what to capture from zero.
-- Step 4 edits the existing file in place. Preserve sections the user hasn't contradicted. Revise ones with new evidence. Add new sections only for genuinely new rules.
+Chế độ cập nhật thay đổi phần còn lại của luồng:
+- Bước 1 chỉ khai thác lịch sử kể từ lần cuối skill được sửa (`git log -1 --format=%cI <path>`).
+- Bước 2 hỏi điều gì đã thay đổi hoặc còn thiếu, không hỏi cần ghi lại gì từ con số không.
+- Bước 4 sửa file hiện có tại chỗ. Giữ nguyên các phần người dùng không phản bác. Chỉnh sửa những phần có bằng chứng mới. Chỉ thêm phần mới cho các quy tắc thật sự mới.
 
-### 1. Mine their history
+### 1. Khai thác lịch sử của họ
 
-Locate the active workspace's transcripts before fanning out. The system prompt names the workspace's `agent-transcripts/` directory. Use only that path. Don't glob across `~/.cursor/projects/*/`. That crosses workspace boundaries and reads private chats from unrelated projects.
+Định vị transcript của workspace đang hoạt động trước khi tỏa ra. System prompt gọi tên thư mục `agent-transcripts/` của workspace. Chỉ dùng đường dẫn đó. Đừng glob qua `~/.cursor/projects/*/`. Làm vậy vượt qua ranh giới workspace và đọc các chat riêng tư từ các dự án không liên quan.
 
-Survey recent agent conversations within that scope for recurring patterns. Run multiple parallel subagents across slices of history (e.g. last 2-4 weeks, split into 3 slices so each has enough material). Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill. Each slice mining subagent reads transcripts from the workspace-scoped path the parent provides, looks for the signals below, and returns a short structured list of patterns it saw with evidence pointers. Default signals worth hunting:
+Khảo sát các cuộc trò chuyện agent gần đây trong phạm vi đó để tìm các mẫu lặp lại. Chạy nhiều subagent song song trên các lát cắt lịch sử (ví dụ 2-4 tuần qua, chia thành 3 lát để mỗi lát có đủ tư liệu). Chọn mức suy luận của từng subagent cho công việc, theo phần Subagent của skill **poteto-mode**. Mỗi subagent khai thác một lát đọc transcript từ đường dẫn trong phạm vi workspace mà cha cung cấp, tìm các tín hiệu bên dưới, và trả về một danh sách có cấu trúc ngắn gồm các mẫu nó thấy kèm con trỏ bằng chứng. Các tín hiệu mặc định đáng săn tìm:
 
-- Response preferences (length, tone, format, "dumb it down" corrections)
-- Delegation habits (subagents, models, specialized workflows, parallelism)
-- Verification posture (what "done" means, unit tests vs live repro, reviewers)
-- Code and prose discipline (style, principles cited, lint/format tools)
-- Process conventions (worktrees, commits, PRs, review/merge tooling)
-- Meta preferences (fixing skills mid-task, proposing new ones)
+- Sở thích về câu trả lời (độ dài, giọng văn, định dạng, các lời sửa kiểu "nói đơn giản thôi")
+- Thói quen giao việc (subagent, model, workflow chuyên biệt, song song)
+- Tư thế kiểm chứng ("xong" nghĩa là gì, unit test hay tái hiện trực tiếp, reviewer)
+- Kỷ luật code và văn xuôi (style, các nguyên tắc được trích dẫn, công cụ lint/format)
+- Quy ước quy trình (worktree, commit, PR, công cụ review/merge)
+- Sở thích meta (sửa skill giữa chừng task, đề xuất skill mới)
 
-Cross-check across slices before elevating a signal. Patterns seen in 2+ slices are high-confidence. Lone signals are weak and usually get dropped.
+Đối chiếu giữa các lát trước khi nâng một tín hiệu lên. Các mẫu thấy ở 2+ lát có độ tin cậy cao. Tín hiệu đơn lẻ là yếu và thường bị bỏ.
 
-### 2. Ask the user directly
+### 2. Hỏi trực tiếp người dùng
 
-Mining misses intent that hasn't come up yet. Use the `AskQuestion` tool (structured multi-choice) rather than asking the user to type from scratch.
+Việc khai thác bỏ sót những ý định chưa từng xuất hiện. Dùng tool `AskQuestion` (trắc nghiệm có cấu trúc) thay vì bảo người dùng gõ từ đầu.
 
-Shape: one or two questions with 4-6 options each, `allow_multiple: true` for category questions. Start broad ("Which areas matter most?"), then follow up on selected areas with specific options. After the structured rounds, one free-form chat question catches anything the options missed.
+Hình dạng: một hoặc hai câu hỏi, mỗi câu 4-6 lựa chọn, `allow_multiple: true` cho các câu hỏi về danh mục. Bắt đầu rộng ("Những khu vực nào quan trọng nhất?"), rồi hỏi tiếp về các khu vực được chọn với các lựa chọn cụ thể. Sau các vòng có cấu trúc, một câu hỏi tự do trong chat bắt lấy mọi thứ các lựa chọn bỏ sót.
 
-Don't dump 20 questions.
+Đừng đổ ra 20 câu hỏi.
 
-### 3. Cluster findings
+### 3. Gom nhóm các phát hiện
 
-Group the combined signals into sections. Common ones (use only what applies):
+Nhóm các tín hiệu kết hợp thành các phần. Các phần thường gặp (chỉ dùng những gì áp dụng):
 
-- **Response style**: length, tone, format.
-- **Autonomy**: how much to do without asking, MCP tool use.
-- **Understand first**: which skills to reach for when scoping or investigating a change.
-- **Subagents**: default, parallelism, model-to-task, specialized workflows.
-- **Prose / code discipline**: principles, lint tools, style guides.
-- **Review and verify**: repro posture, verification skills, live-testing tools.
-- **Process**: git worktrees, commits, PRs, review/merge tooling.
-- **Skills**: skill-authoring habits, fix-the-skill-first, proposing new skills.
+- **Phong cách trả lời**: độ dài, giọng văn, định dạng.
+- **Tự chủ**: làm bao nhiêu mà không cần hỏi, việc dùng tool MCP.
+- **Hiểu trước**: dùng skill nào khi xác định phạm vi hoặc điều tra một thay đổi.
+- **Subagent**: mặc định, song song, model cho từng task, workflow chuyên biệt.
+- **Kỷ luật văn xuôi / code**: nguyên tắc, công cụ lint, hướng dẫn style.
+- **Review và kiểm chứng**: tư thế tái hiện, skill kiểm chứng, công cụ test trực tiếp.
+- **Quy trình**: git worktree, commit, PR, công cụ review/merge.
+- **Skill**: thói quen soạn skill, sửa skill trước, đề xuất skill mới.
 
-The **poteto-mode** skill shows the shape. Read it for granularity. Don't copy its content. The user's rules are not the same as poteto-mode's.
+Skill **poteto-mode** cho thấy hình dạng. Đọc nó để biết độ chi tiết. Đừng sao chép nội dung của nó. Các quy tắc của người dùng không giống của poteto-mode.
 
-### 4. Draft the skill
+### 4. Soạn skill
 
-Use Cursor's built-in `create-skill` skill to author the skill. Placement:
+Dùng skill `create-skill` có sẵn của Cursor để soạn skill. Vị trí:
 
-- Path: preserve an existing mode skill's category. For a new mode, use `.cursor/skills/<handle>/<handle>-mode/SKILL.md` when the repo has an established personal category for that handle. Otherwise default to `.cursor/skills/<handle>-mode/SKILL.md` in the project (or `~/.cursor/skills/<handle>-mode/` if the user prefers a personal skill).
-- Handle: the user's first name or chosen identifier.
-- Frontmatter `description`: trigger on their name + `/<handle>-mode` + "work in their style", not on generic keywords like "write code" or "review PR".
-- Frontmatter formatting: follow `create-skill`'s YAML rules. Keep `description` as one YAML scalar. Quote it or use `description: >-` with indented continuation lines when punctuation or wrapping requires it.
-- Frontmatter `disable-model-invocation: true` by default. Opt out only if the user explicitly wants their mode to apply on every turn.
+- Đường dẫn: giữ nguyên danh mục của một mode skill hiện có. Với một mode mới, dùng `.cursor/skills/<handle>/<handle>-mode/SKILL.md` khi repo đã có một danh mục cá nhân được thiết lập cho handle đó. Nếu không, mặc định là `.cursor/skills/<handle>-mode/SKILL.md` trong dự án (hoặc `~/.cursor/skills/<handle>-mode/` nếu người dùng thích một skill cá nhân).
+- Handle: tên của người dùng hoặc định danh họ chọn.
+- `description` trong frontmatter: kích hoạt theo tên của họ + `/<handle>-mode` + "work in their style", không theo các từ khóa chung chung như "write code" hay "review PR".
+- Định dạng frontmatter: làm theo các quy tắc YAML của `create-skill`. Giữ `description` là một YAML scalar. Đặt trong dấu nháy hoặc dùng `description: >-` với các dòng tiếp nối thụt lề khi dấu câu hoặc việc xuống dòng đòi hỏi.
+- `disable-model-invocation: true` trong frontmatter theo mặc định. Chỉ bỏ ra nếu người dùng rõ ràng muốn mode của họ áp dụng ở mọi lượt.
 
-### 5. Iterate on prose
+### 5. Lặp lại trên văn xuôi
 
-Apply the **unslop** skill and `create-skill`'s writing guidelines to every line.
+Áp dụng skill **unslop** và hướng dẫn viết của `create-skill` cho mọi dòng.
 
-Show the draft to the user and take feedback. Expect multiple iterations. Cut ruthlessly. A mode skill is not a manual.
+Cho người dùng xem bản nháp và nhận phản hồi. Chuẩn bị cho nhiều vòng lặp. Cắt không thương tiếc. Một mode skill không phải là sách hướng dẫn.
 
-### 6. Land it
+### 6. Land nó
 
-Work in a worktree off main. Commit and open a PR. Don't push to main directly.
+Làm việc trong một worktree tách từ main. Commit và mở PR. Đừng push thẳng lên main.
 
-## Guardrails
+## Rào chắn
 
-- **Don't overfit to one conversation.** A preference stated once and contradicted another time is noise. Require multiple instances before codifying it.
-- **Don't be clever.** Restating other skills' contents, inventing metaphors, or writing "poetic" prose for an agent reader is cost without benefit. Keep it operational.
-- **Reference, don't inline.** Other skills the user relies on should appear as path references, not pasted excerpts. Same for any principle docs they maintain elsewhere.
-- **Keep sections minimal.** Only add a section if the user has a specific, non-default rule there. "Communicate clearly" is not a section. "Short paragraphs. Tables when comparing options. Bullets only when items are genuinely parallel." is.
-- **Name conventions generic.** Use "the user" or "the human" in imperatives, not the author's first name.
-- **Don't force symmetry.** If a user has no process rules worth writing down, skip the Process section entirely.
+- **Đừng khớp quá mức với một cuộc trò chuyện.** Một sở thích được nêu một lần và bị phản bác lần khác là nhiễu. Đòi hỏi nhiều lần xuất hiện trước khi mã hóa nó.
+- **Đừng tỏ ra khéo léo.** Nhắc lại nội dung của skill khác, bịa ra ẩn dụ, hoặc viết văn xuôi "thơ mộng" cho người đọc là agent là chi phí không có lợi ích. Giữ nó mang tính vận hành.
+- **Tham chiếu, đừng chép nội tuyến.** Các skill khác mà người dùng dựa vào nên xuất hiện dưới dạng tham chiếu đường dẫn, không phải đoạn trích được dán. Tương tự với mọi tài liệu nguyên tắc họ duy trì ở nơi khác.
+- **Giữ các phần ở mức tối thiểu.** Chỉ thêm một phần nếu người dùng có một quy tắc cụ thể, không mặc định ở đó. "Giao tiếp rõ ràng" không phải là một phần. "Đoạn văn ngắn. Bảng khi so sánh các phương án. Gạch đầu dòng chỉ khi các mục thật sự song song." thì là.
+- **Đặt tên quy ước chung chung.** Dùng "người dùng" hoặc "con người" trong câu mệnh lệnh, không dùng tên của tác giả.
+- **Đừng ép đối xứng.** Nếu người dùng không có quy tắc quy trình nào đáng viết ra, hãy bỏ hẳn phần Quy trình.
 
-## Evaluation
+## Đánh giá
 
-A `-mode` skill is subjective output. A `create-skill`-style test/iterate benchmark loop isn't useful here. Vibe-check with the user: does it read like them? Did it miss anything? Then ship.
+Một skill `-mode` là output mang tính chủ quan. Một vòng lặp benchmark test/lặp kiểu `create-skill` không hữu ích ở đây. Kiểm tra cảm giác với người dùng: nó đọc lên có giống họ không? Nó có bỏ sót gì không? Rồi ship.
 
-Run a description-optimization loop only if the skill's trigger accuracy turns out to be a problem in practice.
+Chỉ chạy một vòng lặp tối ưu description nếu độ chính xác kích hoạt của skill hóa ra là vấn đề trong thực tế.
 
-## When not to use
+## Khi nào không dùng
 
-- User wants a task-specific skill (not working conventions): `create-skill` alone, no mining required.
-- User wants to capture one narrow workflow (e.g. "how I write commit messages"). That's a regular skill, not a mode skill.
-
+- Người dùng muốn một skill cho task cụ thể (không phải quy ước làm việc): chỉ `create-skill`, không cần khai thác.
+- Người dùng muốn ghi lại một workflow hẹp (ví dụ "cách tôi viết commit message"). Đó là một skill thông thường, không phải mode skill.
