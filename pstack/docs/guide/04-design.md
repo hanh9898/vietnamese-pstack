@@ -1,127 +1,127 @@
-# Design before you write code
+# Thiết kế trước khi viết code
 
-One attempt at a hard design locks in the first shape the model thought of. `/architect` settles types and boundaries before implementation. `/arena` runs several attempts at the same brief and merges the best parts. `/interrogate` has other models try to break the result. When the job is coverage rather than design synthesis, `/swarm` fans out slices or races and aggregates their results.
+Một lần thử duy nhất cho một thiết kế khó sẽ khóa chặt hình dạng đầu tiên mà model nghĩ ra. `/architect` chốt các type và ranh giới trước khi cài đặt. `/arena` chạy nhiều lần thử với cùng một brief và hợp nhất những phần tốt nhất. `/interrogate` để các model khác cố phá kết quả. Khi công việc là độ bao phủ thay vì tổng hợp thiết kế, `/swarm` tỏa ra các lát cắt hoặc các cuộc đua và gộp kết quả của chúng.
 
-The two most common design mistakes are taking the agent's first design and polishing a plan that no code has tested. This page fixes both. You plan through code. Prototypes answer the open questions, a README or tutorial sets the target, and the written plan comes last.
+Hai sai lầm thiết kế phổ biến nhất là nhận thiết kế đầu tiên của agent và trau chuốt một kế hoạch chưa có dòng code nào kiểm thử. Trang này sửa cả hai. Bạn lập kế hoạch thông qua code. Prototype trả lời các câu hỏi còn mở, một README hoặc tutorial đặt ra mục tiêu, và kế hoạch viết ra đến sau cùng.
 
-![Three robots draft competing bridge models at their own tables under /architect, /arena, and /interrogate panels, while a judge robot with a clipboard inspects skeptically.](./images/design.jpg)
+![Ba robot phác thảo các mô hình cây cầu cạnh tranh nhau, mỗi robot ở bàn riêng dưới các bảng /architect, /arena và /interrogate, trong khi một robot giám khảo cầm bảng kẹp hồ sơ kiểm tra đầy hoài nghi.](./images/design.jpg)
 
-## Settle the shape with `/architect`
-
-```text
-/architect design the import pipeline before writing any code. i care most about how callers use it.
-```
-
-[`/architect`](../../skills/architect/SKILL.md) traces every system the change touches first. Then it sketches two different shapes, each with types, signatures, and module boundaries, and picks the one where each piece of state has one owner, each task has one way to do it, and callers need to know least. For a large or contested design, it runs `/arena` instead of sketching alone. If you want to see the design before any code, say so in the prompt.
-
-The design isn't sacred once code starts. If the same workaround keeps coming back, `/architect` redesigns instead of patching around it.
-
-## Fan out attempts with `/arena`
+## Chốt hình dạng với `/architect`
 
 ```text
-/arena take my prompt to the arena verbatim. i want to compare their proposals with yours.
+/architect thiết kế import pipeline trước khi viết bất kỳ code nào. tôi quan tâm nhất đến cách caller dùng nó.
 ```
 
-[`/arena`](../../skills/arena/SKILL.md) is the general tool underneath. N subagents attempt the same design or code brief in parallel, each writing to its own worktree or directory. A read-only judge from a different model vendor scores every candidate against a rubric. When no model from another vendor can run, the coordinator skips the judge and picks the base itself. The coordinator reads each candidate end to end, picks a base, grafts in the best ideas from the losers, and verifies the result.
+[`/architect`](../../skills/architect/SKILL.md) lần theo mọi hệ thống mà thay đổi đụng đến trước tiên. Rồi nó phác thảo hai hình dạng khác nhau, mỗi cái có type, signature và ranh giới module, và chọn cái mà mỗi phần state chỉ có một chủ sở hữu, mỗi việc chỉ có một cách làm, và caller cần biết ít nhất. Với một thiết kế lớn hoặc gây tranh cãi, nó chạy `/arena` thay vì phác thảo một mình. Nếu bạn muốn xem thiết kế trước khi có code, hãy nói vậy trong prompt.
+
+Thiết kế không bất khả xâm phạm khi code đã bắt đầu. Nếu cùng một cách lách cứ quay lại, `/architect` thiết kế lại thay vì vá xung quanh nó.
+
+## Tỏa ra nhiều lần thử với `/arena`
+
+```text
+/arena đưa nguyên văn prompt của tôi lên arena. tôi muốn so sánh đề xuất của chúng với của bạn.
+```
+
+[`/arena`](../../skills/arena/SKILL.md) là công cụ tổng quát nằm bên dưới. N subagent thử cùng một brief thiết kế hoặc code song song, mỗi cái ghi vào worktree hoặc thư mục riêng. Một giám khảo chỉ đọc từ một nhà cung cấp model khác chấm điểm mọi ứng viên theo một rubric. Khi không có model nào từ nhà cung cấp khác chạy được, coordinator bỏ qua giám khảo và tự chọn base. Coordinator đọc từng ứng viên từ đầu đến cuối, chọn một base, ghép vào những ý tưởng hay nhất từ các ứng viên thua, và kiểm chứng kết quả.
 
 ```mermaid
 flowchart LR
-    A[One task] --> B[Configured panel]
-    B --> C[Candidate 1]
-    B --> D[Candidate 2]
-    B --> E[Candidate N]
-    C --> F[Cross-judge]
+    A[Một task] --> B[Panel đã cấu hình]
+    B --> C[Ứng viên 1]
+    B --> D[Ứng viên 2]
+    B --> E[Ứng viên N]
+    C --> F[Chấm chéo]
     D --> F
     E --> F
-    F --> G[Pick a base]
-    G --> H[Graft the best parts]
-    H --> I[Verify]
+    F --> G[Chọn một base]
+    G --> H[Ghép những phần tốt nhất]
+    H --> I[Kiểm chứng]
 ```
 
-The panel comes from your [`/setup-pstack`](../../skills/setup-pstack/SKILL.md) configuration, and you can adjust it per task. Ask for more candidates when the decision matters, fewer when it doesn't:
+Panel đến từ cấu hình [`/setup-pstack`](../../skills/setup-pstack/SKILL.md) của bạn, và bạn có thể điều chỉnh nó theo từng task. Yêu cầu nhiều ứng viên hơn khi quyết định quan trọng, ít hơn khi không:
 
 ```text
-/arena this, 5 candidates. the cache key format is expensive to change later.
+/arena việc này, 5 ứng viên. định dạng cache key về sau rất tốn kém để thay đổi.
 ```
 
-## Cover slices and races with `/swarm`
+## Bao phủ các lát cắt và cuộc đua với `/swarm`
 
 ```text
-/swarm check every package under packages/ against its check.sh. one worker per package. one report.
+/swarm kiểm tra mọi package trong packages/ với check.sh của nó. mỗi package một worker. một báo cáo.
 ```
 
-[`/swarm`](../../skills/swarm/SKILL.md) fans N workers across independent slices, coverage matrices, gauntlet lanes, exploration partitions, or declared race arms. Each worker gets its own scope and check, then reports `PASS`, `ISSUES`, or `BLOCKED`. The parent waits for the workers and returns one compact report with any gaps or dropouts.
+[`/swarm`](../../skills/swarm/SKILL.md) tỏa N worker ra các lát cắt độc lập, ma trận bao phủ, các làn gauntlet, các phân vùng khám phá, hoặc các nhánh đua đã khai báo. Mỗi worker có phạm vi và phép kiểm tra riêng, rồi báo cáo `PASS`, `ISSUES`, hoặc `BLOCKED`. Cha chờ các worker và trả về một báo cáo gọn kèm mọi khoảng trống hoặc worker bỏ dở.
 
-Reach for it when parallelism buys coverage or lets independent checks race. `/arena` gives every worker the same design or code brief, then picks a base and grafts the best parts. `/swarm` covers slices or runs a race with a selection rule declared up front. It does not use the base-selection and grafting ceremony.
+Hãy dùng nó khi tính song song mua được độ bao phủ hoặc cho phép các phép kiểm tra độc lập chạy đua. `/arena` đưa cho mọi worker cùng một brief thiết kế hoặc code, rồi chọn một base và ghép những phần tốt nhất. `/swarm` bao phủ các lát cắt hoặc chạy một cuộc đua với quy tắc chọn được khai báo từ trước. Nó không dùng nghi thức chọn base và ghép.
 
-## Break it with `/interrogate`
+## Phá nó với `/interrogate`
 
 ```text
-/interrogate the whole branch, but skeptically. no nitpicks unless it's an actual bug or regression.
+/interrogate toàn bộ branch, nhưng với thái độ hoài nghi. không bắt bẻ vặt trừ khi đó là bug hoặc hồi quy thật.
 ```
 
-[`/interrogate`](../../skills/interrogate/SKILL.md) gives the change and its intent to adversaries on the configured models, and each tries to break it with a run against the real code. Adversaries find different failures. A finding survives only when rerunning its command shows a failure that breaks the intent. The report lists every verified finding with the adversaries that found it, then what each adversary dropped and why, and applies nothing.
+[`/interrogate`](../../skills/interrogate/SKILL.md) đưa thay đổi và ý định của nó cho các đối thủ trên những model đã cấu hình, và mỗi đối thủ cố phá nó bằng một lần chạy với code thật. Các đối thủ tìm ra những lỗi khác nhau. Một phát hiện chỉ được giữ lại khi chạy lại lệnh của nó cho thấy một lỗi phá vỡ ý định. Báo cáo liệt kê mọi phát hiện đã kiểm chứng cùng các đối thủ đã tìm ra nó, rồi những gì mỗi đối thủ đã loại bỏ và tại sao, và không áp dụng gì cả.
 
-Read the Dropped list too. You can override the verdict.
+Hãy đọc cả danh sách Dropped. Bạn có thể ghi đè phán quyết.
 
-## Prototype instead of debating
+## Prototype thay vì tranh luận
 
-Never take the first design. Ask for a few, and pick from evidence you can see:
+Đừng bao giờ nhận thiết kế đầu tiên. Hãy yêu cầu vài cái, và chọn dựa trên bằng chứng bạn nhìn thấy được:
 
 ```text
-/poteto-mode prototype a few options for the new dropdown menu. take screenshots or videos for me to compare.
+/poteto-mode prototype vài phương án cho dropdown menu mới. chụp screenshot hoặc quay video để tôi so sánh.
 ```
 
-The [Prototype playbook](../../skills/poteto-mode/playbooks/prototype.md) builds throwaway sketches in a scratch directory, puts the variants behind one switcher, drives each one, and captures screenshots or timings. It also works for behavior and algorithms, not just UI. Prototypes are planning with code. They let the agent answer its own open questions by running something instead of asking you, and they leave room for an option you wouldn't have thought of.
+[Playbook Prototype](../../skills/poteto-mode/playbooks/prototype.md) xây các bản phác thảo dùng xong bỏ trong một thư mục nháp, đặt các biến thể sau một công tắc chuyển, chạy từng cái, và thu screenshot hoặc số đo thời gian. Nó cũng dùng được cho hành vi và thuật toán, không chỉ UI. Prototype là lập kế hoạch bằng code. Chúng cho phép agent tự trả lời các câu hỏi mở của mình bằng cách chạy thứ gì đó thay vì hỏi bạn, và chừa chỗ cho một phương án bạn đã không nghĩ tới.
 
-The same idea scales up to a real design. Pair `/architect` with prototypes and keep a review gate:
+Cùng ý tưởng đó mở rộng lên một thiết kế thật. Kết hợp `/architect` với prototype và giữ một cổng review:
 
 ```text
-/poteto-mode we need rate limiting for external webhooks. /architect it first, and answer open questions with prototypes. let me review before proceeding.
+/poteto-mode chúng ta cần rate limiting cho các webhook bên ngoài. /architect nó trước, và trả lời các câu hỏi mở bằng prototype. để tôi review trước khi làm tiếp.
 ```
 
-Don't spend adversaries on an abstract plan. `/interrogate` drops every finding a run does not prove, so a plan with no code behind it gives them little to break. Let prototypes settle the questions, then review what got built.
+Đừng phí đối thủ vào một kế hoạch trừu tượng. `/interrogate` loại bỏ mọi phát hiện mà một lần chạy không chứng minh được, nên một kế hoạch không có code phía sau cho chúng rất ít thứ để phá. Hãy để prototype giải quyết các câu hỏi, rồi review những gì đã được xây.
 
-## Write the README first for shared code
+## Viết README trước cho code dùng chung
 
-For a package or API that other code will use, start with the doc a user would read:
+Với một package hoặc API mà code khác sẽ dùng, hãy bắt đầu bằng tài liệu mà người dùng sẽ đọc:
 
 ```text
-/poteto-mode write a tutorial for how i would use the new config package first. then /teach me why it beats the current one.
+/poteto-mode viết trước một tutorial về cách tôi sẽ dùng config package mới. rồi /teach tôi tại sao nó tốt hơn cái hiện tại.
 ```
 
-Writing the tutorial first forces the caller's view. You describe the API to a hypothetical user and work back to the implementation. The doc also becomes a concrete target the agent checks its own work against. Name [`/technical-writing`](../../skills/technical-writing/SKILL.md) when the doc itself matters, so a tutorial stays a tutorial instead of drifting into reference and explanation at once.
+Viết tutorial trước buộc bạn nhìn từ góc độ caller. Bạn mô tả API cho một người dùng giả định và đi ngược về phần cài đặt. Tài liệu đó cũng trở thành một mục tiêu cụ thể để agent đối chiếu công việc của chính mình. Gọi tên [`/technical-writing`](../../skills/technical-writing/SKILL.md) khi bản thân tài liệu quan trọng, để một tutorial vẫn là tutorial thay vì trôi dạt thành vừa reference vừa giải thích cùng lúc.
 
-## Plan after the design settles
+## Lập kế hoạch sau khi thiết kế đã chốt
 
-pstack has no planning skill, on purpose. When you do want a written plan, ask for it once the design is settled:
+pstack không có skill lập kế hoạch, và đó là có chủ đích. Khi bạn thật sự muốn một kế hoạch viết ra, hãy yêu cầu nó khi thiết kế đã chốt:
 
 ```text
-/poteto-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.
+/poteto-mode biến thiết kế này thành một kế hoạch. các PR nhỏ có thể kiểm chứng, mỗi PR có các bước kiểm chứng riêng.
 ```
 
-The [Multi-phase plan playbook](../../skills/poteto-mode/playbooks/multi-phase-plan.md) settles any remaining open questions by prototype, then writes one section per PR, each ending in proof that the change works. A passing test suite alone doesn't count as that proof. The plan is the deliverable. The playbook doesn't implement it, and execution starts only when you say go.
+[Playbook Multi-phase plan](../../skills/poteto-mode/playbooks/multi-phase-plan.md) giải quyết mọi câu hỏi mở còn lại bằng prototype, rồi viết mỗi PR một phần, mỗi phần kết thúc bằng bằng chứng rằng thay đổi hoạt động. Chỉ một bộ test pass thôi thì không được tính là bằng chứng đó. Kế hoạch là sản phẩm bàn giao. Playbook không cài đặt nó, và việc thực thi chỉ bắt đầu khi bạn bảo bắt đầu.
 
-For a migration, state the bar in the prompt:
+Với một migration, hãy nói rõ tiêu chuẩn trong prompt:
 
 ```text
-/poteto-mode plan the migration of our ui library to the new styling system. small verifiable PRs, each with visual regression checks. the result must match the original exactly, bugs included.
+/poteto-mode lập kế hoạch migration thư viện ui của chúng ta sang hệ thống styling mới. các PR nhỏ có thể kiểm chứng, mỗi PR có kiểm tra visual regression. kết quả phải khớp chính xác bản gốc, kể cả bug.
 ```
 
-"bugs included" keeps the migration from quietly fixing things on the way, which would make the old and new output impossible to compare. For a project that spans many days, you can commit the plan to the repo for a while so other agents see the work in progress. Delete it when the work lands.
+"kể cả bug" ngăn migration lặng lẽ sửa mọi thứ trên đường đi, điều sẽ khiến output cũ và mới không thể so sánh được. Với một dự án kéo dài nhiều ngày, bạn có thể commit kế hoạch vào repo một thời gian để các agent khác thấy công việc đang tiến hành. Xóa nó khi công việc đã land.
 
-## How much design work does a task deserve?
+## Một task đáng được bao nhiêu công thiết kế?
 
-You might be wondering whether every change needs this. No. Most changes need none of it. A rough ladder:
+Có thể bạn đang tự hỏi liệu mọi thay đổi có cần những điều này không. Không. Phần lớn thay đổi không cần gì trong số đó. Một bậc thang đại khái:
 
-- A small, finished change you're unsure about needs `/interrogate` alone.
-- A change that crosses function boundaries or moves ownership earns `/architect`, which brings `/arena` with it when the design is large or contested.
-- A standalone decision where independent attempts would help, like naming, formats, or an algorithm, is `/arena` directly.
-- A coverage matrix, set of parallel checks, or race with declared arms is `/swarm`.
-- An open question you could answer by running something, like a layout, a timing, or an approach, gets a prototype, not a debate.
-- A contested design that's expensive to reverse gets `/architect`, then `/interrogate` before shipping.
-- Work that spans several PRs gets a plan, written after the design settles.
+- Một thay đổi nhỏ, đã xong mà bạn không chắc chắn chỉ cần `/interrogate`.
+- Một thay đổi vượt qua ranh giới hàm hoặc chuyển quyền sở hữu xứng đáng với `/architect`, skill này kéo theo `/arena` khi thiết kế lớn hoặc gây tranh cãi.
+- Một quyết định độc lập mà các lần thử riêng rẽ sẽ có ích, như đặt tên, định dạng hoặc một thuật toán, thì dùng thẳng `/arena`.
+- Một ma trận bao phủ, một tập phép kiểm tra song song, hoặc một cuộc đua với các nhánh đã khai báo thì dùng `/swarm`.
+- Một câu hỏi mở mà bạn có thể trả lời bằng cách chạy thứ gì đó, như một layout, một số đo thời gian hoặc một cách tiếp cận, thì làm prototype, không tranh luận.
+- Một thiết kế gây tranh cãi và tốn kém để đảo ngược thì dùng `/architect`, rồi `/interrogate` trước khi ship.
+- Công việc trải dài nhiều PR thì cần một kế hoạch, viết sau khi thiết kế đã chốt.
 
-`/poteto-mode` already applies this ladder. Boundary-crossing work triggers `/architect` on its own, so you reach for these directly mainly when you want more or less scrutiny than the default.
+`/poteto-mode` vốn đã áp dụng bậc thang này. Công việc vượt ranh giới tự động kích hoạt `/architect`, nên bạn dùng trực tiếp các skill này chủ yếu khi muốn mức soi xét nhiều hơn hoặc ít hơn mặc định.
 
-Next: [Build and clean the change](./05-build-and-clean.md).
+Tiếp theo: [Xây dựng và dọn dẹp thay đổi](./05-build-and-clean.md).

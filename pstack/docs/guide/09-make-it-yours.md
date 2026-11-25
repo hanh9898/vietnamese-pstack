@@ -1,100 +1,100 @@
-# Make it yours
+# Biến nó thành của bạn
 
-poteto-mode is one person's style. The playbooks, routing, and model roles underneath it work just as well with yours. This page covers generating a personal mode, capturing lessons from a session, fixing the repo so agents stop repeating mistakes, authoring a focused skill, and testing a skill change before you trust it.
+poteto-mode là phong cách của một người. Các playbook, cơ chế định tuyến và vai trò model bên dưới nó hoạt động tốt không kém với phong cách của bạn. Trang này đề cập việc sinh một mode cá nhân, ghi lại bài học từ một session, sửa repo để agent thôi lặp lại lỗi, viết một skill tập trung, và test một thay đổi skill trước khi tin nó.
 
-Start smaller than you think. You don't need many skills on day one, or even this whole plugin. Prompt plainly, watch where agents fail, and add a skill or a check when the same failure shows up twice.
+Hãy bắt đầu nhỏ hơn bạn nghĩ. Bạn không cần nhiều skill ngay ngày đầu, thậm chí không cần cả plugin này. Hãy viết prompt đơn giản, quan sát chỗ agent thất bại, và thêm một skill hoặc một phép kiểm tra khi cùng một lỗi xuất hiện hai lần.
 
-## Generate your own mode with `/automate-me`
+## Sinh mode của riêng bạn với `/automate-me`
 
 ```text
 /automate-me
 ```
 
-You don't describe your style, because [`/automate-me`](../../skills/automate-me/SKILL.md) reads it out of your history. It mines your recent transcripts in the active workspace for repeated preferences, in how you like replies, delegation, verification, code, prose, and process, then asks you which patterns are really you. It drafts `.cursor/skills/<your-name>-mode/SKILL.md` through Cursor's built-in `create-skill` flow, runs the draft through [`/unslop`](../../skills/unslop/SKILL.md), and opens a PR from a worktree so you review it like any other change.
+Bạn không mô tả phong cách của mình, vì [`/automate-me`](../../skills/automate-me/SKILL.md) đọc nó ra từ lịch sử của bạn. Nó đào các transcript gần đây của bạn trong workspace đang hoạt động để tìm các sở thích lặp lại, về cách bạn thích câu trả lời, giao việc, kiểm chứng, code, văn xuôi và quy trình, rồi hỏi bạn những mẫu nào thật sự là bạn. Nó soạn `.cursor/skills/<your-name>-mode/SKILL.md` thông qua luồng `create-skill` có sẵn của Cursor, chạy bản nháp qua [`/unslop`](../../skills/unslop/SKILL.md), và mở một PR từ một worktree để bạn review nó như mọi thay đổi khác.
 
-Run it again whenever your habits drift:
-
-```text
-/automate-me update my mode skill with everything since its last edit
-```
-
-Update mode mines only the history since the skill last changed. It keeps rules you haven't contradicted, revises the ones with new evidence, and adds sections only for new patterns.
-
-## Capture a session's lessons with `/reflect`
-
-Right after a task that taught you something, run:
+Chạy lại nó bất cứ khi nào thói quen của bạn thay đổi:
 
 ```text
-/reflect that took way too long. capture what we learned so the next run doesn't repeat it.
+/automate-me cập nhật mode skill của tôi với mọi thứ kể từ lần sửa cuối của nó
 ```
 
-[`/reflect`](../../skills/reflect/SKILL.md) reads the transcript, keeps only lessons that would change a future agent's work, and sorts the proposals into `Accepted`, `Rejected`, and `Backlog`. It waits for your approval before any skill changes. Approve a proposal only if it would change a future decision. One weird session is an anecdote, not a rule.
+Chế độ cập nhật chỉ đào lịch sử kể từ lần skill thay đổi gần nhất. Nó giữ các quy tắc bạn chưa phản bác, sửa lại những quy tắc có bằng chứng mới, và chỉ thêm phần mới cho các mẫu mới.
 
-## Fix the environment with `/correct`
+## Ghi lại bài học của một session với `/reflect`
 
-When you correct agents for the same mistake again and again, the fix belongs in the repo, not in your next prompt. Rank the options by how well they hold:
-
-1. Make the mistake impossible with architecture or a better data structure.
-2. Block it with types, or with a lint or CI check whose error names the fix.
-3. Catch it with a test.
-4. Write it down as a doc or agent rule. Nothing fails when an agent skips a rule, so this comes last.
-
-Human review isn't on the list. A reviewer who must catch the same mistake on every PR is the problem this fixes. [`/correct`](../../skills/correct/SKILL.md) does the work:
+Ngay sau một task đã dạy bạn điều gì đó, hãy chạy:
 
 ```text
-/correct agents keep calling the database client directly instead of going through the repository layer
+/reflect việc đó tốn quá nhiều thời gian. ghi lại những gì ta đã học để lượt chạy tiếp theo không lặp lại.
 ```
 
-It reads recent commits, reverts, review comments, and comments that explain workarounds, then groups the mistakes into classes. A class counts once it has happened twice. It fixes the most frequent classes one commit each, at the highest level that works, and proves each new check fails on a real past mistake. It also keeps a table in the agent instruction file that pairs each rule with what enforces it, so a rule that nothing enforces shows up as a repeat. The reply lists each class with its evidence, the level chosen, and why a higher level didn't work.
+[`/reflect`](../../skills/reflect/SKILL.md) đọc transcript, chỉ giữ những bài học sẽ thay đổi công việc của một agent trong tương lai, và xếp các đề xuất vào `Accepted`, `Rejected`, và `Backlog`. Nó chờ bạn chấp thuận trước khi thay đổi bất kỳ skill nào. Chỉ chấp thuận một đề xuất nếu nó sẽ thay đổi một quyết định trong tương lai. Một session kỳ quặc là một giai thoại, không phải một quy tắc.
 
-Run it with no argument and it finds the classes from history on its own. `/reflect` and `/correct` split the work. `/reflect` improves skills from one session. `/correct` changes the repo so a mistake class can't come back. Pair it with `/architect` when the fix is a new boundary. [Run many projects in parallel](./07-overnight.md#run-many-projects-in-parallel) has a prompt that does both across a whole repo.
+## Sửa môi trường bằng `/correct`
 
-## Author a focused skill
+Khi bạn sửa agent vì cùng một lỗi hết lần này đến lần khác, bản sửa thuộc về repo, không thuộc về prompt tiếp theo của bạn. Xếp hạng các lựa chọn theo mức độ bền vững:
 
-When you already know the workflow you want to capture:
+1. Làm cho lỗi không thể xảy ra bằng kiến trúc hoặc một cấu trúc dữ liệu tốt hơn.
+2. Chặn nó bằng type, hoặc bằng một lint hay CI check có thông báo lỗi gọi tên cách sửa.
+3. Bắt nó bằng một test.
+4. Viết nó ra thành tài liệu hoặc quy tắc cho agent. Không có gì thất bại khi một agent bỏ qua một quy tắc, nên cách này đứng cuối.
+
+Review của con người không có trong danh sách. Một reviewer phải bắt cùng một lỗi trên mọi PR chính là vấn đề mà cách này sửa. [`/correct`](../../skills/correct/SKILL.md) làm việc đó:
 
 ```text
-/poteto-mode write a skill for verifying database migrations in this repo
+/correct agent cứ gọi trực tiếp database client thay vì đi qua repository layer
 ```
 
-Writing a skill matches the [Authoring or modifying a skill playbook](../../skills/poteto-mode/playbooks/authoring-a-skill.md), which routes through Cursor's built-in `create-skill`, validates the frontmatter and links, and ships the result through the Opening a PR playbook. Agent-facing prose has a higher bar than human prose, because an unhelpful sentence becomes an instruction some future agent follows. Let the playbook hold that bar rather than writing a `SKILL.md` freehand.
+Nó đọc các commit gần đây, các lần revert, comment review, và các comment giải thích cách lách, rồi nhóm các lỗi thành từng loại. Một loại được tính khi nó đã xảy ra hai lần. Nó sửa các loại thường gặp nhất, mỗi loại một commit, ở mức cao nhất có hiệu quả, và chứng minh mỗi phép kiểm tra mới thất bại trên một lỗi thật trong quá khứ. Nó cũng giữ một bảng trong file hướng dẫn cho agent ghép mỗi quy tắc với thứ thực thi nó, nên một quy tắc không có gì thực thi sẽ hiện ra như một lỗi lặp lại. Câu trả lời liệt kê từng loại kèm bằng chứng, mức đã chọn, và lý do một mức cao hơn không hiệu quả.
 
-Two special cases have their own generators. A skill that must drive your app and prove behavior is a verification skill, so use [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md) and [`/maintain-verification-skill`](../../skills/maintain-verification-skill/SKILL.md) instead. A skill that checks a property of your code with a model checker, a proof, or another verifier is a formal verification skill, so use [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md) and [`/maintain-formal-verification-skill`](../../skills/maintain-formal-verification-skill/SKILL.md). [Verify and ship](./06-verify-and-ship.md#prove-a-property-with-a-formal-verification-skill) covers both kinds.
+Chạy nó không có đối số và nó tự tìm các loại lỗi từ lịch sử. `/reflect` và `/correct` chia nhau công việc. `/reflect` cải thiện skill từ một session. `/correct` thay đổi repo để một loại lỗi không thể quay lại. Kết hợp nó với `/architect` khi bản sửa là một ranh giới mới. [Chạy nhiều dự án song song](./07-overnight.md#chạy-nhiều-dự-án-song-song) có một prompt làm cả hai trên toàn bộ một repo.
 
-## Write docs to a standard with `/technical-writing`
+## Viết một skill tập trung
 
-Skills aren't the only prose you ship. For docs, RFCs, readmes, PR descriptions, and commit messages:
+Khi bạn đã biết rõ quy trình mình muốn ghi lại:
 
 ```text
-/technical-writing review the readme changes
+/poteto-mode viết một skill để kiểm chứng database migration trong repo này
 ```
 
-[`/technical-writing`](../../skills/technical-writing/SKILL.md) applies a layered standard. Its goal is prose that a tired engineer understands on the first read. It picks the document's mode first (tutorial, how-to, reference, or explanation), then works sentence by sentence: who does what, one thought per sentence, nothing readable two ways. Use it to review what you or an agent just wrote, or name it up front when you ask for a doc.
+Viết một skill khớp với [playbook Authoring or modifying a skill](../../skills/poteto-mode/playbooks/authoring-a-skill.md), playbook này đi qua `create-skill` có sẵn của Cursor, validate frontmatter và link, và ship kết quả qua playbook Opening a PR. Văn xuôi dành cho agent có tiêu chuẩn cao hơn văn xuôi dành cho người, vì một câu vô ích sẽ trở thành một chỉ dẫn mà agent nào đó trong tương lai làm theo. Hãy để playbook giữ tiêu chuẩn đó thay vì tự tay viết một `SKILL.md`.
 
-## Test a skill change blind
+Hai trường hợp đặc biệt có bộ sinh riêng. Một skill phải điều khiển ứng dụng của bạn và chứng minh hành vi là một verification skill, nên hãy dùng [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md) và [`/maintain-verification-skill`](../../skills/maintain-verification-skill/SKILL.md) thay thế. Một skill kiểm tra một thuộc tính của code bằng model checker, một chứng minh, hoặc một verifier khác là một formal verification skill, nên hãy dùng [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md) và [`/maintain-formal-verification-skill`](../../skills/maintain-formal-verification-skill/SKILL.md). [Kiểm chứng và ship](./06-verify-and-ship.md#chứng-minh-một-thuộc-tính-bằng-formal-verification-skill) đề cập cả hai loại.
 
-A skill edit affects every future session, so test it like the experiment it is. The same goes for adopting someone else's skill. Check that it makes the agent better on your work before you keep it.
+## Viết tài liệu theo chuẩn với `/technical-writing`
+
+Skill không phải là văn xuôi duy nhất bạn ship. Với tài liệu, RFC, readme, mô tả PR và commit message:
 
 ```text
-/poteto-mode run the eval playbook on this skill change. same task for both variants, candidates stay blind.
+/technical-writing review các thay đổi trong readme
 ```
 
-When a skill keeps missing and you know what it should do, change and test it in one task:
+[`/technical-writing`](../../skills/technical-writing/SKILL.md) áp dụng một tiêu chuẩn nhiều lớp. Mục tiêu của nó là văn xuôi mà một kỹ sư mệt mỏi hiểu ngay lần đọc đầu. Nó chọn chế độ của tài liệu trước (tutorial, how-to, reference, hoặc explanation), rồi làm từng câu một: ai làm gì, mỗi câu một ý, không có gì đọc được theo hai cách. Dùng nó để review những gì bạn hoặc một agent vừa viết, hoặc gọi tên nó ngay từ đầu khi bạn yêu cầu một tài liệu.
+
+## Test mù một thay đổi skill
+
+Một chỉnh sửa skill ảnh hưởng đến mọi session trong tương lai, nên hãy test nó như một thí nghiệm đúng nghĩa. Điều tương tự áp dụng khi dùng skill của người khác. Hãy kiểm tra nó làm agent tốt hơn trên công việc của bạn trước khi giữ lại.
 
 ```text
-/poteto-mode update the review skill so it flags missing migrations, and eval the change.
+/poteto-mode chạy playbook eval trên thay đổi skill này. cùng một task cho cả hai biến thể, các ứng viên không được biết.
 ```
 
-Asking for the eval up front keeps the edit honest. A fix written from one bad session tends to overfit that session, and over many edits the skill drifts. The eval catches the drift before it ships.
+Khi một skill cứ trượt và bạn biết nó nên làm gì, hãy thay đổi và test nó trong cùng một task:
 
-The [Eval playbook](../../skills/poteto-mode/playbooks/eval.md) is built around one failure mode, the observer effect. An agent that knows it's being evaluated behaves differently. So candidate agents get an organic-looking task in sanitized directories, never the words "eval" or "candidate", and never each other's existence. One judge scores all outputs under neutral labels, and chain-following gets graded from which files each candidate actually read, not from what it claims.
+```text
+/poteto-mode cập nhật review skill để nó gắn cờ các migration bị thiếu, và eval thay đổi đó.
+```
 
-Read every output yourself before accepting the verdict. If you disagree with the judge, suspect the rubric before you suspect your judgment.
+Yêu cầu eval ngay từ đầu giữ cho chỉnh sửa trung thực. Một bản sửa viết ra từ một session tồi thường overfit với session đó, và qua nhiều lần sửa skill sẽ trôi dạt. Eval bắt được sự trôi dạt trước khi nó được ship.
 
-## Build a bot UI with `/make-bot-ui`
+[Playbook Eval](../../skills/poteto-mode/playbooks/eval.md) được xây quanh một kiểu thất bại, hiệu ứng người quan sát. Một agent biết mình đang bị đánh giá sẽ hành xử khác đi. Nên các agent ứng viên nhận một task trông tự nhiên trong các thư mục đã được làm sạch, không bao giờ thấy chữ "eval" hay "candidate", và không bao giờ biết sự tồn tại của nhau. Một giám khảo chấm mọi output dưới các nhãn trung lập, và việc đi theo chuỗi chỉ dẫn được chấm dựa trên những file mỗi ứng viên thật sự đã đọc, không phải những gì nó tuyên bố.
 
-One situational skill is for Grok Bot users. [`/make-bot-ui`](../../skills/make-bot-ui/SKILL.md) builds a small page whose buttons wake a bot over a webhook routine. For example, you could swipe through a review queue and have each swipe ask the bot to act on that item. A server on your machine holds the webhook's sender key, so the key never reaches the browser or the chat. The skill also covers exposing the page on Tailscale.
+Hãy tự đọc mọi output trước khi chấp nhận phán quyết. Nếu bạn không đồng ý với giám khảo, hãy nghi ngờ rubric trước khi nghi ngờ phán đoán của mình.
 
-**Pitfall:** don't edit a skill mid-task because it's misbehaving. Fix it in its own PR and keep the task moving. A skill edit that ships tangled into feature work is invisible to review and impossible to evaluate.
+## Xây UI cho bot với `/make-bot-ui`
 
-Next: [Recipes and pitfalls](./10-recipes-and-pitfalls.md).
+Một skill tình huống dành cho người dùng Grok Bot. [`/make-bot-ui`](../../skills/make-bot-ui/SKILL.md) xây một trang nhỏ có các nút đánh thức một bot qua một routine webhook. Ví dụ, bạn có thể vuốt qua một hàng đợi review và mỗi lần vuốt yêu cầu bot hành động trên mục đó. Một server trên máy của bạn giữ sender key của webhook, nên key không bao giờ đến được browser hay chat. Skill cũng đề cập việc công khai trang trên Tailscale.
+
+**Cạm bẫy:** đừng sửa một skill giữa chừng task chỉ vì nó đang hoạt động sai. Hãy sửa nó trong PR riêng và giữ cho task tiếp tục. Một chỉnh sửa skill được ship lẫn vào công việc feature thì vô hình với review và không thể đánh giá được.
+
+Tiếp theo: [Công thức và cạm bẫy](./10-recipes-and-pitfalls.md).

@@ -1,79 +1,79 @@
-# Understand the code before changing it
+# Hiểu code trước khi thay đổi nó
 
-Editing code you don't understand is how subtle regressions ship, and that's as true for the agent as for you. Agents usually fail in one of two ways. They misread what you want, or they don't have the context to do the work right. [What goes in a prompt](./02-poteto-mode.md#what-goes-in-a-prompt) handles the first. This page handles the second.
+Sửa code bạn không hiểu là cách những lỗi hồi quy khó thấy lọt ra production, và điều đó đúng với agent cũng như với bạn. Agent thường thất bại theo một trong hai cách. Chúng hiểu sai điều bạn muốn, hoặc chúng không có đủ context để làm đúng việc. [Prompt nên chứa gì](./02-poteto-mode.md#prompt-nên-chứa-gì) xử lý cách thứ nhất. Trang này xử lý cách thứ hai.
 
-pstack gives you four ways in. `/how` explains what the code does now. `/why` digs up the reasons it's shaped that way. `/teach` blends both into one explanation. `/recall` rebuilds your own recent context on a topic. Each one also makes the agent explain itself in words you can check. That's how you supervise an agent that may know the code better than you do.
+pstack cho bạn bốn lối vào. `/how` giải thích code hiện đang làm gì. `/why` đào ra lý do nó có hình dạng như vậy. `/teach` hòa cả hai thành một lời giải thích. `/recall` dựng lại context gần đây của chính bạn về một chủ đề. Mỗi cái cũng buộc agent tự giải thích bằng lời mà bạn có thể kiểm tra. Đó là cách bạn giám sát một agent có thể hiểu code rõ hơn bạn.
 
-![A detective studies a machine blueprint with a magnifying glass while robots fetch case files; the evidence board behind her links clues under /how and /why.](./images/understanding.jpg)
+![Một thám tử xem xét bản thiết kế máy móc bằng kính lúp trong khi các robot mang hồ sơ vụ án đến; bảng bằng chứng phía sau cô nối các manh mối dưới /how và /why.](./images/understanding.jpg)
 
-## Start with a read-only investigation
+## Bắt đầu bằng một cuộc điều tra chỉ đọc
 
-When the cause is unclear, ask for findings, not a fix:
-
-```text
-/poteto-mode investigate why background jobs time out every few hours. give me what we know, what data you used, and your best hypotheses. don't change any code yet.
-```
-
-"don't change any code yet" routes this to the [Investigation playbook](../../skills/poteto-mode/playbooks/investigation.md). It traces the code, adds `/why` for questions about motivation, and returns a cited explanation. For a choice between options, it returns a recommendation with a trade-offs table. Asking "what data you used" makes the agent separate its evidence from its guesses. When the findings point at a fix, start the fix as a new task.
-
-## Trace behavior with `/how`
+Khi nguyên nhân chưa rõ, hãy yêu cầu phát hiện, không phải bản sửa:
 
 ```text
-/how do we dedupe notifications? is there an n+1 when we look up subscribers?
+/poteto-mode điều tra tại sao các background job bị timeout vài tiếng một lần. cho tôi biết những gì ta đã biết, dữ liệu bạn đã dùng, và các giả thuyết tốt nhất của bạn. chưa thay đổi code nào.
 ```
 
-Ask the question you actually have. [`/how`](../../skills/how/SKILL.md) reads the code and answers at the level of a senior engineer onboarding you onto the subsystem, with the runtime flow, the key types, and the non-obvious parts. It starts one read-only subagent that explores the code and writes the explanation.
+"chưa thay đổi code nào" chuyển việc này sang [playbook Investigation](../../skills/poteto-mode/playbooks/investigation.md). Nó lần theo code, thêm `/why` cho các câu hỏi về động cơ, và trả về một lời giải thích có trích dẫn. Với một lựa chọn giữa các phương án, nó trả về một đề xuất kèm bảng đánh đổi. Hỏi "dữ liệu bạn đã dùng" buộc agent tách bằng chứng khỏi phỏng đoán. Khi các phát hiện chỉ ra một bản sửa, hãy bắt đầu bản sửa đó như một task mới.
 
-## Dig up history with `/why`
+## Lần theo hành vi với `/how`
 
 ```text
-/why was the retry limit set to five? does the reason still hold?
+/how chúng ta khử trùng lặp thông báo thế nào? có bị n+1 khi tra cứu subscriber không?
 ```
 
-[`/why`](../../skills/why/SKILL.md) answers from the record, not the code. It reads the commits and PR discussions that introduced the code and each later change, and looks at other sources when that trail is thin. The answer cites what the authors wrote, marks the agent's own inferences as inferences, and says what the record does not answer, because "nobody wrote down why" is itself an answer.
+Hãy hỏi đúng câu hỏi bạn đang có. [`/how`](../../skills/how/SKILL.md) đọc code và trả lời ở mức một kỹ sư senior đang hướng dẫn bạn làm quen subsystem, với luồng runtime, các type chính, và những phần không hiển nhiên. Nó khởi chạy một subagent chỉ đọc để khám phá code và viết lời giải thích.
 
-The two compose naturally. `do why first then how` is a good prompt when you suspect the history explains the mess.
-
-## Actually understand it with `/teach`
+## Đào lịch sử với `/why`
 
 ```text
-/teach me how this PR changes retries. convince me it fixes the cause and not the symptom.
+/why giới hạn retry được đặt là năm? lý do đó còn đúng không?
 ```
 
-[`/teach`](../../skills/teach/SKILL.md) is for when a summary isn't enough. It runs `/how` and `/why`, for a small change maybe just one of them, and weaves the findings into a plain explanation that builds up diagram by diagram. The "convince me" framing is worth reusing. It turns the explanation into an argument you can test instead of a tour.
+[`/why`](../../skills/why/SKILL.md) trả lời từ hồ sơ lịch sử, không phải từ code. Nó đọc các commit và thảo luận PR đã tạo ra đoạn code đó và từng thay đổi sau đó, và xem các nguồn khác khi dấu vết đó mỏng. Câu trả lời trích dẫn những gì tác giả đã viết, đánh dấu suy luận của agent là suy luận, và nói rõ hồ sơ không trả lời được điều gì, vì "không ai ghi lại lý do" tự nó cũng là một câu trả lời.
 
-It works on the agent's own choices too:
+Hai skill này kết hợp với nhau rất tự nhiên. `làm why trước rồi how` là một prompt tốt khi bạn nghi rằng lịch sử giải thích được mớ hỗn độn.
+
+## Thật sự hiểu nó với `/teach`
 
 ```text
-/teach me why you implemented it this way and not with a queue. what did you trade off, and why?
+/teach tôi cách PR này thay đổi retry. thuyết phục tôi rằng nó sửa nguyên nhân chứ không phải triệu chứng.
 ```
 
-Teaching helps the agent as much as you. An agent that has to explain its work must read the code and back each claim with evidence, instead of stating it confidently and moving on.
+[`/teach`](../../skills/teach/SKILL.md) dành cho khi một bản tóm tắt là không đủ. Nó chạy `/how` và `/why`, với thay đổi nhỏ có thể chỉ một trong hai, và đan các phát hiện thành một lời giải thích đơn giản được xây dần qua từng sơ đồ. Cách đặt vấn đề "thuyết phục tôi" rất đáng dùng lại. Nó biến lời giải thích thành một lập luận bạn có thể kiểm tra thay vì một chuyến tham quan.
 
-## Rebuild your own context with `/recall`
+Nó cũng hoạt động với chính các lựa chọn của agent:
 
 ```text
-/recall catch me up on the export work from last week
+/teach tôi tại sao bạn cài đặt theo cách này mà không dùng queue. bạn đã đánh đổi những gì, và tại sao?
 ```
 
-[`/recall`](../../skills/recall/SKILL.md) mines your own recent chats plus the shared record (issues, prior fixes, errors still firing) and hands back a brief on where things stand and what's next. Your old chats hold context that a fresh agent lacks, so start new work on an old topic by loading it first, then hand over the new input:
+Việc dạy giúp ích cho agent nhiều như cho bạn. Một agent phải giải thích công việc của mình thì phải đọc code và chống lưng mỗi khẳng định bằng bằng chứng, thay vì nói một cách tự tin rồi đi tiếp.
+
+## Dựng lại context của chính bạn với `/recall`
 
 ```text
-/recall my work on the virtualized list from yesterday, then read this bug report.
+/recall cập nhật cho tôi về công việc export tuần trước
 ```
 
-If you want to resume one specific chat, that's the Session pickup playbook below, not `/recall`.
-
-## Take over prior work with Session pickup
-
-When another agent (or you, last week) left a branch mid-flight:
+[`/recall`](../../skills/recall/SKILL.md) đào các chat gần đây của chính bạn cùng hồ sơ chung (issue, các bản sửa trước, những lỗi vẫn đang phát sinh) và trả về một bản tóm tắt về tình hình hiện tại và việc tiếp theo. Các chat cũ của bạn chứa context mà một agent mới không có, nên hãy bắt đầu công việc mới về một chủ đề cũ bằng cách nạp nó trước, rồi mới đưa đầu vào mới:
 
 ```text
-/poteto-mode take over this branch. read the decision log, figure out what's done, and continue from there. don't redo finished work.
+/recall công việc của tôi về virtualized list hôm qua, rồi đọc báo cáo bug này.
 ```
 
-The [Session pickup playbook](../../skills/poteto-mode/playbooks/session-pickup.md) treats the prior trail as authoritative. It reconstructs the branch state and decisions, names the resume point, and verifies inherited claims against the original goal instead of re-deriving everything from scratch.
+Nếu bạn muốn tiếp tục một chat cụ thể, đó là playbook Session pickup bên dưới, không phải `/recall`.
 
-**Pitfall:** don't skip this page's skills because "the agent will read the code anyway." An agent that starts editing without a traced model tends to fix the symptom at the first plausible spot. `/how` first is cheaper than the second bug.
+## Tiếp quản công việc trước đó với Session pickup
 
-Next: [Design the change](./04-design.md).
+Khi một agent khác (hoặc chính bạn, tuần trước) để lại một branch đang làm dở:
+
+```text
+/poteto-mode tiếp quản branch này. đọc nhật ký quyết định, xác định những gì đã xong, và tiếp tục từ đó. đừng làm lại việc đã xong.
+```
+
+[Playbook Session pickup](../../skills/poteto-mode/playbooks/session-pickup.md) coi dấu vết trước đó là nguồn chính thống. Nó dựng lại trạng thái branch và các quyết định, gọi tên điểm tiếp tục, và kiểm chứng các khẳng định được thừa hưởng so với mục tiêu ban đầu thay vì suy ra lại mọi thứ từ đầu.
+
+**Cạm bẫy:** đừng bỏ qua các skill trong trang này vì "dù sao agent cũng sẽ đọc code." Một agent bắt đầu sửa khi chưa có mô hình đã được lần theo thường sửa triệu chứng ở chỗ hợp lý đầu tiên. `/how` trước thì rẻ hơn bug thứ hai.
+
+Tiếp theo: [Thiết kế thay đổi](./04-design.md).
