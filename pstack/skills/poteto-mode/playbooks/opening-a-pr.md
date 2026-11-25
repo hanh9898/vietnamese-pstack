@@ -1,9 +1,9 @@
 ### Opening a PR
 
-Invoked at the end of every other playbook.
+Được gọi ở cuối mọi playbook khác.
 
-Work from a git worktree off trunk, and keep unrelated work out of it. Rebase into small, landable commits. Run `/deslop` from `cursor-team-kit` over the diff before commit.
+Làm việc từ một git worktree tách ra từ trunk, và giữ công việc không liên quan bên ngoài nó. Rebase thành các commit nhỏ, có thể land được. Chạy `/deslop` từ `cursor-team-kit` trên diff trước khi commit.
 
-Title: `type(scope): subject`, naming a real symbol when one carries the change. Body: a one-minute briefing under 40 lines with these `##` headings in order, dropping empty ones: `## Why`, `## What changed`, `## Scope`, `## Tradeoffs` (only rejected alternatives a reviewer would otherwise ask about), `## Blast Radius`, `## Verification`.
+Tiêu đề: `type(scope): subject`, gọi tên một symbol thật khi có một symbol mang thay đổi. Thân: một bản tóm tắt đọc trong một phút, dưới 40 dòng, với các heading `##` này theo thứ tự, bỏ những heading trống: `## Why`, `## What changed`, `## Scope`, `## Tradeoffs` (chỉ những phương án đã bị loại mà reviewer sẽ hỏi đến nếu không có), `## Blast Radius`, `## Verification`.
 
-Stack follow-ups by base branch. Open PRs ready, through the run's PR tool with `draft: false`. Without one, use `gh pr create` without `--draft`, or `origin pr create --status open` when Origin's CLI resolves the repository. Opening a PR does not start a babysit.
+Xếp chồng các follow-up theo base branch. Mở PR ở trạng thái sẵn sàng, qua PR tool của lượt chạy với `draft: false`. Nếu không có tool đó, dùng `gh pr create` không kèm `--draft`, hoặc `origin pr create --status open` khi CLI của Origin phân giải được repository. Mở một PR không khởi động babysit.

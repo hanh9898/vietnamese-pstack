@@ -1,12 +1,12 @@
 ### Authoring or modifying a skill
 
-**You own the skill's voice.**
+**Bạn sở hữu giọng văn của skill.**
 
-1. Use the **create-skill** skill (Cursor's built-in for authoring SKILL.md files).
-2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
-3. Test cases if structural. Skip if subjective.
-4. Run **Opening a PR**.
+1. Dùng skill **create-skill** (skill có sẵn của Cursor để viết các file SKILL.md).
+2. Validate skill: frontmatter có `name` và `description`, các file được tham chiếu tồn tại, các link giữa các skill phân giải được.
+3. Viết test case nếu mang tính cấu trúc. Bỏ qua nếu mang tính chủ quan.
+4. Chạy **Opening a PR**.
 
-When in doubt, delete. Keep only prose that changes a decision. Tell it to do the thing and skip the reason. Explain only when the rule is confusing without one. Match tone to scope. Point at structural sources (types, READMEs, config) per the **encode-lessons-in-structure** principle skill. Delegate to other skills by path. Don't restate. A workflow you keep hitting but isn't captured → propose a new skill.
+Khi còn nghi ngờ, hãy xóa. Chỉ giữ văn xuôi làm thay đổi một quyết định. Bảo nó làm việc đó và bỏ qua lý do. Chỉ giải thích khi quy tắc gây khó hiểu nếu thiếu lời giải thích. Khớp giọng văn với phạm vi. Trỏ đến các nguồn mang tính cấu trúc (type, README, config) theo principle skill **encode-lessons-in-structure**. Giao việc cho các skill khác bằng đường dẫn. Đừng nhắc lại. Một workflow bạn cứ gặp lại mà chưa được ghi lại → đề xuất một skill mới.
 
-**Reply:** summary of the skill, key design decisions, validation notes.
+**Câu trả lời:** tóm tắt skill, các quyết định thiết kế chính, ghi chú validation.
