@@ -1,10 +1,10 @@
 ### Pause safely
 
-**You own a clean stop. Leave a checkpoint a cold-start agent can resume from.** This is explicit only. On "keep going", "going to bed, keep going", or "don't stop", do not pause.
+**Bạn sở hữu một lần dừng sạch sẽ. Để lại một checkpoint mà một agent khởi động lạnh có thể tiếp tục từ đó.** Việc này chỉ diễn ra khi được yêu cầu rõ ràng. Với "cứ làm tiếp", "đi ngủ đây, cứ làm tiếp", hoặc "đừng dừng", đừng tạm dừng.
 
-1. Stop at a safe boundary. Finish the current atomic step or back out of it. Start nothing new, and cancel any nested subagents.
-2. Take no irreversible action to pause. No PR and no push unless you already had one out.
-3. Make the work durable. Commit uncommitted edits as one clear `wip:` commit on the current branch so nothing is lost. If the tree is broken, say so in the commit body in one line.
-4. Write the resume note off-context. Capture intent, what you were doing, progress and what's verified, current state, next steps, key files, and gotchas. For the compaction trigger write it to a file like `/tmp/<slug>-resume.md`. If a show-me-your-work trail exists, point at it instead of duplicating it.
+1. Dừng ở một ranh giới an toàn. Hoàn tất bước nguyên tử hiện tại hoặc lùi khỏi nó. Không bắt đầu gì mới, và hủy mọi subagent lồng nhau.
+2. Không thực hiện hành động không thể đảo ngược nào để tạm dừng. Không PR và không push trừ khi bạn đã có sẵn một cái.
+3. Làm cho công việc bền vững. Commit các chỉnh sửa chưa commit thành một commit `wip:` rõ ràng trên branch hiện tại để không mất gì. Nếu tree đang hỏng, hãy nói vậy trong thân commit bằng một dòng.
+4. Viết ghi chú tiếp tục ra ngoài context. Ghi lại ý định, việc bạn đang làm, tiến độ và những gì đã kiểm chứng, trạng thái hiện tại, các bước tiếp theo, các file chính, và các cạm bẫy. Với trigger compaction, hãy ghi nó vào một file như `/tmp/<slug>-resume.md`. Nếu đã có một dấu vết show-me-your-work, hãy trỏ đến nó thay vì sao chép.
 
-**Reply:** where you are in the loop, what's on disk versus still in your head (paths, no diff dumps), the commits you made and whether the tree is clean, and the first action on resume. This is a pause, not a final report.
+**Câu trả lời:** bạn đang ở đâu trong vòng lặp, những gì đã nằm trên đĩa so với những gì vẫn còn trong đầu bạn (đường dẫn, không dump diff), các commit bạn đã tạo và tree có sạch không, và hành động đầu tiên khi tiếp tục. Đây là một lần tạm dừng, không phải báo cáo cuối cùng.

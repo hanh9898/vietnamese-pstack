@@ -1,51 +1,51 @@
-# Prompts worth copying
+# Các prompt đáng sao chép
 
-Swap in the real paths, skills, and done checks. Informal wording works.
+Thay vào đường dẫn, skill, và phép kiểm tra hoàn thành thật. Cách diễn đạt thân mật cũng được.
 
-## Understand
+## Hiểu
 
-- `/poteto-mode read <thread>. restate the underlying issue in your own words, in plain english.`
-- `/in-your-own-words <long or messy ask>`
-- `/sharpen <the prompt you're about to send>`
-- `/poteto-mode investigate why <symptom>. give me what we know, what data you used, and your best hypotheses. don't change any code yet.`
-- `use /how to understand <subsystem>. then use /why to find out why it broke recently.`
-- `/recall my work on <topic> from last week, then read <issue>.`
-- `/teach me why you implemented it this way and not <other way>. what did you trade off?`
-- `/poteto-mode take over this branch. read the decision log, find what's done, and continue. don't redo finished work.`
+- `/poteto-mode đọc <thread>. nhắc lại vấn đề gốc bằng lời của bạn, bằng ngôn ngữ đơn giản.`
+- `/in-your-own-words <yêu cầu dài hoặc lộn xộn>`
+- `/sharpen <prompt bạn sắp gửi>`
+- `/poteto-mode điều tra tại sao <triệu chứng>. cho tôi biết những gì ta đã biết, dữ liệu bạn đã dùng, và các giả thuyết tốt nhất của bạn. chưa sửa code.`
+- `dùng /how để hiểu <subsystem>. rồi dùng /why để tìm hiểu tại sao gần đây nó bị hỏng.`
+- `/recall việc tôi làm với <chủ đề> tuần trước, rồi đọc <issue>.`
+- `/teach tôi tại sao bạn cài đặt theo cách này mà không phải <cách khác>. bạn đã đánh đổi gì?`
+- `/poteto-mode tiếp quản branch này. đọc log quyết định, tìm những gì đã xong, và tiếp tục. đừng làm lại việc đã xong.`
 
-## Build
+## Xây dựng
 
-- Bug: `/poteto-mode <symptom>. repro first, then fix and verify.`
-- Bug in an app: `/poteto-mode repro this with /verify-<app>. if it repros on main, fix it and show me a video as proof.`
-- Bug with a cheap test: `/poteto-mode repro <bug> first. if there's a cheap test path, /tdd it. then fix and rerun.`
-- Feature: `/poteto-mode add <behavior>. <current output> stays byte-identical. verify both.`
-- Refactor: `/poteto-mode move <code> into one module, zero behavior change. record the current output first and prove it's unchanged after.`
-- Perf: `/poteto-mode <operation> takes <time> on <fixture>. trace it, fix the measured cause, show me before and after.`
+- Bug: `/poteto-mode <triệu chứng>. tái hiện trước, rồi sửa và kiểm chứng.`
+- Bug trong một app: `/poteto-mode tái hiện cái này bằng /verify-<app>. nếu nó tái hiện được trên main, hãy sửa và cho tôi xem một video làm bằng chứng.`
+- Bug có test rẻ: `/poteto-mode tái hiện <bug> trước. nếu có đường test rẻ, dùng /tdd. rồi sửa và chạy lại.`
+- Feature: `/poteto-mode thêm <hành vi>. <output hiện tại> giữ nguyên từng byte. kiểm chứng cả hai.`
+- Refactor: `/poteto-mode chuyển <code> vào một module, không thay đổi hành vi. ghi lại output hiện tại trước và chứng minh nó không đổi sau đó.`
+- Hiệu năng: `/poteto-mode <thao tác> mất <thời gian> trên <fixture>. trace nó, sửa nguyên nhân đã đo được, cho tôi xem trước và sau.`
 
-## Design and plan
+## Thiết kế và lập kế hoạch
 
-- `/poteto-mode prototype a few options for <feature>. take screenshots or videos for me to compare.`
-- `/poteto-mode we need <feature>. /architect it first, and answer open questions with prototypes. let me review before proceeding.`
-- `/poteto-mode write a tutorial for how i would use <new package> first. then /teach me why it beats the current one.`
-- `ask /arena for a second opinion on this thread and our approach.`
-- `/poteto-mode turn this design into a plan. small verifiable PRs, each with its own verification steps.`
-- `/poteto-mode plan the migration of <library> to <target>. small verifiable PRs. the result must match the original exactly, bugs included.`
+- `/poteto-mode làm prototype vài phương án cho <feature>. chụp screenshot hoặc quay video để tôi so sánh.`
+- `/poteto-mode ta cần <feature>. dùng /architect trước, và trả lời các câu hỏi còn mở bằng prototype. để tôi review trước khi làm tiếp.`
+- `/poteto-mode viết một tutorial về cách tôi sẽ dùng <package mới> trước. rồi /teach tôi tại sao nó tốt hơn cái hiện tại.`
+- `hỏi /arena ý kiến thứ hai về thread này và cách tiếp cận của ta.`
+- `/poteto-mode biến thiết kế này thành một kế hoạch. các PR nhỏ kiểm chứng được, mỗi PR có các bước kiểm chứng riêng.`
+- `/poteto-mode lập kế hoạch migration <thư viện> sang <mục tiêu>. các PR nhỏ kiểm chứng được. kết quả phải khớp chính xác với bản gốc, kể cả bug.`
 
-## Review and ship
+## Review và ship
 
-- `/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Read the Dropped list too.
-- `/create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` After merges or refactors in that code: `/maintain-formal-verification-skill`.
-- `/swarm check every package under <dir> against its check script. one worker per package. one report.`
-- `/poteto-mode open the pr. small ordered commits, evidence in the description.`
-- `/poteto-mode babysit this pr. get it green.` For status only: `/poteto-mode check on pr <number>. anything outstanding?`
-- `/poteto-mode land the stack.`
+- `/interrogate toàn bộ branch, nhưng với thái độ hoài nghi. chưa thay đổi gì. không bắt lỗi vặt trừ khi đó là bug hoặc hồi quy thật.` Đọc cả danh sách Đã bỏ.
+- `/create-formal-verification-skill chứng minh <tính chất> đúng trong <module>, kể cả khi <các bước> xen kẽ nhau hoặc retry.` Sau các lần merge hoặc refactor trong code đó: `/maintain-formal-verification-skill`.
+- `/swarm kiểm tra mọi package trong <dir> với check script của nó. mỗi package một worker. một báo cáo.`
+- `/poteto-mode mở pr. các commit nhỏ có thứ tự, bằng chứng trong mô tả.`
+- `/poteto-mode babysit pr này. làm cho nó xanh.` Chỉ để xem trạng thái: `/poteto-mode kiểm tra pr <số>. còn gì tồn đọng không?`
+- `/poteto-mode land stack.`
 
-## Away and back
+## Rời đi và quay lại
 
-- `/poteto-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. /loop until done. if you're truly stuck after a few hours, stop and write up why.`
-- `/show-me-your-work catch me up on what you did last night.` Read its Attention section first.
-- `/ketchup` catches you up on this chat since your last message and lists every call that waits on you.
-- `/poteto-mode full autopilot on this queue. each item is independent.`
-- `/poteto-mode autopilot these changes, but don't merge. i'll land them.`
-- `/reflect capture what we learned so the next run doesn't repeat it.` Approve only edits that change a future decision.
-- `/bro` restates the last reply in plain words.
+- `/poteto-mode tôi đi ngủ đây. <mục tiêu> trong một worktree mới tách từ <base>. xong nghĩa là <các phép kiểm tra>. giữ một log quyết định. đừng hỏi tôi trước khi commit. /loop cho đến khi xong. nếu bạn thật sự bị kẹt sau vài giờ, hãy dừng và viết ra lý do.`
+- `/show-me-your-work cập nhật cho tôi những gì bạn đã làm đêm qua.` Đọc phần Attention của nó trước.
+- `/ketchup` cập nhật cho bạn về chat này kể từ tin nhắn cuối của bạn và liệt kê mọi quyết định đang chờ bạn.
+- `/poteto-mode autopilot toàn phần cho hàng đợi này. mỗi mục độc lập.`
+- `/poteto-mode autopilot các thay đổi này, nhưng đừng merge. tôi sẽ tự land chúng.`
+- `/reflect ghi lại những gì ta đã học để lượt chạy tiếp theo không lặp lại.` Chỉ phê duyệt các chỉnh sửa thay đổi một quyết định trong tương lai.
+- `/bro` nhắc lại câu trả lời cuối bằng lời lẽ đơn giản.

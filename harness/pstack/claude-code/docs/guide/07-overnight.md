@@ -1,122 +1,122 @@
-# Run work while you sleep
+# Chạy công việc trong khi bạn ngủ
 
-This is the payoff for everything before it. An agent you can trust to verify its own work is an agent you can leave alone with a hard task. What makes that safe isn't hope. It's a checkable finish condition, an isolated worktree or cloud agent, and a decision log you audit in the morning.
+Đây là phần thưởng cho mọi thứ trước đó. Một agent bạn tin là sẽ tự kiểm chứng công việc của mình là một agent bạn có thể để lại một mình với một task khó. Điều làm việc đó an toàn không phải là hy vọng. Đó là một điều kiện hoàn thành có thể kiểm tra, một worktree hoặc cloud agent tách biệt, và một nhật ký quyết định bạn kiểm toán vào buổi sáng.
 
-![She waves goodnight from the door while robots keep the factory running, one updating a DECISION LOG wall board under a BUILD LOOP ACTIVE sign.](./images/overnight.jpg)
+![Cô ấy vẫy tay chúc ngủ ngon từ cửa trong khi các robot giữ cho nhà máy chạy, một robot đang cập nhật bảng DECISION LOG trên tường dưới biển BUILD LOOP ACTIVE.](./images/overnight.jpg)
 
-## Earn the trust before the loop
+## Giành được lòng tin trước khi chạy vòng lặp
 
-A loop you don't trust just produces unchecked work faster, and the mess compounds with every iteration. Before you leave one running, check that it has earned it:
+Một vòng lặp bạn không tin chỉ tạo ra công việc chưa kiểm tra nhanh hơn, và mớ hỗn độn tích lũy sau mỗi vòng. Trước khi để một vòng lặp chạy, hãy kiểm tra nó đã xứng đáng chưa:
 
-- You've done the task once by hand, or watched an agent do it, so you know what good looks like.
-- The agent has the tools and signals you'd use yourself: the verification skill, the profiler, the logs.
-- Every stage proves its work and can stop the line when the work misses the bar.
-- You've read a few transcripts and turned the repeated failures into tools, skills, or checks.
+- Bạn đã tự tay làm task này một lần, hoặc đã xem một agent làm, nên bạn biết thế nào là tốt.
+- Agent có các công cụ và tín hiệu mà chính bạn sẽ dùng: verification skill, profiler, log.
+- Mỗi giai đoạn chứng minh công việc của nó và có thể dừng dây chuyền khi công việc không đạt chuẩn.
+- Bạn đã đọc vài transcript và biến những thất bại lặp lại thành công cụ, skill, hoặc phép kiểm tra.
 
-Make the loop autonomous only after all four hold. Until then, run it while you watch.
+Chỉ để vòng lặp tự chủ sau khi cả bốn điều trên đều đúng. Trước đó, hãy chạy nó trong khi bạn theo dõi.
 
-## The overnight contract
+## Hợp đồng qua đêm
 
-A good handoff has the goal, the finish condition, permissions, and an escape hatch. It doesn't need to be long:
+Một lần bàn giao tốt có mục tiêu, điều kiện hoàn thành, quyền hạn, và một lối thoát. Nó không cần dài:
 
 ```text
-/poteto-mode im going to bed. migrate every caller to the new parser in a fresh worktree off <base>.
-done means zero old callers, all parser fixtures pass, old api deleted.
-keep a decision log. don't ask me before committing.
-/loop until done. if you're truly stuck after a few hours, stop and write up why.
+/poteto-mode tôi đi ngủ đây. migrate mọi caller sang parser mới trong một worktree mới tách từ <base>.
+xong nghĩa là không còn caller cũ nào, mọi parser fixture đều pass, api cũ đã bị xóa.
+giữ một nhật ký quyết định. đừng hỏi tôi trước khi commit.
+/loop đến khi xong. nếu bạn thật sự bế tắc sau vài tiếng, hãy dừng lại và viết ra lý do.
 ```
 
-Walk through what each line buys you:
+Xem qua mỗi dòng mang lại cho bạn điều gì:
 
-- "im going to bed" is a session override. The agent stops asking and keeps going.
-- "done means..." turns the goal into checks every iteration can run.
-- "fresh worktree off `<base>`" keeps the run from colliding with anything else you have open.
-- "don't ask me before committing" pre-answers the permission the agent would otherwise block on.
-- `/loop` is Cursor's built-in wake mechanism, not a pstack skill. The [Autonomous run playbook](../../skills/poteto-mode/playbooks/autonomous-run.md) uses it to re-check the finish condition on events or a heartbeat.
-- The escape hatch lets it stop at a genuine dead end and write up why, which beats eight hours of creative goal reinterpretation.
+- "tôi đi ngủ đây" là một lệnh ghi đè cho session. Agent thôi hỏi và cứ làm tiếp.
+- "xong nghĩa là..." biến mục tiêu thành các phép kiểm tra mà mọi vòng lặp đều chạy được.
+- "worktree mới tách từ `<base>`" giữ cho lượt chạy không va chạm với bất cứ thứ gì khác bạn đang mở.
+- "đừng hỏi tôi trước khi commit" trả lời trước câu hỏi về quyền mà nếu không agent sẽ dừng lại chờ.
+- `/loop` là cơ chế đánh thức có sẵn của Cursor, không phải một skill của pstack. [Playbook Autonomous run](../../skills/poteto-mode/playbooks/autonomous-run.md) dùng nó để kiểm tra lại điều kiện hoàn thành theo sự kiện hoặc theo nhịp heartbeat.
+- Lối thoát cho phép nó dừng ở một ngõ cụt thật sự và viết ra lý do, điều tốt hơn tám tiếng diễn giải lại mục tiêu một cách sáng tạo.
 
-Because you'll review this work after stepping away, `/poteto-mode` routes it through [`/figure-it-out`](../../skills/figure-it-out/SKILL.md), which designs the run's phases before any code and wires in the decision log.
+Vì bạn sẽ review công việc này sau khi rời đi, `/poteto-mode` chuyển nó qua [`/figure-it-out`](../../skills/figure-it-out/SKILL.md), skill này thiết kế các giai đoạn của lượt chạy trước khi có bất kỳ code nào và nối vào nhật ký quyết định.
 
-To stop a run on purpose, tell the agent to pause, or that you're about to go offline or restart Cursor. The [Pause safely playbook](../../skills/poteto-mode/playbooks/pause-safely.md) finishes or backs out of the current step, commits a work-in-progress checkpoint, and writes a resume note. A fresh chat picks the work up from that note through the Session pickup playbook. Saying "keep going" never triggers a pause.
+Để chủ động dừng một lượt chạy, hãy bảo agent tạm dừng, hoặc rằng bạn sắp offline hoặc khởi động lại Cursor. [Playbook Pause safely](../../skills/poteto-mode/playbooks/pause-safely.md) hoàn tất hoặc lùi khỏi bước hiện tại, commit một checkpoint đang làm dở, và viết một ghi chú để tiếp tục. Một chat mới nhận lại công việc từ ghi chú đó thông qua playbook Session pickup. Nói "cứ làm tiếp" không bao giờ kích hoạt việc tạm dừng.
 
-## What the loop does all night
+## Vòng lặp làm gì suốt đêm
 
 ```mermaid
 flowchart TD
-    A[Check the finish condition] --> B[Make the smallest justified change]
-    B --> C[Verify against the real artifact]
-    C --> D{Progress?}
-    D -->|Yes| E[Commit]
-    D -->|No| F[Discard]
-    E --> G[Log one decision row]
+    A[Kiểm tra điều kiện hoàn thành] --> B[Thực hiện thay đổi nhỏ nhất có căn cứ]
+    B --> C[Kiểm chứng với artifact thật]
+    C --> D{Có tiến triển?}
+    D -->|Có| E[Commit]
+    D -->|Không| F[Bỏ đi]
+    E --> G[Ghi một dòng quyết định]
     F --> G
     G --> A
 ```
 
-One change, one check, one log row, every iteration. Changes that didn't help get discarded, not left to ride. A plateau means pivot, not stop, and the finish condition never quietly relaxes to declare victory.
+Một thay đổi, một phép kiểm tra, một dòng nhật ký, mỗi vòng lặp. Những thay đổi không giúp ích bị bỏ đi, không để trôi theo. Một sự chững lại nghĩa là chuyển hướng, không phải dừng, và điều kiện hoàn thành không bao giờ lặng lẽ được nới lỏng để tuyên bố chiến thắng.
 
-## The morning audit
+## Kiểm toán buổi sáng
 
-[`/show-me-your-work`](../../skills/show-me-your-work/SKILL.md) is what makes the run reviewable. Each row records the time, phase, decision, reason, an evidence pointer, and the result, in a TSV at `decisions.tsv` (or `.audit/<task-slug>.tsv` when several runs share a directory). It stays local by default. Commit it when the work is ambitious enough that a reviewer needs the trail to trust the result.
+[`/show-me-your-work`](../../skills/show-me-your-work/SKILL.md) là thứ làm cho lượt chạy có thể review được. Mỗi dòng ghi lại thời gian, giai đoạn, quyết định, lý do, một con trỏ đến bằng chứng, và kết quả, trong một file TSV tại `decisions.tsv` (hoặc `.audit/<task-slug>.tsv` khi nhiều lượt chạy dùng chung một thư mục). Theo mặc định nó chỉ nằm cục bộ. Hãy commit nó khi công việc đủ tham vọng để reviewer cần dấu vết đó mới tin được kết quả.
 
-When you're back, ask for the run in review form:
-
-```text
-/show-me-your-work catch me up on what you did last night
-```
-
-Before the skill hands back its summary, it spawns a reviewer on a different model family to read the trail and the transcript, and the reply ends with an Attention section listing what deserves your scrutiny. Read that section first, then the log rows it points at. You're auditing decisions, not re-reading the whole night.
-
-For a quick status instead of an audit, run [`/ketchup`](../../skills/ketchup/SKILL.md) in the chat that ran the work. It reads only, and tells you in plain words what changed since your last message, with the screenshots and small diagrams the work produced. Then it lists each call waiting on you, such as a merge, an approval, or a choice between options, with its pick, the evidence, and the risk, so you can decide from the reply alone.
-
-## When the night holds a queue, not a task
-
-The contract above drives one task to one finish condition. Some nights hold more, a queue of independent changes or a whole program. Two playbooks and one skill scale the same trust up.
-
-[Autopilot-full](../../skills/poteto-mode/playbooks/autopilot-full.md) runs a queue of independent PRs to merged. Each PR gets one owner agent that carries it from build through merge, and no owner merges on its own verdict. A swarm of fresh verifiers checks the owner's code-ready head. A later rebase or minor fix gets one fresh verifier, and only new behavior or a large new diff calls the full swarm again. Only a clean verdict on the patch that merges authorizes the merge:
+Khi bạn quay lại, hãy yêu cầu lượt chạy ở dạng review:
 
 ```text
-/poteto-mode full autopilot on this queue. each item is independent. i want them merged by morning.
+/show-me-your-work cập nhật cho tôi những gì bạn đã làm đêm qua
 ```
 
-[Autopilot-stack](../../skills/poteto-mode/playbooks/autopilot-stack.md) is Autopilot-full without the merge. You wake up to verified PRs, each with its verdict, and you review and land them yourself. A PR stacks only on a PR it builds on. Pick it over Autopilot-full when you want your own eyes on the work before anything merges:
+Trước khi skill trả về bản tóm tắt, nó khởi chạy một reviewer trên một họ model khác để đọc dấu vết và transcript, và câu trả lời kết thúc bằng một phần Attention liệt kê những gì đáng để bạn soi xét. Hãy đọc phần đó trước, rồi đến các dòng nhật ký mà nó trỏ tới. Bạn đang kiểm toán các quyết định, không phải đọc lại cả đêm.
+
+Để xem nhanh trạng thái thay vì kiểm toán, hãy chạy [`/ketchup`](../../skills/ketchup/SKILL.md) trong chat đã chạy công việc. Nó chỉ đọc, và cho bạn biết bằng lời đơn giản những gì đã thay đổi kể từ tin nhắn cuối của bạn, kèm các screenshot và sơ đồ nhỏ mà công việc tạo ra. Rồi nó liệt kê từng quyết định đang chờ bạn, như một lần merge, một sự chấp thuận, hoặc một lựa chọn giữa các phương án, kèm lựa chọn của nó, bằng chứng, và rủi ro, để bạn có thể quyết định chỉ từ câu trả lời.
+
+## Khi đêm chứa cả một hàng đợi, không chỉ một task
+
+Hợp đồng ở trên đưa một task đến một điều kiện hoàn thành. Có những đêm chứa nhiều hơn, một hàng đợi các thay đổi độc lập hoặc cả một chương trình. Hai playbook và một skill mở rộng cùng mức lòng tin đó lên.
+
+[Autopilot-full](../../skills/poteto-mode/playbooks/autopilot-full.md) chạy một hàng đợi các PR độc lập đến khi được merge. Mỗi PR có một agent chủ sở hữu mang nó từ lúc xây dựng đến lúc merge, và không chủ sở hữu nào merge dựa trên phán quyết của chính mình. Một swarm các verifier mới kiểm tra head đã sẵn sàng của chủ sở hữu. Một lần rebase sau đó hoặc một bản sửa nhỏ được một verifier mới kiểm tra, và chỉ hành vi mới hoặc một diff mới lớn mới gọi lại toàn bộ swarm. Chỉ một phán quyết sạch trên đúng bản vá được merge mới cho phép merge:
 
 ```text
-/poteto-mode autopilot these five changes, but don't merge. i'll land them in the morning.
+/poteto-mode full autopilot với hàng đợi này. mỗi mục là độc lập. tôi muốn chúng được merge trước sáng mai.
 ```
 
-A whole program, such as a migration across many packages, has no playbook of its own. `/poteto-mode` routes large or cross-cutting work to [`/figure-it-out`](../../skills/figure-it-out/SKILL.md), which designs one rigorous run for it:
+[Autopilot-stack](../../skills/poteto-mode/playbooks/autopilot-stack.md) là Autopilot-full nhưng không merge. Bạn thức dậy với các PR đã được kiểm chứng, mỗi cái kèm phán quyết, và bạn tự review và land chúng. Một PR chỉ xếp chồng lên một PR mà nó xây dựa trên. Hãy chọn nó thay vì Autopilot-full khi bạn muốn tự mình xem công việc trước khi bất cứ thứ gì được merge:
 
 ```text
-/poteto-mode migrate every package to the new store. own it until each one is converted and merged. i'll check in twice a day.
+/poteto-mode autopilot năm thay đổi này, nhưng đừng merge. sáng mai tôi sẽ land chúng.
 ```
 
-## Run many projects in parallel
-
-A [Cursor Project](https://cursor.com/blog/projects) gives one coordinator agent a persistent thread. The coordinator doesn't write code. It directs subagents, which run in the cloud by default, so the work continues when your laptop is closed. Start your prompts to the coordinator with `/poteto-mode`, and the subagents it spawns follow the playbooks. Each agent it starts reads [`worker.md`](../../skills/poteto-mode/worker.md) first, so workers hold to the kickoff's bar, decide reversible calls instead of asking you, and open PRs ready for review.
-
-A few habits help:
-
-- Give each body of work its own Project, such as a feature, a migration, a perf push, or a tech-debt cleanup. Several can run side by side.
-- Drag related chats into the Project, finished ones included. They become context for every agent in it.
-- Give each PR a verification swarm before it merges, and let Autopilot-stack or Autopilot-full carry the queue.
-- Ask the coordinator for a plan backed by data, and have it answer open questions with prototypes before it asks you.
-
-One prompt can carry a whole Project, from research through execution:
+Cả một chương trình, như một migration trên nhiều package, không có playbook riêng. `/poteto-mode` chuyển công việc lớn hoặc cắt ngang nhiều phần sang [`/figure-it-out`](../../skills/figure-it-out/SKILL.md), skill này thiết kế một lượt chạy chặt chẽ cho nó:
 
 ```text
-/poteto-mode refactor this repo so its architecture is more agent friendly. use /correct and /architect on past commits and review comments to find the mistakes agents make most here. use /recall for context from past chats. answer open questions with prototypes instead of asking me. come back with a plan backed by real data. once i approve it, run it with autopilot-stack or autopilot-full, and ask me which.
+/poteto-mode migrate mọi package sang store mới. chịu trách nhiệm đến khi từng cái được chuyển đổi và merge. tôi sẽ ghé xem hai lần một ngày.
 ```
 
-## Let loops start themselves
+## Chạy nhiều dự án song song
 
-Every loop above still waits for you to start it. A scheduled or event-driven automation removes that step. Software maintenance splits into stages that suit this well: triage a report, reproduce it, fix it, verify the fix. Two rules keep such a line trustworthy:
+Một [Cursor Project](https://cursor.com/blog/projects) cho một agent điều phối một thread lâu dài. Agent điều phối không viết code. Nó chỉ đạo các subagent, chúng chạy trên cloud theo mặc định, nên công việc vẫn tiếp tục khi laptop của bạn đã đóng. Hãy bắt đầu các prompt cho agent điều phối bằng `/poteto-mode`, và các subagent nó khởi chạy sẽ làm theo playbook. Mỗi agent nó khởi động đọc [`worker.md`](../../skills/poteto-mode/worker.md) trước, nên các worker giữ đúng tiêu chuẩn của lúc khởi động, tự quyết các lựa chọn có thể đảo ngược thay vì hỏi bạn, và mở PR sẵn sàng để review.
 
-- Every stage can stop the line. Triage can decide the report is expected behavior, repro can fail to reproduce it, and the fixer can judge the change too risky. Each of those outcomes is useful, because it keeps bad work from reaching the next stage, where it costs more to undo.
-- Every stage hands over evidence. Repro attaches screenshots and video of the broken state, and the fix attaches before-and-after proof. A human can then check that the agent fixed the right thing before reading a line of code.
+Vài thói quen có ích:
 
-pstack ships this as a dormant [automation pack](https://github.com/cursor/plugins/blob/main/pstack/automations/benny/README.md) for Slack issue reports. One automation triages each report. The other reproduces confirmed bugs and may prepare a small draft fix. Point an agent at its [`FOR_AGENTS.md`](https://github.com/cursor/plugins/blob/main/pstack/automations/benny/FOR_AGENTS.md) and name the target repository to set it up.
+- Cho mỗi khối công việc một Project riêng, như một feature, một migration, một đợt đẩy perf, hoặc một lần dọn nợ kỹ thuật. Nhiều Project có thể chạy song song.
+- Kéo các chat liên quan vào Project, kể cả những chat đã xong. Chúng trở thành context cho mọi agent trong đó.
+- Cho mỗi PR một verification swarm trước khi merge, và để Autopilot-stack hoặc Autopilot-full mang hàng đợi.
+- Yêu cầu agent điều phối một kế hoạch có dữ liệu chống lưng, và để nó trả lời các câu hỏi mở bằng prototype trước khi hỏi bạn.
 
-**Pitfall:** a duration is not a finish condition. "work on this for 4 hours" gives the agent nothing to check, and you'll wake up to four hours of motion instead of a result. Give `/loop` a predicate that can pass or fail.
+Một prompt có thể mang cả một Project, từ nghiên cứu đến thực thi:
 
-Next: [Steer with principle names](./08-principles.md).
+```text
+/poteto-mode refactor repo này để kiến trúc của nó thân thiện với agent hơn. dùng /correct và /architect trên các commit trước và các comment review để tìm ra những lỗi agent hay mắc nhất ở đây. dùng /recall để lấy context từ các chat trước. trả lời các câu hỏi mở bằng prototype thay vì hỏi tôi. quay lại với một kế hoạch có dữ liệu thật chống lưng. khi tôi duyệt, hãy chạy nó bằng autopilot-stack hoặc autopilot-full, và hỏi tôi chọn cái nào.
+```
+
+## Để vòng lặp tự khởi động
+
+Mọi vòng lặp ở trên vẫn chờ bạn khởi động nó. Một automation theo lịch hoặc theo sự kiện loại bỏ bước đó. Bảo trì phần mềm chia thành các giai đoạn rất hợp với điều này: phân loại một báo cáo, tái hiện nó, sửa nó, kiểm chứng bản sửa. Hai quy tắc giữ cho một dây chuyền như vậy đáng tin:
+
+- Mỗi giai đoạn đều có thể dừng dây chuyền. Phân loại có thể kết luận báo cáo là hành vi mong đợi, tái hiện có thể không tái hiện được, và người sửa có thể đánh giá thay đổi quá rủi ro. Mỗi kết quả đó đều hữu ích, vì nó ngăn công việc tồi đến giai đoạn tiếp theo, nơi việc gỡ bỏ tốn kém hơn.
+- Mỗi giai đoạn bàn giao bằng chứng. Tái hiện đính kèm screenshot và video về trạng thái lỗi, và bản sửa đính kèm bằng chứng trước và sau. Khi đó một người có thể kiểm tra agent đã sửa đúng thứ chưa trước khi đọc một dòng code.
+
+pstack cung cấp điều này dưới dạng một [gói automation](https://github.com/hanh9898/vietnamese-pstack/blob/main/pstack/automations/benny/README.md) ở trạng thái ngủ cho các báo cáo issue trên Slack. Một automation phân loại từng báo cáo. Cái còn lại tái hiện các bug đã xác nhận và có thể chuẩn bị một bản sửa nháp nhỏ. Hãy chỉ một agent vào [`FOR_AGENTS.md`](https://github.com/hanh9898/vietnamese-pstack/blob/main/pstack/automations/benny/FOR_AGENTS.md) của nó và gọi tên repository đích để thiết lập.
+
+**Cạm bẫy:** một khoảng thời gian không phải là điều kiện hoàn thành. "làm việc này trong 4 tiếng" không cho agent thứ gì để kiểm tra, và bạn sẽ thức dậy với bốn tiếng chuyển động thay vì một kết quả. Hãy đưa cho `/loop` một vị từ có thể pass hoặc fail.
+
+Tiếp theo: [Lái bằng tên nguyên tắc](./08-principles.md).

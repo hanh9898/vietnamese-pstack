@@ -1,53 +1,53 @@
 ---
 name: setup-pstack
-description: Configure which models pstack uses per role and at what reasoning budget. Detects your available models and writes an always-applied rule that overrides the skill defaults. Use for /setup-pstack, "configure pstack models", "pstack budget", or changing pstack's model choices.
+description: Cấu hình pstack dùng model nào cho mỗi vai trò và ở ngân sách reasoning nào. Phát hiện các model bạn có và ghi một rule luôn được áp dụng để ghi đè mặc định của skill. Dùng cho /setup-pstack, "configure pstack models", "pstack budget" (hoặc "cấu hình model pstack", "ngân sách pstack"), hoặc khi thay đổi lựa chọn model của pstack.
 ---
 
-# Setup pstack
+# Thiết lập pstack
 
-In Claude Code, read [the Claude Code adapter](../../docs/harness/claude-code.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
-Write `~/.cursor/rules/pstack-models.mdc`, an always-applied rule that sets pstack's model per role.
+Ghi `~/.cursor/rules/pstack-models.mdc`, một rule luôn được áp dụng để đặt model của pstack cho mỗi vai trò.
 
-## Steps
+## Các bước
 
-### 1. Detect available models
+### 1. Phát hiện các model có sẵn
 
-Enumerate the model slugs you can pass to a `Task` subagent in this session. That is the dependable source. If Cursor also exposes a models API or CLI that lists the user's entitled models, prefer it for completeness. If you cannot detect any, ask the user to paste the slugs they have access to. Never write a real slug you have not confirmed is available. The aliases `inherit-parent` and `auto` are always valid even though they are not detected slugs.
+Liệt kê các model slug mà bạn có thể truyền cho một subagent `Task` trong session này. Đó là nguồn đáng tin cậy. Nếu Cursor cũng cung cấp một API hoặc CLI model liệt kê các model mà người dùng được quyền dùng, hãy ưu tiên nó để đầy đủ hơn. Nếu bạn không phát hiện được cái nào, hãy yêu cầu người dùng dán các slug họ có quyền truy cập. Không bao giờ ghi một slug thật mà bạn chưa xác nhận là có sẵn. Các alias `inherit-parent` và `auto` luôn hợp lệ dù chúng không phải là slug được phát hiện.
 
-### 2. Load current state
+### 2. Nạp trạng thái hiện tại
 
-The default role-to-model mapping is the rule shape shown in step 5 below. If `~/.cursor/rules/pstack-models.mdc` already exists, read it and treat its `# budget` line and its role values as the current choices. Otherwise start from those defaults. A line whose role is not in step 5, such as `hardest tasks`, `architect runners`, `reflect tooling`, or `why investigators`, is from a retired role. Drop it.
+Ánh xạ mặc định từ vai trò sang model là hình dạng rule được cho thấy ở bước 5 bên dưới. Nếu `~/.cursor/rules/pstack-models.mdc` đã tồn tại, hãy đọc nó và coi dòng `# budget` và các giá trị vai trò của nó là lựa chọn hiện tại. Nếu không, bắt đầu từ các mặc định đó. Một dòng có vai trò không nằm trong bước 5, như `hardest tasks`, `architect runners`, `reflect tooling`, hoặc `why investigators`, là của một vai trò đã ngừng dùng. Bỏ nó.
 
-Older defaults put another Gemini model, then `gemini-4-neon-high`, in the panel seat. So in any rule, a `gemini-4-neon-high` entry, or a `gemini-4-*` entry other than `gemini-4-neon-*`, in a panel role (`arena runners`, `arena cross-judge pool`, `interrogate reviewers`) is an old default. Each one becomes `gemini-4-neon-xhigh`. A Gemini 4 Neon entry at any other level is the user's choice and stays. Tell the user which entries you replaced.
+Các mặc định cũ hơn đặt một model Gemini khác, rồi `gemini-4-neon-high`, vào ghế panel. Vì vậy trong bất kỳ rule nào, một mục `gemini-4-neon-high`, hoặc một mục `gemini-4-*` khác `gemini-4-neon-*`, trong một vai trò panel (`arena runners`, `arena cross-judge pool`, `interrogate reviewers`) là một mặc định cũ. Mỗi cái trở thành `gemini-4-neon-xhigh`. Một mục Gemini 4 Neon ở bất kỳ mức nào khác là lựa chọn của người dùng và được giữ. Cho người dùng biết bạn đã thay thế những mục nào.
 
-A rule without the `# defaults: 3` line comes from an older setup. That setup wrote a line for every role, so some of its values are old defaults, not choices. Before step 3, replace these values:
+Một rule không có dòng `# defaults: 3` đến từ một lần thiết lập cũ hơn. Lần thiết lập đó ghi một dòng cho mọi vai trò, nên một số giá trị của nó là mặc định cũ, không phải lựa chọn. Trước bước 3, hãy thay thế các giá trị sau:
 
-- An `arena cross-judge pool` list of exactly one `claude-fable-*` entry, one `claude-opus-*` entry, and one `gemini-*` entry, in any order, takes the role's step 5 list. Fable and Opus are one vendor, so the Fable entry could judge only where the Opus entry also could.
-- A `# budget: unlimited` line becomes `large`, because no role runs above `xhigh`.
-- If the rule has no `# defaults: 2` line either, an old slug is one that matches `grok-*`. An old slug in `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, or `swarm workers` takes the role's step 5 default. In a panel role (`arena runners`, `arena cross-judge pool`, `interrogate reviewers`), a list of exactly one `claude-opus-*` entry and one old slug, in either order, takes the role's step 5 list. In any other list, each old slug becomes `claude-opus-5-5-high-fast`.
+- Một danh sách `arena cross-judge pool` gồm đúng một mục `claude-fable-*`, một mục `claude-opus-*`, và một mục `gemini-*`, theo bất kỳ thứ tự nào, nhận danh sách bước 5 của vai trò. Fable và Opus là cùng một nhà cung cấp, nên mục Fable chỉ có thể làm giám khảo ở nơi mục Opus cũng có thể.
+- Một dòng `# budget: unlimited` trở thành `large`, vì không vai trò nào chạy trên `xhigh`.
+- Nếu rule cũng không có dòng `# defaults: 2`, một slug cũ là slug khớp `grok-*`. Một slug cũ trong `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, hoặc `swarm workers` nhận mặc định bước 5 của vai trò. Trong một vai trò panel (`arena runners`, `arena cross-judge pool`, `interrogate reviewers`), một danh sách gồm đúng một mục `claude-opus-*` và một slug cũ, theo thứ tự nào cũng được, nhận danh sách bước 5 của vai trò. Trong mọi danh sách khác, mỗi slug cũ trở thành `claude-opus-5-5-high-fast`.
 
-Every other value is the user's choice and stays, including an old slug in any other role and every `inherit-parent` or `auto` value. Tell the user which values you replaced.
+Mọi giá trị khác là lựa chọn của người dùng và được giữ, bao gồm một slug cũ trong bất kỳ vai trò nào khác và mọi giá trị `inherit-parent` hoặc `auto`. Cho người dùng biết bạn đã thay thế những giá trị nào.
 
-### 3. Budget, map, and confirm
+### 3. Ngân sách, ánh xạ, và xác nhận
 
-**(a) Ask for a budget.** Prefer AskQuestion over free text. Offer these three options with these exact labels, and name the current budget when the rule records one. With no rule, say that `large` matches the skill defaults.
+**(a) Hỏi ngân sách.** Ưu tiên AskQuestion thay vì văn bản tự do. Đưa ra ba lựa chọn này với chính xác các nhãn này, và gọi tên ngân sách hiện tại khi rule có ghi một cái. Khi không có rule, hãy nói rằng `large` khớp với mặc định của skill.
 
 - `large — xhigh reasoning`
 - `medium — high reasoning`
 - `small — medium reasoning`
 
-**(b) Apply it.** Build the working table from the skill defaults, and on a re-run keep any role you changed by family, list, or alias (`inherit-parent`, `auto`). Families are the ones Phase A of the **arena** skill defines, so Fable is its own family. Each role has a target effort, which is its default's effort moved by the budget. `large` keeps it, `medium` lowers it one step, and `small` lowers it two steps, on the ladder `xhigh` > `high` > `medium` > `low`. No role runs above `xhigh`, and a target at the bottom of the ladder stays there. Most defaults are at `xhigh`, and each budget label names where those land. Set the effort token of every real slug in the role, panel entries included, to the role's target. The effort token is the last token, or the one before a trailing `fast`. If the result is not a detected slug, use the same family's detected slug with the highest effort at or below the target, else mark the role as needing a choice. `inherit-parent` and `auto` do not change. So `medium` turns `claude-opus-5-5-xhigh-fast` into `claude-opus-5-5-high-fast` and `claude-opus-5-5-high-fast` into `claude-opus-5-5-medium-fast`, and `small` turns them into `claude-opus-5-5-medium-fast` and `claude-opus-5-5-low-fast`. Opus 5.5 always runs its `-fast` slug, so every Opus 5.5 value ends in `-fast`. Fable 5.2 and Gemini have no fast slug, so never write one. Gemini 4 Neon slugs run from `low` to `xhigh` with no `max` or `fast` slug, so its seat runs at `gemini-4-neon-xhigh`, its top slug. A Gemini 4 Neon entry in a panel role takes its own target, `xhigh` moved by the budget, so `large` keeps `gemini-4-neon-xhigh`, `medium` writes `gemini-4-neon-high`, and `small` writes `gemini-4-neon-medium`.
+**(b) Áp dụng nó.** Xây bảng làm việc từ các mặc định của skill, và trong một lần chạy lại hãy giữ mọi vai trò bạn đã thay đổi theo họ model, danh sách, hoặc alias (`inherit-parent`, `auto`). Các họ model là những họ mà Phase A của skill **arena** định nghĩa, nên Fable là một họ riêng. Mỗi vai trò có một mức effort mục tiêu, là effort của mặc định của nó được dịch chuyển theo ngân sách. `large` giữ nguyên, `medium` hạ một bậc, và `small` hạ hai bậc, trên thang `xhigh` > `high` > `medium` > `low`. Không vai trò nào chạy trên `xhigh`, và một mục tiêu ở đáy thang thì ở lại đó. Hầu hết mặc định ở `xhigh`, và mỗi nhãn ngân sách gọi tên nơi chúng rơi xuống. Đặt effort token của mọi slug thật trong vai trò, kể cả các mục panel, thành mục tiêu của vai trò. Effort token là token cuối, hoặc token đứng trước một `fast` ở cuối. Nếu kết quả không phải là một slug được phát hiện, hãy dùng slug được phát hiện của cùng họ có effort cao nhất ở mức bằng hoặc dưới mục tiêu, nếu không thì đánh dấu vai trò là cần một lựa chọn. `inherit-parent` và `auto` không thay đổi. Vì vậy `medium` biến `claude-opus-5-5-xhigh-fast` thành `claude-opus-5-5-high-fast` và `claude-opus-5-5-high-fast` thành `claude-opus-5-5-medium-fast`, còn `small` biến chúng thành `claude-opus-5-5-medium-fast` và `claude-opus-5-5-low-fast`. Opus 5.5 luôn chạy slug `-fast` của nó, nên mọi giá trị Opus 5.5 đều kết thúc bằng `-fast`. Fable 5.2 và Gemini không có slug fast, nên không bao giờ ghi một cái. Các slug Gemini 4 Neon chạy từ `low` đến `xhigh` không có slug `max` hay `fast`, nên ghế của nó chạy ở `gemini-4-neon-xhigh`, slug cao nhất của nó. Một mục Gemini 4 Neon trong một vai trò panel nhận mục tiêu riêng của nó, `xhigh` được dịch chuyển theo ngân sách, nên `large` giữ `gemini-4-neon-xhigh`, `medium` ghi `gemini-4-neon-high`, và `small` ghi `gemini-4-neon-medium`.
 
-**(c) Show the roles and confirm.** Show every role with its model, marking any real slug not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models at `xhigh` or below plus `inherit-parent` and `auto` (both mean: this role runs on the parent chat model, which is how Auto users stay on Auto) as the options. Prefer AskQuestion over free text. For panel roles (arena runners, interrogate reviewers) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values from a vendor other than the parent's, in list order, so order it by preference. Fable and the other Claude models are one vendor. An `inherit-parent` or `auto` value never judges. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+**(c) Cho xem các vai trò và xác nhận.** Cho xem mọi vai trò với model của nó, đánh dấu mọi slug thật không nằm trong tập được phát hiện là cần một lựa chọn. Cũng liệt kê mỗi dòng mà bước 2 đã bỏ. Hỏi xem chấp nhận như hiện có hay thay đổi các vai trò cụ thể, đưa ra các model được phát hiện ở mức `xhigh` hoặc thấp hơn cùng với `inherit-parent` và `auto` (cả hai đều nghĩa là: vai trò này chạy trên model của chat cha, đó là cách người dùng Auto ở lại trên Auto) làm các lựa chọn. Ưu tiên AskQuestion thay vì văn bản tự do. Với các vai trò panel (arena runners, interrogate reviewers), giá trị là một danh sách, và mỗi mục chạy một subagent, kể cả các mục alias, nên độ dài danh sách đặt số lượng. `arena cross-judge pool` cũng là một danh sách, nhưng Arena chạy một giám khảo. Nó chỉ thử các giá trị từ một nhà cung cấp khác với của cha, theo thứ tự danh sách, nên hãy sắp xếp nó theo mức ưu tiên. Fable và các model Claude khác là cùng một nhà cung cấp. Một giá trị `inherit-parent` hoặc `auto` không bao giờ làm giám khảo. `swarm workers` là model mặc định cho mọi worker trừ khi một cuộc đua hoặc so sánh gán một model khác cho mỗi nhánh.
 
-### 4. Validate
+### 4. Kiểm tra hợp lệ
 
-Every real slug written must be in the detected set and at `xhigh` or below. `inherit-parent` and `auto` always pass. If a chosen real slug is not available, stop and ask again.
+Mọi slug thật được ghi phải nằm trong tập được phát hiện và ở mức `xhigh` hoặc thấp hơn. `inherit-parent` và `auto` luôn hợp lệ. Nếu một slug thật được chọn không có sẵn, hãy dừng và hỏi lại.
 
-### 5. Write the rule
+### 5. Ghi rule
 
-Write `~/.cursor/rules/pstack-models.mdc` with `alwaysApply: true`, the `# defaults: 3` line, a `# budget` line with the chosen label and the effort that label names, and one line per role, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. Shape:
+Ghi `~/.cursor/rules/pstack-models.mdc` với `alwaysApply: true`, dòng `# defaults: 3`, một dòng `# budget` với nhãn được chọn và effort mà nhãn đó gọi tên, và mỗi vai trò một dòng, dùng cùng các nhãn mà poteto-mode dùng. Ghi đè toàn bộ file để các lần chạy lại vẫn idempotent. Hình dạng:
 
 ```
 ---
@@ -69,14 +69,14 @@ swarm workers: claude-opus-5-5-high-fast
 interrogate reviewers: claude-fable-5-2-high, claude-opus-5-5-high-fast, gemini-4-neon-xhigh
 ```
 
-### 6. Confirm
+### 6. Xác nhận
 
-Tell the user the rule was written and that it applies to new sessions. Re-running this skill updates it.
+Cho người dùng biết rule đã được ghi và nó áp dụng cho các session mới. Chạy lại skill này sẽ cập nhật nó.
 
-### 7. Offer a verification skill (optional)
+### 7. Đề xuất một verification skill (tùy chọn)
 
-Check whether the project has a way to drive the real app for proof (a `verify-*` skill, or an existing harness). If not, offer once: "want a project-local verification skill, so agents can drive the app the way a user does and prove changes work? I can generate one with /create-verification-skill." On yes, invoke `/create-verification-skill` (resolves wherever pstack is installed: workspace, user, or plugin). On no, move on without pushing.
+Kiểm tra xem dự án có cách nào để điều khiển app thật làm bằng chứng không (một skill `verify-*`, hoặc một harness có sẵn). Nếu không, hãy đề xuất một lần: "bạn có muốn một verification skill cục bộ cho dự án, để agent có thể điều khiển app theo cách người dùng làm và chứng minh các thay đổi hoạt động không? Tôi có thể tạo một cái bằng /create-verification-skill." Nếu đồng ý, gọi `/create-verification-skill` (được tìm thấy ở bất cứ đâu pstack được cài: workspace, user, hoặc plugin). Nếu không, tiếp tục mà không thúc ép.
 
-### 8. Offer a formal verification skill (optional)
+### 8. Đề xuất một formal verification skill (tùy chọn)
 
-Check whether the project already has a formal verification skill (a project skill that runs a model checker, a proof, or another verifier against the code). If not, offer once: "want a formal verification skill, so agents can prove a key property of your code holds in every case in scope, not only the cases tests reach? I can generate one with /create-formal-verification-skill." On yes, invoke `/create-formal-verification-skill` (resolves wherever pstack is installed: workspace, user, or plugin). On no, move on without pushing.
+Kiểm tra xem dự án đã có formal verification skill chưa (một skill của dự án chạy một model checker, một chứng minh, hoặc một verifier khác trên code). Nếu chưa, hãy đề xuất một lần: "bạn có muốn một formal verification skill, để agent có thể chứng minh một tính chất then chốt của code đúng trong mọi trường hợp trong phạm vi, không chỉ các trường hợp mà test chạm đến không? Tôi có thể tạo một cái bằng /create-formal-verification-skill." Nếu đồng ý, gọi `/create-formal-verification-skill` (được tìm thấy ở bất cứ đâu pstack được cài: workspace, user, hoặc plugin). Nếu không, tiếp tục mà không thúc ép.

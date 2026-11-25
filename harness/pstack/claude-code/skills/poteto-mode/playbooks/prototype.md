@@ -1,14 +1,14 @@
 ### Prototype
 
-**You own the design decision, not the code. The prototype is a throwaway instrument. The real build follows Feature.**
+**Bạn sở hữu quyết định thiết kế, không phải code. Prototype là một công cụ dùng xong bỏ. Bản xây thật theo playbook Feature.**
 
-The one playbook where the Laziness Protocol's "smallest change" and the verification bar invert. Speed over polish, code quality does not matter, no planning. The rigor is in picking the right design cheaply. Propose variations the user didn't ask for, throw an approach away and try another.
+Đây là playbook duy nhất mà "thay đổi nhỏ nhất" của Laziness Protocol và tiêu chuẩn kiểm chứng bị đảo ngược. Tốc độ hơn trau chuốt, chất lượng code không quan trọng, không lập kế hoạch. Sự chặt chẽ nằm ở việc chọn đúng thiết kế một cách rẻ. Đề xuất các biến thể mà người dùng không yêu cầu, bỏ một cách tiếp cận đi và thử cách khác.
 
-1. Scope the decision the prototype exists to make: which layout, which interaction, which density, or for an empirical fork which behavior, timing, or approach. No decision means no prototype. Route to Feature.
-2. Gather references when the design space is open. Search for prior art, summarize a moodboard of themes, palettes, and layouts, let the user pick directions before building. Skip when the direction is set.
-3. Build throwaway in an isolated scratch dir, separate from production source. For a visual decision, vanilla HTML/CSS/JS or the lightest stack that renders the idea, CDN deps, a dev server with hot reload. For a behavioral or timing decision, the smallest script that exercises the question. No production framework, no tests, no abstractions.
-4. When comparing alternatives, build them behind one switcher (buttons or a keypress), each variant labeled. This is the **exhaust-the-design-space** principle skill made cheap.
-5. Verify on the matching surface. For a visual decision, screenshot each variant via the control skill and drive the interaction. For a behavioral or timing decision, observe the thing you are deciding by logging the timing, printing the output, or watching the render. The observation is the test here, not an assertion.
-6. Present alternatives, tradeoffs, and a recommendation. The output is the decision plus the throwaway artifact, not shippable code. Hand the chosen direction to **Feature** (or `architect` for the shape) for the real build.
+1. Xác định phạm vi quyết định mà prototype tồn tại để đưa ra: bố cục nào, tương tác nào, mật độ nào, hoặc với một ngã rẽ thực nghiệm thì hành vi, thời điểm, hay cách tiếp cận nào. Không có quyết định nghĩa là không có prototype. Định tuyến sang Feature.
+2. Thu thập tài liệu tham khảo khi không gian thiết kế còn mở. Tìm các tiền lệ, tóm tắt một moodboard gồm chủ đề, bảng màu, và bố cục, để người dùng chọn hướng trước khi xây. Bỏ qua khi hướng đi đã định.
+3. Xây bản dùng xong bỏ trong một thư mục nháp tách biệt, riêng khỏi source production. Với một quyết định trực quan, dùng HTML/CSS/JS thuần hoặc stack nhẹ nhất hiển thị được ý tưởng, dependency qua CDN, một dev server có hot reload. Với một quyết định về hành vi hoặc thời điểm, dùng script nhỏ nhất kiểm tra được câu hỏi. Không framework production, không test, không abstraction.
+4. Khi so sánh các phương án, xây chúng sau một bộ chuyển đổi (nút bấm hoặc phím tắt), mỗi biến thể có nhãn. Đây là principle skill **exhaust-the-design-space** được làm cho rẻ.
+5. Kiểm chứng trên bề mặt tương ứng. Với một quyết định trực quan, chụp screenshot từng biến thể qua control skill và điều khiển tương tác. Với một quyết định về hành vi hoặc thời điểm, quan sát thứ bạn đang quyết định bằng cách log thời gian, in output, hoặc xem quá trình render. Ở đây việc quan sát chính là test, không phải một assertion.
+6. Trình bày các phương án, đánh đổi, và một đề xuất. Output là quyết định cùng artifact dùng xong bỏ, không phải code có thể ship. Bàn giao hướng đã chọn cho **Feature** (hoặc `architect` để có hình dạng) cho bản xây thật.
 
-**Reply:** the variants explored, the evidence (screenshots for a visual decision, the observed output or timing for a behavioral one), tradeoffs, your recommendation, and the scratch path. Say plainly that the prototype is throwaway.
+**Câu trả lời:** các biến thể đã khám phá, bằng chứng (screenshot cho quyết định trực quan, output hoặc thời gian quan sát được cho quyết định về hành vi), các đánh đổi, đề xuất của bạn, và đường dẫn thư mục nháp. Nói rõ ràng rằng prototype là đồ dùng xong bỏ.

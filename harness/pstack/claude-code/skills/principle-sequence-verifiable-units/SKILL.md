@@ -1,13 +1,13 @@
 ---
 name: principle-sequence-verifiable-units
-description: "Apply to multi-step work (sweeps, migrations, runs of similar edits) and to how you stack commits and PRs. Break work into small units that each end in a verifiable state, check each before the next, and order delivery so the sequence proves itself to a reviewer."
+description: "Áp dụng cho công việc nhiều bước (quét diện rộng, migration, chuỗi chỉnh sửa tương tự) và cho cách bạn xếp chồng commit và PR. Chia công việc thành các đơn vị nhỏ mỗi đơn vị kết thúc ở một trạng thái kiểm chứng được, kiểm tra từng cái trước cái tiếp theo, và sắp thứ tự bàn giao để chuỗi tự chứng minh với reviewer."
 disable-model-invocation: true
 ---
 
 # Sequence work into verifiable units
 
-Order work as small units that each end in a state you can check, and do not advance until the current one is green.
+Sắp xếp công việc thành các đơn vị nhỏ mỗi đơn vị kết thúc ở một trạng thái bạn có thể kiểm tra, và đừng tiến lên cho đến khi đơn vị hiện tại xanh.
 
-In a sweep, migration, or run of similar edits, each unit is a bracket: known-good state, one change, run the check, proceed. Run the per-unit check even when a tool does the edits.
+Trong một lần quét diện rộng, migration, hoặc chuỗi chỉnh sửa tương tự, mỗi đơn vị là một khung: trạng thái tốt đã biết, một thay đổi, chạy phép kiểm tra, tiến lên. Chạy phép kiểm tra cho từng đơn vị kể cả khi một công cụ thực hiện các chỉnh sửa.
 
-Deliver in the order that proves the work: the failing test first, then the fix. The subtraction before the reshape. The baseline before the treatment. Each commit lands on its own.
+Bàn giao theo thứ tự chứng minh được công việc: test thất bại trước, rồi bản sửa. Phần loại bỏ trước phần định hình lại. Baseline trước phần can thiệp. Mỗi commit tự land được.

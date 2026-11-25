@@ -1,10 +1,10 @@
 ---
 name: principle-laziness-protocol
-description: "Apply when refactoring, evaluating diff size, or tempted to add abstractions, layers, or signal threading. Bias toward deletion and the smallest change that solves the problem."
+description: "Áp dụng khi refactor, đánh giá kích thước diff, hoặc bị cám dỗ thêm abstraction, lớp, hoặc luồn tín hiệu. Thiên về xóa bỏ và thay đổi nhỏ nhất giải quyết được vấn đề."
 disable-model-invocation: true
 ---
 
 # Laziness Protocol
 
-- **Consolidate decisions.** Do not repeat the same choice in several places. Put it behind one source of truth and pass the result as a simple flag.
-- **Minimize the diff.** Make the smallest change that solves the problem. Fewer lines beat "elegant" boilerplate.
+- **Hợp nhất các quyết định.** Đừng lặp lại cùng một lựa chọn ở nhiều nơi. Đặt nó sau một nguồn sự thật duy nhất và truyền kết quả dưới dạng một cờ đơn giản.
+- **Tối thiểu hóa diff.** Thực hiện thay đổi nhỏ nhất giải quyết được vấn đề. Ít dòng hơn thắng boilerplate "thanh lịch".

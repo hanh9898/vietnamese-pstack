@@ -1,47 +1,47 @@
-# Notes verification map
+# Bản đồ kiểm chứng Notes
 
-This directory is the maintained source for verifying the user-facing behavior of Notes. Read the index before driving the app, then use the matching feature file as the recipe.
+Thư mục này là nguồn được bảo trì để kiểm chứng hành vi hướng người dùng của Notes. Đọc index trước khi điều khiển app, rồi dùng file feature tương ứng làm công thức.
 
-## Baseline preconditions
+## Điều kiện tiên quyết cơ bản
 
-- Launch Notes at `http://127.0.0.1:4173` with a disposable data directory.
-- Set `NOTES_DATA_DIR=/tmp/notes-verify-$RUN_ID` so concurrent runs do not share state.
-- Seed notes titled `Quarterly plan` and `Grocery list`.
-- Put `control-notes` and the `notes` CLI on `PATH`.
-- Run `control-notes doctor` and require the expected URL, data directory, and build revision.
-- Never drive an instance that was not started by this verification run.
+- Khởi chạy Notes tại `http://127.0.0.1:4173` với một thư mục dữ liệu dùng một lần.
+- Đặt `NOTES_DATA_DIR=/tmp/notes-verify-$RUN_ID` để các lượt chạy đồng thời không dùng chung trạng thái.
+- Seed các note có tiêu đề `Quarterly plan` và `Grocery list`.
+- Đặt `control-notes` và CLI `notes` vào `PATH`.
+- Chạy `control-notes doctor` và yêu cầu đúng URL, thư mục dữ liệu, và revision build mong đợi.
+- Không bao giờ điều khiển một instance không được khởi động bởi lượt chạy kiểm chứng này.
 
-## Driving conventions
+## Quy ước điều khiển
 
-- Start every recipe from the baseline state unless its preconditions say otherwise.
-- Prefer ARIA roles and accessible names over CSS selectors or DOM position.
-- Treat every command as literal. Keep quoted names and flags unchanged.
-- Run browser actions through `control-notes browser`.
-- Run terminal actions through `control-notes cli -- <command>`.
-- Restore seeded data after a mutation. Do not remove proof artifacts during cleanup.
+- Bắt đầu mọi công thức từ trạng thái cơ bản trừ khi điều kiện tiên quyết của nó nói khác.
+- Ưu tiên ARIA role và accessible name thay vì CSS selector hay vị trí DOM.
+- Coi mọi lệnh là nguyên văn. Giữ nguyên các tên và flag trong dấu nháy.
+- Chạy các hành động trên trình duyệt qua `control-notes browser`.
+- Chạy các hành động trên terminal qua `control-notes cli -- <command>`.
+- Khôi phục dữ liệu seed sau một thay đổi. Đừng xóa các artifact bằng chứng khi dọn dẹp.
 
-## Proof and skip reporting
+## Báo cáo bằng chứng và phần bỏ qua
 
-- Capture the user action and the resulting state, not only the final screen.
-- UI proof includes an ARIA snapshot and a screenshot with the app identity visible.
-- CLI proof includes the command, stdout, stderr, and exit code.
-- Mutation proof includes a read-only second view of the stored value.
-- Record the feature ID and entry point used with every artifact.
-- Report an unreachable path with the attempted command and the unmet precondition.
-- Do not report a skipped entry point as verified through a different path.
+- Thu hành động của người dùng và trạng thái kết quả, không chỉ màn hình cuối.
+- Bằng chứng UI bao gồm một ARIA snapshot và một screenshot có thể thấy danh tính của app.
+- Bằng chứng CLI bao gồm lệnh, stdout, stderr, và exit code.
+- Bằng chứng thay đổi dữ liệu bao gồm một góc nhìn thứ hai chỉ đọc của giá trị đã lưu.
+- Ghi lại ID feature và điểm vào đã dùng cùng mọi artifact.
+- Báo cáo một đường không thể tiếp cận kèm lệnh đã thử và điều kiện tiên quyết chưa được đáp ứng.
+- Đừng báo cáo một điểm vào bị bỏ qua là đã kiểm chứng qua một đường khác.
 
-## Feature entry contract
+## Hợp đồng cho mục feature
 
-Each feature file starts with an H1 title and one paragraph describing the user-visible behavior. It then uses exactly four H2 sections in this order.
+Mỗi file feature bắt đầu bằng một tiêu đề H1 và một đoạn văn mô tả hành vi mà người dùng nhìn thấy. Sau đó nó dùng đúng bốn phần H2 theo thứ tự này.
 
-1. `Sub-features` lists short IDs with one line for each behavior.
-2. `How to get to it (user POV)` lists every user entry point.
-3. `Driving it with <harness>` starts with `Preconditions:` and uses labeled bullets that pair each user action with an exact command and observable result.
-4. `Gotchas` lists traps that can waste or invalidate a verification run.
+1. `Sub-features` liệt kê các ID ngắn, mỗi hành vi một dòng.
+2. `How to get to it (user POV)` liệt kê mọi điểm vào của người dùng.
+3. `Driving it with <harness>` bắt đầu bằng `Preconditions:` và dùng các gạch đầu dòng có nhãn ghép mỗi hành động của người dùng với một lệnh chính xác và kết quả quan sát được.
+4. `Gotchas` liệt kê các cái bẫy có thể làm lãng phí hoặc vô hiệu hóa một lượt chạy kiểm chứng.
 
-Keep implementation details out of the map. Name only user paths, stable handles, required state, commands, and observable proof.
+Giữ chi tiết cài đặt ngoài map. Chỉ gọi tên đường đi của người dùng, handle ổn định, trạng thái cần có, lệnh, và bằng chứng quan sát được.
 
-## Features
+## Các feature
 
-- [Create a note](./create-note.md) covers browser and CLI creation, cancellation, persistence, and cleanup.
-- [Search notes](./search.md) covers toolbar, keyboard, and CLI search with matching, empty, and clear states.
+- [Tạo một note](./create-note.md) bao gồm việc tạo qua trình duyệt và CLI, hủy, lưu bền, và dọn dẹp.
+- [Tìm kiếm note](./search.md) bao gồm tìm kiếm qua toolbar, bàn phím, và CLI với các trạng thái khớp, rỗng, và xóa.

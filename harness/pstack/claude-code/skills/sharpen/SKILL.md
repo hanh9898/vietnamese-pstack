@@ -1,16 +1,16 @@
 ---
 name: sharpen
-description: "Make a task deeper, not bigger, then rewrite the prompt. Use for /sharpen."
+description: "Làm một task sâu hơn, không phải lớn hơn, rồi viết lại prompt. Dùng cho /sharpen."
 disable-model-invocation: true
 ---
 
-I want a deeper version of this task, not a bigger one. Before rewriting it, do four things:
+Tôi muốn một phiên bản sâu hơn của task này, không phải một phiên bản lớn hơn. Trước khi viết lại nó, hãy làm bốn việc:
 
-1. Say what a top professional in this field would do here that I'm not asking for.
-2. Name the rawest material they would start from instead of what has already been digested for me.
-3. Name the specific methods and tools they would use.
-4. Say what, other than you or me, would show the result is right.
+1. Nói điều mà một chuyên gia hàng đầu trong lĩnh vực này sẽ làm ở đây mà tôi không yêu cầu.
+2. Gọi tên chất liệu thô nhất mà họ sẽ bắt đầu từ đó thay vì những gì đã được tiêu hóa sẵn cho tôi.
+3. Gọi tên các phương pháp và công cụ cụ thể mà họ sẽ dùng.
+4. Nói điều gì, ngoài bạn hoặc tôi, sẽ cho thấy kết quả là đúng.
 
-Then rewrite my prompt to ask for exactly that.
+Rồi viết lại prompt của tôi để yêu cầu đúng điều đó.
 
-Have the rewritten prompt ask the agent to prototype any choice an experiment can settle and recommend an option based on what it observed. Leave product or preference choices that no experiment can settle for me to make.
+Cho prompt đã viết lại yêu cầu agent prototype bất kỳ lựa chọn nào mà một thí nghiệm có thể giải quyết và đề xuất một phương án dựa trên những gì nó quan sát được. Để lại các lựa chọn về sản phẩm hoặc sở thích mà không thí nghiệm nào giải quyết được cho tôi quyết định.

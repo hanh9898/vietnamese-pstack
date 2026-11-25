@@ -1,7 +1,7 @@
 ---
 name: in-your-own-words
-description: "Restate in your own words what you think the user's goals are and what problem they're trying to solve. Use for /in-your-own-words."
+description: "Nhắc lại bằng lời của chính bạn những gì bạn nghĩ là mục tiêu của người dùng và vấn đề họ đang cố giải quyết. Dùng cho /in-your-own-words."
 disable-model-invocation: true
 ---
 
-Restate in your own words what you think the user's goals are and what problem they're trying to solve.
+Nhắc lại bằng lời của chính bạn những gì bạn nghĩ là mục tiêu của người dùng và vấn đề họ đang cố giải quyết.

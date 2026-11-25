@@ -1,11 +1,11 @@
 ---
 name: principle-encode-lessons-in-structure
-description: "Apply when you catch yourself writing the same instruction a second time, or notice a recurring correction. Encode the rule as a lint, metadata flag, runtime check, or script instead of more text."
+description: "Áp dụng khi bạn bắt gặp mình viết cùng một chỉ dẫn lần thứ hai, hoặc nhận thấy một lời sửa lặp lại. Mã hóa quy tắc thành một lint, cờ metadata, kiểm tra runtime, hoặc script thay vì thêm văn bản."
 disable-model-invocation: true
 ---
 
 # Encode Lessons in Structure
 
-If the lesson needs judgment and cannot be encoded, make the instruction more prominent and add an example of the failure mode.
+Nếu bài học cần phán đoán và không thể mã hóa, hãy làm chỉ dẫn nổi bật hơn và thêm một ví dụ về kiểu thất bại.
 
-**Corollary:** If the fix is structural, only use the structural fix. The instruction is the symptom.
+**Hệ quả:** Nếu bản sửa mang tính cấu trúc, chỉ dùng bản sửa cấu trúc. Chỉ dẫn là triệu chứng.

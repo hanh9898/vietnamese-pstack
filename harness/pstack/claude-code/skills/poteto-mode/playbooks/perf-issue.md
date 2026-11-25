@@ -1,25 +1,25 @@
 ### Perf issue
 
-**You own the measurement story. Plan, review, verify the numbers.** Tie every fix to a measurement, don't read source instead of measuring.
+**Bạn sở hữu câu chuyện đo đạc. Lập kế hoạch, review, kiểm chứng các con số.** Gắn mọi bản sửa với một phép đo, đừng đọc source thay cho việc đo.
 
-1. Capture a baseline trace via the matching control skill. Vet the baseline, and each later number, with the **benchmark-checklist** skill.
-2. Trace the code to ground hypotheses. Don't claim a perf ceiling without running it first.
-   Try the performance mantras in order, cheapest first:
-   1. Don't do it. Stop work whose result nothing uses rather than cheapening it.
-   2. Do it, but don't do it again.
-   3. Do it less.
-   4. Do it later.
-   5. Do it when they're not looking.
-   6. Do it concurrently.
-   7. Do it cheaper.
+1. Thu một trace baseline qua control skill tương ứng. Thẩm định baseline, và mọi con số sau đó, bằng skill **benchmark-checklist**.
+2. Lần theo code để đặt nền cho các giả thuyết. Đừng tuyên bố một trần hiệu năng khi chưa chạy nó trước.
+   Thử các câu thần chú hiệu năng theo thứ tự, rẻ nhất trước:
+   1. Đừng làm nó. Dừng công việc mà kết quả không được gì dùng đến thay vì làm nó rẻ hơn.
+   2. Làm nó, nhưng đừng làm lại lần nữa.
+   3. Làm nó ít hơn.
+   4. Làm nó sau.
+   5. Làm nó khi họ không nhìn.
+   6. Làm nó đồng thời.
+   7. Làm nó rẻ hơn.
 
-   When an earlier mantra meets the target, stop.
-3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Delegate implementation to a subagent using your configured perf-issue model (default `claude-opus-5-5-xhigh-fast`). Pick each subagent's reasoning level for the job, per the Subagents section. Review the diff. Capture a post-fix trace.
-   Apply the **sequence-verifiable-units** principle skill, verifying each attempt before trying the next.
-4. Parse and compare the artifacts (JSON to sqlite, diff). "Inconclusive" or wrong-surface is not a pass. Flag it.
-5. Cite the measurement in the PR.
-6. Run **Opening a PR**.
+   Khi một câu thần chú sớm hơn đạt được mục tiêu, hãy dừng.
+3. Lập kế hoạch bản sửa từ trace. Nếu nó vượt qua ranh giới hàm, chạy `architect` trước. Giao phần cài đặt cho một subagent dùng model perf-issue đã cấu hình của bạn (mặc định `claude-opus-5-5-xhigh-fast`). Chọn mức suy luận của từng subagent cho công việc, theo phần Subagent. Review diff. Thu một trace sau khi sửa.
+   Áp dụng principle skill **sequence-verifiable-units**, kiểm chứng từng lần thử trước khi thử lần tiếp theo.
+4. Parse và so sánh các artifact (JSON sang sqlite, diff). "Chưa kết luận được" hoặc sai bề mặt không phải là pass. Hãy gắn cờ nó.
+5. Trích dẫn phép đo trong PR.
+6. Chạy **Opening a PR**.
 
-For sustained improvement against a metric rather than a one-off fix, use the Hillclimb playbook (`playbooks/hillclimb.md`).
+Để cải thiện bền bỉ theo một metric thay vì một bản sửa một lần, hãy dùng playbook Hillclimb (`playbooks/hillclimb.md`).
 
-**Reply:** baseline number, post-fix number, delta, artifact path.
+**Câu trả lời:** con số baseline, con số sau khi sửa, mức chênh lệch, đường dẫn artifact.

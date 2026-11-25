@@ -1,11 +1,11 @@
 ### Session pickup
 
-**You own the resume point. Read the prior trail, don't redo it.**
+**Bạn sở hữu điểm tiếp tục. Đọc dấu vết trước đó, đừng làm lại nó.**
 
-1. Locate the prior trail. A local transcript under the active workspace's `agent-transcripts/` directory (the system prompt names the path. Do not glob across `~/.cursor/projects/*/`, that crosses workspace boundaries and reads private chats from unrelated projects), a cloud-agent URL, or a pushed branch. Read the metadata overview and last messages first, then scan back for the decision points. Parse a long transcript in a subagent and keep the reduced timeline in the main thread (the **principle-guard-the-context-window** skill). Pick each subagent's reasoning level for the job, per the Subagents section.
-2. Reconstruct operational state. The branch and worktree, what already landed (`git log`, `git diff` against the base), the open todos, the decisions made. The prior trail is authoritative input. Resist the bias to re-derive it.
-3. Diff done vs pending. Compare what shipped against what was planned, name the resume point, do not re-run the prior repro or redo completed work. A "let me verify from scratch" pass means you're treating the trail as untrustworthy when it's authoritative.
-4. Route the remaining work to the matching playbook and pick the verdict: continue the execution, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. The pickup playbook ends here. The routed playbook owns the rest.
-5. Verify the inherited claims against the original goal on the real artifact (the **principle-prove-it-works** skill). A passing prior self-report is not the proof.
+1. Định vị dấu vết trước đó. Một transcript cục bộ trong thư mục `agent-transcripts/` của workspace đang hoạt động (system prompt nêu tên đường dẫn. Đừng glob qua `~/.cursor/projects/*/`, việc đó vượt ranh giới workspace và đọc các chat riêng tư từ những dự án không liên quan), một URL cloud-agent, hoặc một branch đã push. Đọc phần tổng quan metadata và các tin nhắn cuối trước, rồi quét ngược lại để tìm các điểm quyết định. Parse một transcript dài trong một subagent và giữ dòng thời gian đã rút gọn trong thread chính (skill **principle-guard-the-context-window**). Chọn mức suy luận của từng subagent cho công việc, theo phần Subagent.
+2. Tái dựng trạng thái vận hành. Branch và worktree, những gì đã land (`git log`, `git diff` so với base), các todo còn mở, các quyết định đã đưa ra. Dấu vết trước đó là đầu vào có thẩm quyền. Hãy cưỡng lại xu hướng tự suy ra lại nó.
+3. So sánh đã xong với còn chờ. So sánh những gì đã ship với những gì đã lên kế hoạch, gọi tên điểm tiếp tục, đừng chạy lại bản tái hiện trước đó hay làm lại công việc đã hoàn tất. Một lượt "để tôi kiểm chứng lại từ đầu" nghĩa là bạn đang coi dấu vết là không đáng tin trong khi nó có thẩm quyền.
+4. Định tuyến công việc còn lại sang playbook tương ứng và chọn phán quyết: tiếp tục thực thi, ship một đề xuất đã hoàn thiện, phê chuẩn hoặc ghi đè một kết luận trước đó, hoặc làm postmortem cho một lượt chạy thất bại. Playbook pickup kết thúc ở đây. Playbook được định tuyến sở hữu phần còn lại.
+5. Kiểm chứng các khẳng định được thừa hưởng so với mục tiêu ban đầu trên artifact thật (skill **principle-prove-it-works**). Một bản tự báo cáo pass trước đó không phải là bằng chứng.
 
-**Reply:** where the prior agent stopped, what you inherited vs redid (ideally nothing redone), the resume point, and the outcome.
+**Câu trả lời:** agent trước dừng ở đâu, những gì bạn thừa hưởng so với làm lại (lý tưởng là không làm lại gì), điểm tiếp tục, và kết quả.

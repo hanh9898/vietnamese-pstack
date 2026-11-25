@@ -1,82 +1,82 @@
 ---
 name: statechart
-description: "Check a TLA+ model of a system that moves between states, such as a product flow, a protocol, or a service, and draw it as a Mermaid statechart. The report gives the shortest path to each state that breaks a rule. Use for /statechart, or to show a bug as a path through states."
+description: "Kiểm tra một model TLA+ của một hệ thống di chuyển giữa các trạng thái, như một luồng sản phẩm, một giao thức, hoặc một service, và vẽ nó thành một statechart Mermaid. Báo cáo đưa ra đường ngắn nhất đến mỗi trạng thái phá vỡ một quy tắc. Dùng cho /statechart, hoặc để thể hiện một bug như một đường đi qua các trạng thái."
 disable-model-invocation: true
 ---
 
 # Statechart
 
-The chart shows how a system moves between states, in the words of the person who reads it. That person, the reader, decides whether the behavior is right.
+Biểu đồ cho thấy một hệ thống di chuyển giữa các trạng thái thế nào, bằng ngôn từ của người đọc nó. Người đó, người đọc, quyết định hành vi có đúng không.
 
-## Run
+## Chạy
 
-Work in a scratch folder outside the repo. Write a TLA+ spec and its config. Then run:
+Làm việc trong một thư mục nháp bên ngoài repo. Viết một spec TLA+ và config của nó. Rồi chạy:
 
 ```sh
 <skill dir>/scripts/statechart SPEC.tla [--config FILE] [--view FILE] [--out DIR]
 ```
 
-`scripts/statechart.ts` is TypeScript, so run it with a runtime that can execute TypeScript. `scripts/statechart` is a POSIX shell script that picks one. On native Windows, run `node --disable-warning=ExperimentalWarning <skill dir>/scripts/statechart.ts` with Node 22.18 to 22.x, or Node 23.6 or later.
+`scripts/statechart.ts` là TypeScript, nên hãy chạy nó bằng một runtime có thể thực thi TypeScript. `scripts/statechart` là một shell script POSIX chọn một runtime như vậy. Trên Windows gốc, chạy `node --disable-warning=ExperimentalWarning <skill dir>/scripts/statechart.ts` với Node 22.18 đến 22.x, hoặc Node 23.6 trở lên.
 
-The first run installs TLC and Java with mise and needs the network.
+Lần chạy đầu tiên cài TLC và Java bằng mise và cần mạng.
 
-## Write the spec
+## Viết spec
 
-- Write each rule that the reader agrees to as an INVARIANT. A rule can be about a screen, a result, a stored value, or a message. If the model has no variable for a rule, add the variable. Never weaken a rule to make it hold.
-- Write `Next` as a disjunction of the actions, such as `YouPressPlay \/ YouPressStop`. If you do not, TLC names every step `Next`.
-- A state with no step out breaks `NoDeadlock`, also when it is a correct end state. When an INVARIANT or a PROPERTY already has that name, the rule is `CHECK_DEADLOCK`. Add to `Next` an action that is true only in the end states and changes nothing, such as `Done == phase \in {"paid", "failed"} /\ UNCHANGED vars`, and give it a label in `step()`.
+- Viết mỗi quy tắc mà người đọc đồng ý thành một INVARIANT. Một quy tắc có thể nói về một màn hình, một kết quả, một giá trị được lưu, hoặc một tin nhắn. Nếu model không có biến cho một quy tắc, hãy thêm biến đó. Không bao giờ làm yếu một quy tắc để nó đúng.
+- Viết `Next` thành một phép tuyển của các action, như `YouPressPlay \/ YouPressStop`. Nếu không, TLC đặt tên mọi bước là `Next`.
+- Một trạng thái không có bước đi ra sẽ phá vỡ `NoDeadlock`, kể cả khi nó là một trạng thái kết thúc đúng. Khi một INVARIANT hoặc một PROPERTY đã có tên đó, quy tắc là `CHECK_DEADLOCK`. Thêm vào `Next` một action chỉ đúng ở các trạng thái kết thúc và không thay đổi gì, như `Done == phase \in {"paid", "failed"} /\ UNCHANGED vars`, và cho nó một nhãn trong `step()`.
 
-## Pick the chart
+## Chọn biểu đồ
 
-You do the work that needs judgment: the words on each state and arrow, the phases and their colors, the title, and the report to the reader. Put your work in a view module, and give it with `--view`.
+Bạn làm phần việc cần phán đoán: chữ trên mỗi trạng thái và mũi tên, các giai đoạn và màu của chúng, tiêu đề, và báo cáo cho người đọc. Đặt công việc của bạn trong một view module, và truyền nó bằng `--view`.
 
-To show the reader's words, the view exports `state(vars)`. The value that `state()` returns picks the form:
+Để thể hiện ngôn từ của người đọc, view export `state(vars)`. Giá trị mà `state()` trả về chọn dạng biểu đồ:
 
-- A string gives a flat chart: `export const state = (v) => (v.paid ? "Paid" : "Paying");`
-- An array gives parent states: `export const state = (v) => v.main.split(".");`
-- An object gives one parallel region for each key: `export const state = (v) => ({ Playback: v.playback, Volume: v.volume });`
+- Một chuỗi cho một biểu đồ phẳng: `export const state = (v) => (v.paid ? "Paid" : "Paying");`
+- Một mảng cho các trạng thái cha: `export const state = (v) => v.main.split(".");`
+- Một object cho mỗi key một vùng song song: `export const state = (v) => ({ Playback: v.playback, Volume: v.volume });`
 
-Label each state with what the reader can see or cares about, such as "Paying" or "Lease held, write pending". Keep variable names out of labels. In `vars`, a TLA+ sequence is an object with keys from 1, so `v.pc[1]` is `pc[1]`. A set is an array.
+Gắn nhãn mỗi trạng thái bằng những gì người đọc có thể thấy hoặc quan tâm, như "Đang thanh toán" hoặc "Đang giữ lease, chờ ghi". Giữ tên biến ngoài nhãn. Trong `vars`, một sequence TLA+ là một object có key bắt đầu từ 1, nên `v.pc[1]` là `pc[1]`. Một tập hợp là một mảng.
 
-The view can also export `step(action, from, to)`. It gets the TLC action name and the values before and after the step, and it returns the label of the arrow. Write each step label as the user sees it happen, such as "you press play" or "the connect fails". Do not name the code or the TLA+ action. Two actions that end the same in the chart get the same label, so that they share one arrow.
+View cũng có thể export `step(action, from, to)`. Nó nhận tên action của TLC và các giá trị trước và sau bước, và trả về nhãn của mũi tên. Viết mỗi nhãn bước theo cách người dùng thấy nó xảy ra, như "bạn nhấn play" hoặc "kết nối thất bại". Đừng gọi tên code hay action TLA+. Hai action kết thúc giống nhau trong biểu đồ nhận cùng một nhãn, để chúng dùng chung một mũi tên.
 
-When a step can occur only in some conditions, end its label with the condition in brackets, in the reader's words, such as `you press play [while the file loads]`. In a regions chart, the command writes the condition on the other regions on the arrow, in the words of their labels, such as `[when Offline]`. Your brackets replace it, and two arrows from one state can then look the same. So in a regions chart, do not write brackets for a condition on another region. When a value that no label shows decides where a step goes, name the result in the label, such as "the roster read fails".
+Khi một bước chỉ có thể xảy ra trong một số điều kiện, hãy kết thúc nhãn của nó bằng điều kiện trong ngoặc vuông, bằng ngôn từ của người đọc, như `bạn nhấn play [khi file đang tải]`. Trong một biểu đồ có vùng, lệnh ghi điều kiện về các vùng khác lên mũi tên, bằng ngôn từ của nhãn của chúng, như `[when Offline]`. Ngoặc vuông của bạn thay thế nó, và khi đó hai mũi tên từ một trạng thái có thể trông giống nhau. Vì vậy trong một biểu đồ có vùng, đừng viết ngoặc vuông cho một điều kiện về vùng khác. Khi một giá trị mà không nhãn nào hiển thị quyết định một bước đi đâu, hãy gọi tên kết quả trong nhãn, như "đọc danh sách thất bại".
 
-The view can also export these:
+View cũng có thể export những thứ sau:
 
-- `group(vars)` returns the name of a phase. Each chart state gets the color of its group. When the model states behind one chart state are in different groups, that state gets no color.
-- `colors` gives each group name a color class.
-- `title` is a string that the chart shows at the top.
+- `group(vars)` trả về tên của một giai đoạn. Mỗi trạng thái biểu đồ nhận màu của nhóm nó. Khi các trạng thái model đằng sau một trạng thái biểu đồ thuộc các nhóm khác nhau, trạng thái đó không có màu.
+- `colors` gán cho mỗi tên nhóm một class màu.
+- `title` là một chuỗi mà biểu đồ hiển thị ở trên cùng.
 
-The command calls `state()` and `group()` at most once for each model state, and `step()` at most once for each step. The chart and the report both use those answers. So make each function depend only on its arguments.
+Lệnh gọi `state()` và `group()` tối đa một lần cho mỗi trạng thái model, và `step()` tối đa một lần cho mỗi bước. Biểu đồ và báo cáo đều dùng các câu trả lời đó. Vì vậy hãy làm cho mỗi hàm chỉ phụ thuộc vào tham số của nó.
 
-The chart does not draw a step that stays in one label. Split a label when the reader must see such a step.
+Biểu đồ không vẽ một bước ở lại trong cùng một nhãn. Tách một nhãn khi người đọc phải thấy một bước như vậy.
 
-Aim for about 20 arrows or fewer, because a busier chart is hard to read. First return coarser labels from `state()`. Give one label to values that act the same, and leave out a detail that the reader does not need, such as a call in flight whose return changes nothing. Keep each state of a bug path, and keep each mark. When a merge changes a `breaks` state to `mayBreak`, it hides where a rule breaks. Do not merge two states that break different rules, because the reader then cannot see which rule breaks where. If the chart is still too busy, return `null` from `step()` for the steps that the reader does not need, such as a reset that every state has, or a step whose arrow repeats what other arrows show. Obey these rules when you hide steps:
+Nhắm đến khoảng 20 mũi tên hoặc ít hơn, vì một biểu đồ dày đặc hơn khó đọc. Trước hết hãy trả về các nhãn thô hơn từ `state()`. Cho một nhãn cho các giá trị hoạt động giống nhau, và bỏ một chi tiết mà người đọc không cần, như một lời gọi đang chạy mà kết quả trả về không thay đổi gì. Giữ mỗi trạng thái của một đường bug, và giữ mỗi dấu. Khi một lần gộp đổi một trạng thái `breaks` thành `mayBreak`, nó che giấu nơi một quy tắc bị phá vỡ. Đừng gộp hai trạng thái phá vỡ các quy tắc khác nhau, vì khi đó người đọc không thể thấy quy tắc nào bị phá vỡ ở đâu. Nếu biểu đồ vẫn quá dày đặc, hãy trả về `null` từ `step()` cho các bước mà người đọc không cần, như một lần reset mà mọi trạng thái đều có, hoặc một bước có mũi tên lặp lại những gì các mũi tên khác đã cho thấy. Tuân theo các quy tắc này khi bạn ẩn bước:
 
-- Keep each chart state reachable by arrows from a start state.
-- Keep at least one arrow out of each chart state that has a step out in the model.
-- Hide all the steps of an arrow, or none of them. When you hide only some, its condition gets narrower.
-- In the hand-off, say which steps the chart hides.
+- Giữ mỗi trạng thái biểu đồ có thể đến được bằng các mũi tên từ một trạng thái bắt đầu.
+- Giữ ít nhất một mũi tên đi ra khỏi mỗi trạng thái biểu đồ có bước đi ra trong model.
+- Ẩn tất cả các bước của một mũi tên, hoặc không ẩn bước nào. Khi bạn chỉ ẩn một số, điều kiện của nó trở nên hẹp hơn.
+- Trong phần bàn giao, nói biểu đồ ẩn những bước nào.
 
-## Read the report
+## Đọc báo cáo
 
-- In the chart, a state that breaks a rule has the class `breaks`. When only some model states behind it break the rule, it has the class `mayBreak`. The Legend names the rules of each mark. When two rules break, it names both on one mark, so say in the hand-off which state breaks which rule. In a regions chart, a state gets a mark when each combination of region states that includes it can break a rule. When a combination can break a rule and none of its states has a mark, each state in that combination gets a mark.
-- TLC goes past a state that breaks a rule, so the chart shows the states after a bug.
-- Because TLC goes past bugs, a model with no limit on its states can run without end. Keep the constants small, or add a CONSTRAINT.
-- With a VIEW or a SYMMETRY, TLC counts states that it treats as the same as one state, and the chart draws that one state. An arrow can lead to it rather than to the state that the step reaches, and the report says so.
-- TLC checks the rules in each state past a CONSTRAINT or an ACTION_CONSTRAINT, but it does not explore that state or check it for deadlock. When TLC's shortest path for a rule ends in such a state, the chart draws that state, and the report gives that path. The chart does not draw the other states past the bound. A deadlock in such a state does not show. TLC also checks the rules after each step that an ACTION_CONSTRAINT excludes, also when it reaches the next state another way. When TLC's shortest path for a rule ends with such a step, the chart draws that step.
-- The command checks the rules with TLC on the config as written, with one worker. When a rule breaks, the command removes that rule and runs TLC again, until no rule breaks. After the first break, each run stops at 100,000 distinct states, so that a large model does not run without end. When a run reaches that bound or stops on an error, the report lists the rules that it did not check under "Rules not checked", and the chart does not mark them. A rule that is not checked can hold or break. To check it, remove the rules that break from the config, or make the model smaller. The bound adds a module that changes TLC's order of the variables, so for a property TLC can find a different counterexample than a run without the bound.
-- `tlc.out` is what TLC printed on the config as written. When the chart does not show the bug path of a rule that breaks, `tlc-RULE.out` is what TLC printed for the run that found it. When TLC repeats its first warning, plain TLC prints it twice, but `tlc.out` shows it once, because TLC leaves the second copy out of the output that this command reads. That happens only when Java runs with `-XX:+UseParallelGC`, since otherwise TLC's first warning is its advice to pass that flag, which it prints once.
+- Trong biểu đồ, một trạng thái phá vỡ một quy tắc có class `breaks`. Khi chỉ một số trạng thái model đằng sau nó phá vỡ quy tắc, nó có class `mayBreak`. Legend gọi tên các quy tắc của mỗi dấu. Khi hai quy tắc bị phá vỡ, nó gọi tên cả hai trên một dấu, nên hãy nói trong phần bàn giao trạng thái nào phá vỡ quy tắc nào. Trong một biểu đồ có vùng, một trạng thái nhận một dấu khi mỗi tổ hợp trạng thái vùng bao gồm nó đều có thể phá vỡ một quy tắc. Khi một tổ hợp có thể phá vỡ một quy tắc mà không trạng thái nào của nó có dấu, mỗi trạng thái trong tổ hợp đó nhận một dấu.
+- TLC đi tiếp qua một trạng thái phá vỡ một quy tắc, nên biểu đồ cho thấy các trạng thái sau một bug.
+- Vì TLC đi tiếp qua bug, một model không giới hạn số trạng thái có thể chạy không có điểm dừng. Giữ các hằng số nhỏ, hoặc thêm một CONSTRAINT.
+- Với một VIEW hoặc một SYMMETRY, TLC đếm các trạng thái mà nó coi là giống nhau thành một trạng thái, và biểu đồ vẽ trạng thái đó. Một mũi tên có thể dẫn đến nó thay vì đến trạng thái mà bước đạt tới, và báo cáo nói vậy.
+- TLC kiểm tra các quy tắc ở mỗi trạng thái vượt quá một CONSTRAINT hoặc một ACTION_CONSTRAINT, nhưng nó không khám phá trạng thái đó hay kiểm tra deadlock cho nó. Khi đường ngắn nhất của TLC cho một quy tắc kết thúc ở một trạng thái như vậy, biểu đồ vẽ trạng thái đó, và báo cáo đưa ra đường đó. Biểu đồ không vẽ các trạng thái khác vượt quá giới hạn. Một deadlock ở trạng thái như vậy không hiện ra. TLC cũng kiểm tra các quy tắc sau mỗi bước mà một ACTION_CONSTRAINT loại trừ, kể cả khi nó đến được trạng thái kế tiếp bằng cách khác. Khi đường ngắn nhất của TLC cho một quy tắc kết thúc bằng một bước như vậy, biểu đồ vẽ bước đó.
+- Lệnh kiểm tra các quy tắc bằng TLC trên config như đã viết, với một worker. Khi một quy tắc bị phá vỡ, lệnh xóa quy tắc đó và chạy TLC lại, cho đến khi không quy tắc nào bị phá vỡ. Sau lần phá vỡ đầu tiên, mỗi lượt chạy dừng ở 100,000 trạng thái phân biệt, để một model lớn không chạy mãi. Khi một lượt chạy đạt đến giới hạn đó hoặc dừng vì lỗi, báo cáo liệt kê các quy tắc nó chưa kiểm tra dưới mục "Rules not checked", và biểu đồ không đánh dấu chúng. Một quy tắc chưa được kiểm tra có thể đúng hoặc bị phá vỡ. Để kiểm tra nó, hãy xóa các quy tắc bị phá vỡ khỏi config, hoặc làm model nhỏ hơn. Giới hạn thêm vào một module làm thay đổi thứ tự các biến của TLC, nên với một property, TLC có thể tìm ra một phản ví dụ khác so với một lượt chạy không có giới hạn.
+- `tlc.out` là những gì TLC đã in ra trên config như đã viết. Khi biểu đồ không cho thấy đường bug của một quy tắc bị phá vỡ, `tlc-RULE.out` là những gì TLC đã in ra cho lượt chạy tìm ra nó. Khi TLC lặp lại cảnh báo đầu tiên của nó, TLC thuần in nó hai lần, nhưng `tlc.out` cho thấy nó một lần, vì TLC bỏ bản sao thứ hai khỏi output mà lệnh này đọc. Điều đó chỉ xảy ra khi Java chạy với `-XX:+UseParallelGC`, vì nếu không thì cảnh báo đầu tiên của TLC là lời khuyên truyền flag đó, mà nó chỉ in một lần.
 
-## Show the chart
+## Hiển thị biểu đồ
 
-Show `chart.mmd` to the user as a `mermaid` code block. The chart has a budget of 500 states, counted by TLC on the config as written. Above that, the chart draws only the paths to the rules that break, and when no rule breaks, the command writes no `chart.mmd`. It still checks each rule, and the report gives the state count and each bug path. To see the whole graph, make the model smaller.
+Hiển thị `chart.mmd` cho người dùng dưới dạng một code block `mermaid`. Biểu đồ có ngân sách 500 trạng thái, được TLC đếm trên config như đã viết. Vượt quá mức đó, biểu đồ chỉ vẽ các đường đến các quy tắc bị phá vỡ, và khi không quy tắc nào bị phá vỡ, lệnh không ghi `chart.mmd`. Nó vẫn kiểm tra mỗi quy tắc, và báo cáo đưa ra số trạng thái và mỗi đường bug. Để thấy toàn bộ đồ thị, hãy làm model nhỏ hơn.
 
-Render charts with Pele. When the user asks for an image, or a chart is too large to read as text, follow `references/render.md`. Do not use a different renderer unless the user asks for it.
+Render biểu đồ bằng Pele. Khi người dùng yêu cầu một hình ảnh, hoặc một biểu đồ quá lớn để đọc dưới dạng chữ, hãy làm theo `references/render.md`. Đừng dùng một renderer khác trừ khi người dùng yêu cầu.
 
-## Hand off
+## Bàn giao
 
-Give each chart and its Mermaid text to the person who must decide. Add one line for each bug: the rule, the reader's sentence for that rule, and the path as the report numbers it. Say what the model leaves out. Give the command that makes the files again, with a new `--out` folder.
+Đưa mỗi biểu đồ và chữ Mermaid của nó cho người phải quyết định. Thêm một dòng cho mỗi bug: quy tắc, câu của người đọc cho quy tắc đó, và đường đi như báo cáo đánh số nó. Nói model bỏ ra ngoài những gì. Đưa ra lệnh tạo lại các file, với một thư mục `--out` mới.
 
-When the model describes code, replay each bug path against the real code, as a test or a live repro, one step for each action. If a bug does not occur, think that the model is wrong until you show that it is not.
+Khi model mô tả code, hãy phát lại mỗi đường bug trên code thật, dưới dạng một test hoặc một bản tái hiện trực tiếp, mỗi action một bước. Nếu một bug không xảy ra, hãy nghĩ rằng model sai cho đến khi bạn chứng minh được là không.

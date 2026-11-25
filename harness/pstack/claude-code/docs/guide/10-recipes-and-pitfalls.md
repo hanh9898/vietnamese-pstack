@@ -1,182 +1,182 @@
-# Recipes and pitfalls
+# Công thức và cạm bẫy
 
-Prompts worth copying, then the mistakes everyone makes once. Swap in your own paths and finish conditions. The recipes are deliberately informal. That's how they get typed in practice, and the skills read intent fine.
+Các prompt đáng sao chép, rồi đến những lỗi ai cũng mắc một lần. Thay bằng đường dẫn và điều kiện hoàn thành của riêng bạn. Các công thức được viết thân mật một cách có chủ đích. Đó là cách người ta thật sự gõ chúng, và các skill vẫn đọc được ý định tốt.
 
-![She tastes a finished dish while robots cook from a recipe box, with pinned cards reading /how, /tdd, and /loop above the counter.](./images/recipes.jpg)
+![Cô ấy nếm thử một món ăn đã hoàn thành trong khi các robot nấu theo một hộp công thức, với các tấm thẻ ghim /how, /tdd và /loop phía trên quầy.](./images/recipes.jpg)
 
-## Understand an unfamiliar subsystem
+## Hiểu một subsystem lạ
 
 ```text
-use /how first to understand how this initialization works. then use /why to figure out why it broke recently.
+dùng /how trước để hiểu phần khởi tạo này hoạt động thế nào. rồi dùng /why để tìm ra tại sao gần đây nó bị hỏng.
 ```
 
-Mechanics first, history second. Each skill's report tells you which sources it searched, so you know what the answer is grounded in.
+Cơ chế trước, lịch sử sau. Báo cáo của mỗi skill cho bạn biết nó đã tìm trong những nguồn nào, nên bạn biết câu trả lời dựa trên cái gì.
 
-## Restate a noisy report before touching code
+## Nhắc lại một báo cáo nhiều nhiễu trước khi đụng vào code
 
 ```text
-/poteto-mode read this thread. restate the underlying issue in your own words, in plain english. don't change any code yet.
+/poteto-mode đọc thread này. nhắc lại vấn đề cốt lõi bằng lời của bạn, bằng tiếng việt dễ hiểu. chưa thay đổi code nào.
 ```
 
-A misreading shows up in the restatement, where it costs one message to correct. Keep your own theory to yourself until the agent has stated its own. `/in-your-own-words` asks for the restatement alone, with no playbook.
+Một sự hiểu sai sẽ lộ ra trong phần nhắc lại, nơi việc sửa chỉ tốn một tin nhắn. Hãy giữ giả thuyết của bạn cho riêng mình đến khi agent đã nêu giả thuyết của nó. `/in-your-own-words` chỉ yêu cầu phần nhắc lại, không cần playbook.
 
-## Sharpen a prompt before you send it
+## Mài sắc một prompt trước khi gửi
 
 ```text
-/sharpen write the onboarding doc for the new billing service.
+/sharpen viết tài liệu onboarding cho billing service mới.
 ```
 
-The agent names what an expert would do that you didn't ask for, the raw material they'd start from, their methods and tools, and an outside check that the result is right. It hands back your prompt rewritten to ask for that and doesn't do the task. Send the rewrite when it reads right.
+Agent gọi tên những gì một chuyên gia sẽ làm mà bạn chưa yêu cầu, nguyên liệu thô họ sẽ bắt đầu từ đó, phương pháp và công cụ của họ, và một phép kiểm tra bên ngoài cho thấy kết quả là đúng. Nó trả lại prompt của bạn đã được viết lại để yêu cầu điều đó và không làm task. Hãy gửi bản viết lại khi nó đọc thấy đúng.
 
-## Prototype before you pick
+## Prototype trước khi chọn
 
 ```text
-/poteto-mode prototype a few options for the settings layout. put them behind a switcher and send me screenshots of each.
+/poteto-mode prototype vài phương án cho layout trang settings. đặt chúng sau một công tắc chuyển và gửi tôi screenshot của từng cái.
 ```
 
-You pick from things that run, not from descriptions. The agent answers its own layout and timing questions along the way.
+Bạn chọn từ những thứ chạy được, không phải từ mô tả. Agent tự trả lời các câu hỏi về layout và thời gian của nó trên đường đi.
 
-## Turn a settled design into a plan
+## Biến một thiết kế đã chốt thành kế hoạch
 
 ```text
-/poteto-mode turn this design into a plan. small verifiable PRs, each with its own proof.
+/poteto-mode biến thiết kế này thành một kế hoạch. các PR nhỏ có thể kiểm chứng, mỗi PR có bằng chứng riêng.
 ```
 
-Ask only after the design settles. The plan is the deliverable, and it names the playbook that will execute it.
+Chỉ yêu cầu sau khi thiết kế đã chốt. Kế hoạch là sản phẩm bàn giao, và nó gọi tên playbook sẽ thực thi nó.
 
-## Get a second opinion on a design
+## Lấy ý kiến thứ hai về một thiết kế
 
 ```text
-ask /arena for a second opinion on this thread and our approach
+nhờ /arena cho ý kiến thứ hai về thread này và cách tiếp cận của chúng ta
 ```
 
-Your current design becomes one candidate among several, and the synthesis tells you whether the panel found something better or confirmed what you had. It costs little next to a design that is expensive to reverse.
+Thiết kế hiện tại của bạn trở thành một ứng viên giữa nhiều ứng viên, và phần tổng hợp cho bạn biết panel đã tìm ra thứ gì tốt hơn hay xác nhận những gì bạn đã có. Nó tốn rất ít so với một thiết kế đắt đỏ để đảo ngược.
 
-## Check independent slices in parallel
+## Kiểm tra các lát cắt độc lập song song
 
 ```text
-/swarm check every package under packages/ against its check.sh. one worker per package. one report.
+/swarm kiểm tra mọi package trong packages/ với check.sh của nó. mỗi package một worker. một báo cáo.
 ```
 
-Each worker owns one package. The parent waits for every slice and returns one `PASS`, `ISSUES`, or `BLOCKED` report instead of raw worker dumps.
+Mỗi worker sở hữu một package. Cha chờ mọi lát cắt và trả về một báo cáo `PASS`, `ISSUES`, hoặc `BLOCKED` thay vì đống output thô của các worker.
 
-## Review a branch skeptically
+## Review một branch với thái độ hoài nghi
 
 ```text
-/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's an actual bug or regression in behavior.
+/interrogate toàn bộ branch, nhưng với thái độ hoài nghi. chưa thay đổi gì cả. không bắt bẻ vặt trừ khi đó là bug hoặc hồi quy hành vi thật.
 ```
 
-The qualifiers do real work. "don't change anything yet" keeps it read-only, and the nitpick rule pre-filters the noise so the verified findings are worth your time.
+Các điều kiện kèm theo làm việc thật. "chưa thay đổi gì cả" giữ nó ở chế độ chỉ đọc, và quy tắc về bắt bẻ vặt lọc trước nhiễu để các phát hiện đã kiểm chứng đáng thời gian của bạn.
 
-## Fix a bug through a failing test
+## Sửa bug thông qua một test thất bại
 
 ```text
-/poteto-mode repro the duplicate write first. if there's a cheap test path, /tdd it. then fix and rerun.
+/poteto-mode tái hiện lần ghi trùng lặp trước. nếu có đường test rẻ, /tdd nó. rồi sửa và chạy lại.
 ```
 
-"if there's a cheap test path" matters. Forcing a test through brittle mocks proves less than running the real command, and the playbook is allowed to say so.
+"nếu có đường test rẻ" là quan trọng. Ép một test qua các mock dễ vỡ chứng minh được ít hơn chạy lệnh thật, và playbook được phép nói vậy.
 
-## Repro and fix a report with proof
+## Tái hiện và sửa một báo cáo kèm bằng chứng
 
 ```text
-/poteto-mode repro this with /verify-<app>. if it repros on main, fix it and show me a video as proof.
+/poteto-mode tái hiện lỗi này với /verify-<app>. nếu nó tái hiện trên main, sửa nó và cho tôi xem video làm bằng chứng.
 ```
 
-"if it repros on main" lets the run stop early when the bug is already gone. The video lets you check the fix before you read the diff.
+"nếu nó tái hiện trên main" cho phép lượt chạy dừng sớm khi bug đã không còn. Video cho phép bạn kiểm tra bản sửa trước khi đọc diff.
 
-## Prove a property tests rarely reach
+## Chứng minh một thuộc tính mà test hiếm khi chạm tới
 
 ```text
-/create-formal-verification-skill the retry queue. a message must never be delivered twice.
+/create-formal-verification-skill retry queue. một message không bao giờ được gửi hai lần.
 ```
 
-You get one property checked in every case within a stated scope, a counterexample in your code's terms if the code already breaks it, and a project skill the next agent runs on any change to that code.
+Bạn nhận được một thuộc tính được kiểm tra trong mọi trường hợp trong một phạm vi đã nêu, một phản ví dụ theo thuật ngữ code của bạn nếu code đã phá vỡ nó, và một skill của dự án mà agent tiếp theo chạy trên mọi thay đổi đối với code đó.
 
-## Vet a number before you post it
+## Thẩm định một con số trước khi đăng nó
 
 ```text
-/benchmark-checklist vet this 40% speedup before it goes in the pr description
+/benchmark-checklist thẩm định mức tăng tốc 40% này trước khi nó vào mô tả pr
 ```
 
-You get faster, slower, no measurable difference, or inconclusive, with the run count, the range, and what limits the number.
+Bạn nhận được nhanh hơn, chậm hơn, không có khác biệt đo được, hoặc chưa kết luận được, kèm số lượt chạy, khoảng biến thiên, và cái giới hạn con số.
 
-## Stop correcting the same mistake
+## Thôi sửa cùng một lỗi
 
 ```text
-/correct agents keep adding new config flags without registering them in the schema
+/correct agent cứ thêm config flag mới mà không đăng ký chúng trong schema
 ```
 
-The fix lands in the repo as architecture, a type, a lint, or a test, so the next agent can't make the mistake.
+Bản sửa land vào repo dưới dạng kiến trúc, một type, một lint, hoặc một test, để agent tiếp theo không thể mắc lỗi đó.
 
-## Ask how without starting the work
+## Hỏi cách làm mà không bắt đầu công việc
 
 ```text
-/poteto-help how do i get poteto-mode to stay on every turn?
+/poteto-help làm sao để poteto-mode luôn bật ở mọi lượt?
 ```
 
-You get an answer, a prompt to send, and a link to the source. Nothing runs until you send that prompt.
+Bạn nhận được một câu trả lời, một prompt để gửi, và một link đến nguồn. Không có gì chạy cho đến khi bạn gửi prompt đó.
 
-## Keep a run honest while you're away
+## Giữ một lượt chạy trung thực khi bạn đi vắng
 
 ```text
-im going to bed, keep going autonomously until every fixture passes. do not stop. keep a decision log i can audit in the morning.
+tôi đi ngủ đây, cứ tự chủ làm tiếp đến khi mọi fixture đều pass. đừng dừng lại. giữ một nhật ký quyết định để tôi kiểm toán vào buổi sáng.
 ```
 
-The full contract is on the [overnight page](./07-overnight.md). The short form works once the task and finish condition are already in the conversation.
+Hợp đồng đầy đủ nằm ở [trang qua đêm](./07-overnight.md). Dạng ngắn dùng được khi task và điều kiện hoàn thành đã có sẵn trong cuộc trò chuyện.
 
-## Redirect a drifting run
+## Chuyển hướng một lượt chạy đang trôi dạt
 
-Steering prompts are one line:
-
-```text
-i said the goal is to repro. i did not ask for a fix yet.
-```
+Các prompt lái chỉ một dòng:
 
 ```text
-apply prove it works. show me the real output, not the build log.
+tôi đã nói mục tiêu là tái hiện. tôi chưa yêu cầu sửa.
 ```
 
 ```text
-/unslop that, no emdashes
+áp dụng prove it works. cho tôi xem output thật, không phải build log.
 ```
 
-You rarely need more words. You need the right name, and [the principles page](./08-principles.md) is the vocabulary.
+```text
+/unslop cái đó, không dùng gạch ngang dài
+```
 
-## Get the reply in plain words
+Bạn hiếm khi cần nhiều lời hơn. Bạn cần đúng cái tên, và [trang nguyên tắc](./08-principles.md) là bộ từ vựng.
+
+## Nhận câu trả lời bằng lời đơn giản
 
 ```text
 /bro
 ```
 
-That's the whole prompt. [`/bro`](../../skills/bro/SKILL.md) restates the last message like one human talking to another, no jargon, shorter. Use it when a reply is technically thorough and you still don't know what it said.
+Đó là toàn bộ prompt. [`/bro`](../../skills/bro/SKILL.md) nhắc lại tin nhắn cuối như một người nói chuyện với người khác, không thuật ngữ, ngắn hơn. Dùng nó khi một câu trả lời đầy đủ về kỹ thuật mà bạn vẫn không biết nó nói gì.
 
-## Catch up on a chat you left running
+## Cập nhật một chat bạn để chạy
 
 ```text
 /ketchup
 ```
 
-[`/ketchup`](../../skills/ketchup/SKILL.md) tells you in plain words what changed since your last message, then lists each call waiting on you with its pick, evidence, and risk. It changes nothing while it reports.
+[`/ketchup`](../../skills/ketchup/SKILL.md) cho bạn biết bằng lời đơn giản những gì đã thay đổi kể từ tin nhắn cuối của bạn, rồi liệt kê từng quyết định đang chờ bạn kèm lựa chọn, bằng chứng và rủi ro. Nó không thay đổi gì trong lúc báo cáo.
 
-To watch the catch-up instead, run [`/ketchup-video`](../../skills/ketchup-video/SKILL.md). It shows what happened in a short subtitled video of slides, and lists the calls waiting on you as text under it.
+Để xem bản cập nhật thay vì đọc, hãy chạy [`/ketchup-video`](../../skills/ketchup-video/SKILL.md). Nó cho thấy những gì đã xảy ra trong một video ngắn gồm các slide có phụ đề, và liệt kê các quyết định đang chờ bạn dưới dạng văn bản bên dưới.
 
-## The pitfalls
+## Các cạm bẫy
 
-- **Enumerating skills in the prompt.** "use /architect then /arena then /interrogate" reorders steps the playbook already sequences. State the goal and constraints. Name a skill only to override a default.
-- **A vague finish condition.** "make it better" gives `/loop` nothing to check. Give a command or artifact that can pass or fail.
-- **Leading with your theory of the cause.** The agent searches wherever you pointed. Ask it to restate the problem first, then share your hunch.
-- **Taking the first design.** One attempt locks in the first shape the model thought of. Ask for prototypes or `/architect` and pick from evidence.
-- **Polishing an abstract plan.** Adversarial review of a plan with no code behind it invents risks that will never happen. Settle the open questions with prototypes, then review what got built.
-- **Parallel agents in one worktree.** They overwrite each other, and nobody can tell which agent changed what. Run them as cloud agents, or say "own worktree per attempt".
-- **Looping before you trust the loop.** A loop that can't verify its own work only makes unchecked work faster. Get the verification skill working first.
-- **Trusting an unvetted number.** A warm cache or a skipped code path can fake a speedup. Run `/benchmark-checklist` before the number goes anywhere.
-- **Correcting the same mistake by hand.** A correction in chat helps one run. `/correct` fixes the repo so no later run repeats it.
-- **Using `/arena` for coverage.** `/arena` repeats one design or code brief, then picks a base and grafts the best parts. `/swarm` partitions slices or declared race arms and aggregates one report.
-- **Accepting every review comment.** Bots and humans both file real catches and noise in one list. `/interrogate` keeps only the findings a rerun proves and lists what it dropped and why, and you can override either way.
-- **Treating `auto` as a model slug.** `auto` and `inherit-parent` mean "omit the model field so the subagent inherits the parent chat model." [Setup](./01-setup.md) covers the roles.
-- **Reporting success off a green build.** A build proves it compiles. Ask for the real command, flow, stored value, or profile, and expect the evidence in the reply.
-- **Writing a `SKILL.md` freehand.** Route it through the [Authoring or modifying a skill playbook](../../skills/poteto-mode/playbooks/authoring-a-skill.md) so validation and review happen.
+- **Liệt kê skill trong prompt.** "dùng /architect rồi /arena rồi /interrogate" đảo thứ tự các bước mà playbook đã sắp xếp. Hãy nêu mục tiêu và ràng buộc. Chỉ gọi tên một skill để ghi đè một mặc định.
+- **Một điều kiện hoàn thành mơ hồ.** "làm cho nó tốt hơn" không cho `/loop` thứ gì để kiểm tra. Hãy đưa ra một lệnh hoặc artifact có thể pass hoặc fail.
+- **Mở đầu bằng giả thuyết của bạn về nguyên nhân.** Agent tìm kiếm ở bất cứ đâu bạn đã chỉ. Hãy yêu cầu nó nhắc lại vấn đề trước, rồi mới chia sẻ linh cảm của bạn.
+- **Nhận thiết kế đầu tiên.** Một lần thử khóa chặt hình dạng đầu tiên mà model nghĩ ra. Hãy yêu cầu prototype hoặc `/architect` và chọn dựa trên bằng chứng.
+- **Trau chuốt một kế hoạch trừu tượng.** Review đối kháng một kế hoạch không có code phía sau sẽ bịa ra những rủi ro không bao giờ xảy ra. Hãy giải quyết các câu hỏi mở bằng prototype, rồi review những gì đã được xây.
+- **Nhiều agent song song trong một worktree.** Chúng ghi đè lên nhau, và không ai biết agent nào đã thay đổi cái gì. Hãy chạy chúng dưới dạng cloud agent, hoặc nói "mỗi lần thử một worktree riêng".
+- **Chạy vòng lặp trước khi tin vòng lặp.** Một vòng lặp không thể tự kiểm chứng công việc của mình chỉ làm công việc chưa kiểm tra nhanh hơn. Hãy làm cho verification skill hoạt động trước.
+- **Tin một con số chưa được thẩm định.** Một cache đã ấm hoặc một đường code bị bỏ qua có thể làm giả một mức tăng tốc. Hãy chạy `/benchmark-checklist` trước khi con số đi đâu.
+- **Tự tay sửa cùng một lỗi.** Một lời sửa trong chat giúp một lượt chạy. `/correct` sửa repo để không lượt chạy nào sau đó lặp lại nó.
+- **Dùng `/arena` để bao phủ.** `/arena` lặp lại một brief thiết kế hoặc code, rồi chọn một base và ghép những phần tốt nhất. `/swarm` phân chia các lát cắt hoặc các nhánh đua đã khai báo và gộp thành một báo cáo.
+- **Chấp nhận mọi comment review.** Cả bot và người đều ghi phát hiện thật lẫn nhiễu trong cùng một danh sách. `/interrogate` chỉ giữ những phát hiện mà một lần chạy lại chứng minh được và liệt kê những gì nó đã loại bỏ cùng lý do, và bạn có thể ghi đè theo cả hai chiều.
+- **Coi `auto` là một model slug.** `auto` và `inherit-parent` nghĩa là "bỏ trống trường model để subagent thừa hưởng model của chat cha." [Cài đặt](./01-setup.md) đề cập các vai trò.
+- **Báo thành công dựa trên một bản build xanh.** Một bản build chứng minh nó compile được. Hãy yêu cầu lệnh, luồng, giá trị đã lưu, hoặc profile thật, và chờ đợi bằng chứng trong câu trả lời.
+- **Tự tay viết một `SKILL.md`.** Hãy đưa nó qua [playbook Authoring or modifying a skill](../../skills/poteto-mode/playbooks/authoring-a-skill.md) để việc validate và review diễn ra.
 
-That's the guide. If you skipped ahead, go back to [setup](./01-setup.md) and run one real task. The habits stick from use, not from reading.
+Đó là toàn bộ hướng dẫn. Nếu bạn đã đọc lướt qua, hãy quay lại [cài đặt](./01-setup.md) và chạy một task thật. Thói quen bám lại từ việc dùng, không phải từ việc đọc.
 
-Back to the [guide index](./README.md).
+Quay lại [mục lục hướng dẫn](./README.md).

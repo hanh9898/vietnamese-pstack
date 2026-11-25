@@ -1,68 +1,68 @@
-# pstack in Claude Code
+# pstack trong Claude Code
 
-pstack skills use Cursor names. In Claude Code, read this file once per session, then map each Cursor name in a skill with the tables below. `<pstack>` means the folder that holds `skills/` and `docs/`. If a Cursor field has no row, drop it and say so. Never pass a field or value the tool schema rejects.
+Các skill của pstack dùng tên của Cursor. Trong Claude Code, hãy đọc file này một lần mỗi session, rồi ánh xạ từng tên Cursor trong một skill bằng các bảng bên dưới. `<pstack>` nghĩa là thư mục chứa `skills/` và `docs/`. Nếu một trường của Cursor không có dòng tương ứng, hãy bỏ nó và nói rõ. Không bao giờ truyền một trường hoặc giá trị mà schema của tool từ chối.
 
-## Tools
+## Tool
 
 | Cursor | Claude Code |
 | --- | --- |
 | `Task` | `Agent` |
-| `AskQuestion` | `AskUserQuestion`. In `-p` mode it is absent, so ask in plain text. |
-| Open a todolist, or copy steps into the todolist tool | Use `TodoWrite` if the session offers it. Otherwise keep the list in your reply and update it at each phase. |
-| Run another pstack skill (`/name` or "the **name** skill") | `Read` `<pstack>/skills/<name>/SKILL.md` and follow it. The `Skill` tool refuses most pstack skills. When you tell the user to type it, write `/pstack:<name>`. |
-| `Grep`, `Glob` | `Bash` with `rg` when the session has no `Grep` or `Glob`. |
+| `AskQuestion` | `AskUserQuestion`. Ở chế độ `-p` nó không có, nên hãy hỏi bằng văn bản thường. |
+| Mở một todolist, hoặc chép các bước vào tool todolist | Dùng `TodoWrite` nếu session có. Nếu không, giữ danh sách trong câu trả lời và cập nhật nó ở mỗi giai đoạn. |
+| Chạy một skill pstack khác (`/name`, "skill **name**" hoặc "the **name** skill") | `Read` `<pstack>/skills/<name>/SKILL.md` và làm theo nó. Tool `Skill` từ chối phần lớn các skill pstack. Khi bạn bảo người dùng gõ nó, hãy viết `/pstack:<name>`. |
+| `Grep`, `Glob` | `Bash` với `rg` khi session không có `Grep` hoặc `Glob`. |
 
-## Subagent fields
+## Các trường của subagent
 
 | Cursor | Claude Code |
 | --- | --- |
 | `subagent_type: generalPurpose` | `subagent_type: "general-purpose"` |
 | `poteto-agent`, `comment-sicko` | `pstack:poteto-agent`, `pstack:comment-sicko` |
-| The `model:` line in `poteto-agent`'s file | It holds a Cursor slug. Pass `model` and `effort` on every `Agent` call that spawns `pstack:poteto-agent`, mapped with the Models table, so that slug never reaches the API. |
-| `readonly: true` | `subagent_type: "Explore"`. It keeps `Bash`, so the brief also says "do not edit files", and you check `git status` afterward. |
-| `readonly: false` | `general-purpose`. It keeps the session's MCP servers. |
-| `environment: "cloud"` | `isolation: "worktree"`. Name the branch or commit the worker checks out. |
-| `environment: "local"` | Omit. |
-| `cloud_base_branch: <b>` | Tell the worker to check out `<b>` first. |
-| `run_in_background: true` | Omit. Subagents run in the background by default and notify you when they finish. |
-| `resume` | Spawn a new agent and paste the earlier result into its brief. |
-| `file_attachments` | List the paths in the brief. |
+| Dòng `model:` trong file của `poteto-agent` | Nó chứa một slug của Cursor. Truyền `model` và `effort` trên mọi lệnh gọi `Agent` khởi chạy `pstack:poteto-agent`, được ánh xạ bằng bảng Model, để slug đó không bao giờ đến được API. |
+| `readonly: true` | `subagent_type: "Explore"`. Nó vẫn giữ `Bash`, nên brief cũng phải nói "không sửa file", và bạn kiểm tra `git status` sau đó. |
+| `readonly: false` | `general-purpose`. Nó giữ các MCP server của session. |
+| `environment: "cloud"` | `isolation: "worktree"`. Gọi tên branch hoặc commit mà worker sẽ checkout. |
+| `environment: "local"` | Bỏ qua. |
+| `cloud_base_branch: <b>` | Bảo worker checkout `<b>` trước. |
+| `run_in_background: true` | Bỏ qua. Subagent chạy nền theo mặc định và thông báo cho bạn khi xong. |
+| `resume` | Khởi chạy một agent mới và dán kết quả trước đó vào brief của nó. |
+| `file_attachments` | Liệt kê các đường dẫn trong brief. |
 
-## Models
+## Model
 
 | Cursor | Claude Code |
 | --- | --- |
-| `claude-<family>-<version>-<effort>[-fast]`, such as `claude-opus-5-5-xhigh` | `model: "opus"` and `effort: "xhigh"`. `model` takes only `opus`, `sonnet`, `haiku`, `fable`. Drop `-fast`. |
-| A `gemini-*` or other non-Claude slug | Omit `model` so the agent runs on the session model, and say so. |
-| `auto` or `inherit-parent` | Omit `model`. |
-| The `pstack-models.mdc` rule, `~/.cursor/rules/pstack-models.mdc` | `~/.claude/rules/pstack-models.md`. Claude Code loads it into every new session, so its role lines are already in context. If they are not, read the file. If the file or the role's line is missing, use the skill's default slug. |
-| A role value `<model> <effort>`, such as `opus high` | `model: "opus"` and `effort: "high"`. |
+| `claude-<family>-<version>-<effort>[-fast]`, như `claude-opus-5-5-xhigh` | `model: "opus"` và `effort: "xhigh"`. `model` chỉ nhận `opus`, `sonnet`, `haiku`, `fable`. Bỏ `-fast`. |
+| Một slug `gemini-*` hoặc slug không phải Claude khác | Bỏ `model` để agent chạy trên model của session, và nói rõ điều đó. |
+| `auto` hoặc `inherit-parent` | Bỏ `model`. |
+| Rule `pstack-models.mdc`, `~/.cursor/rules/pstack-models.mdc` | `~/.claude/rules/pstack-models.md`. Claude Code nạp nó vào mọi session mới, nên các dòng vai trò của nó đã có sẵn trong context. Nếu chưa có, hãy đọc file. Nếu file hoặc dòng của vai trò bị thiếu, dùng slug mặc định của skill. |
+| Một giá trị vai trò `<model> <effort>`, như `opus high` | `model: "opus"` và `effort: "high"`. |
 
 ## setup-pstack
 
-Claude Code loads every `.md` file in `~/.claude/rules/` into each new session, so `setup-pstack` writes its rule there. Follow its steps with these changes:
+Claude Code nạp mọi file `.md` trong `~/.claude/rules/` vào từng session mới, nên `setup-pstack` ghi rule của nó vào đó. Làm theo các bước của nó với những thay đổi sau:
 
-- Detect. The detected models are the `model` values that the `Agent` tool schema lists, each with an effort from its `effort` values. Write a real model as `<model> <effort>`, such as `opus xhigh`. The effort is the last token, so the budget step works as written.
-- Defaults. Map each default slug with the rows above: `claude-opus-5-5-xhigh-fast` is `opus xhigh`, `claude-opus-5-5-high-fast` is `opus high`, `claude-fable-5-2-high` is `fable high`, and `gemini-4-neon-xhigh` is `inherit-parent`.
-- Write. Write `~/.claude/rules/pstack-models.md` with no frontmatter, then the comment lines, the `# budget` line, and one line per role from step 5. Overwrite the whole file. Never put the role lines in `CLAUDE.md` or `AGENTS.md`.
+- Detect. Các model được phát hiện là các giá trị `model` mà schema của tool `Agent` liệt kê, mỗi cái với một effort từ các giá trị `effort` của nó. Viết một model thật dưới dạng `<model> <effort>`, như `opus xhigh`. Effort là token cuối cùng, nên bước budget hoạt động như đã viết.
+- Defaults. Ánh xạ từng slug mặc định bằng các dòng ở trên: `claude-opus-5-5-xhigh-fast` là `opus xhigh`, `claude-opus-5-5-high-fast` là `opus high`, `claude-fable-5-2-high` là `fable high`, và `gemini-4-neon-xhigh` là `inherit-parent`.
+- Write. Ghi `~/.claude/rules/pstack-models.md` không có frontmatter, rồi đến các dòng comment, dòng `# budget`, và mỗi vai trò một dòng từ bước 5. Ghi đè toàn bộ file. Không bao giờ đặt các dòng vai trò trong `CLAUDE.md` hoặc `AGENTS.md`.
 
-## Paths
+## Đường dẫn
 
 | Cursor | Claude Code |
 | --- | --- |
 | `.cursor/skills/`, `~/.cursor/skills/` | `.claude/skills/`, `~/.claude/skills/` |
 | `~/.cursor/plugins/`, `.cursor-plugin/plugin.json` | `~/.claude/plugins/`, `.claude-plugin/plugin.json` |
-| `.cursor/rules/*.mdc`, always-applied rules | `CLAUDE.md`, or `AGENTS.md` when no `CLAUDE.md` exists. Claude Code never reads `.mdc` files. The model rule is the exception. See Models. |
-| `https://github.com/cursor/plugins/blob/main/pstack/<path>` | `<pstack>/<path>` when that file exists. The plugin ships the skills, `docs/guide/`, and `README.md`. Read the local copy and never fetch it. Give the user the URL when they need a link. |
-| Transcripts in `~/.cursor/projects/<slug>/agent-transcripts/` | `~/.claude/projects/<slug>/<session>.jsonl`. The slug is the workspace path with each `/` and `.` changed to `-`, so `/Users/you/proj` is `-Users-you-proj`. The newest `.jsonl` directly in that folder is the current session. Its `<session>/subagents/` folder holds subagent transcripts. Read only this workspace's folder. |
+| `.cursor/rules/*.mdc`, các rule luôn được áp dụng | `CLAUDE.md`, hoặc `AGENTS.md` khi không có `CLAUDE.md`. Claude Code không bao giờ đọc file `.mdc`. Rule về model là ngoại lệ. Xem phần Model. |
+| `https://github.com/hanh9898/vietnamese-pstack/blob/main/pstack/<path>` | `<pstack>/<path>` khi file đó tồn tại. Plugin cung cấp các skill, `docs/guide/`, và `README.md`. Hãy đọc bản cục bộ và không bao giờ tải nó về. Đưa URL cho người dùng khi họ cần một link. |
+| Transcript trong `~/.cursor/projects/<slug>/agent-transcripts/` | `~/.claude/projects/<slug>/<session>.jsonl`. Slug là đường dẫn workspace với mỗi `/` và `.` được đổi thành `-`, nên `/Users/you/proj` là `-Users-you-proj`. File `.jsonl` mới nhất nằm trực tiếp trong thư mục đó là session hiện tại. Thư mục `<session>/subagents/` của nó chứa transcript của các subagent. Chỉ đọc thư mục của workspace này. |
 
-## Cursor-only features
+## Tính năng chỉ có trên Cursor
 
-Claude Code has no Cursor Automations, Bugbot, Cursor cloud agents, or built-in PR tool. When a step needs one, put one line in your reply, `Skipped in Claude Code: <step>. <reason>.`, then go on to the next step. Do not stop, ask, or retry. When a later step needs what the skipped step made, such as a URL or a key, leave a placeholder and name it in the line.
+Claude Code không có Cursor Automations, Bugbot, cloud agent của Cursor, hay tool PR có sẵn. Khi một bước cần một trong số đó, hãy đặt một dòng trong câu trả lời, `Bỏ qua trong Claude Code: <step>. <reason>.`, rồi chuyển sang bước tiếp theo. Không dừng, hỏi, hay thử lại. Khi một bước sau cần thứ mà bước bị bỏ qua đã tạo ra, như một URL hoặc một key, hãy để một placeholder và gọi tên nó trong dòng đó.
 
 | Cursor | Claude Code |
 | --- | --- |
-| Cursor Automations: routines, `update_state` routine calls, `api2.cursor.sh/automations` webhooks, routine wakes, and `SendToUser` secret requests | Skip with the line. |
-| Bugbot | Bugbot comments on a GitHub PR are ordinary review threads, so triage them with the forge command that the step gives. Skip a step that starts, waits for, or configures Bugbot when the PR has no Bugbot check or comment. |
-| Cursor cloud agents | `environment: "cloud"` maps to a worktree, as in Subagent fields. Skip a step that needs the cloud agent itself, such as its dashboard status or its own machine. |
-| A built-in PR tool | Use the forge command that the step gives, such as `gh pr create`. That is not a skip, so write no line. |
+| Cursor Automations: routine, các lệnh gọi routine `update_state`, webhook `api2.cursor.sh/automations`, đánh thức routine, và yêu cầu secret `SendToUser` | Bỏ qua kèm dòng thông báo. |
+| Bugbot | Comment của Bugbot trên một PR GitHub là các thread review bình thường, nên hãy phân loại chúng bằng lệnh forge mà bước đó đưa ra. Bỏ qua một bước khởi động, chờ, hoặc cấu hình Bugbot khi PR không có check hoặc comment nào của Bugbot. |
+| Cloud agent của Cursor | `environment: "cloud"` ánh xạ thành một worktree, như trong phần Các trường của subagent. Bỏ qua một bước cần chính cloud agent, như trạng thái dashboard của nó hoặc máy riêng của nó. |
+| Một tool PR có sẵn | Dùng lệnh forge mà bước đó đưa ra, như `gh pr create`. Đó không phải là bỏ qua, nên không viết dòng nào. |

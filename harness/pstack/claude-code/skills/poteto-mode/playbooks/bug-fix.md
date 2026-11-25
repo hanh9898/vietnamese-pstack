@@ -1,15 +1,15 @@
 ### Bug fix
 
-**You own this task. Plan, review, verify.** Delegate investigation and the fix to subagents, stay in the lead. Pick each subagent's reasoning level for the job, per the Subagents section.
+**Bạn sở hữu task này. Lập kế hoạch, review, kiểm chứng.** Giao việc điều tra và bản sửa cho subagent, bạn giữ vai trò dẫn dắt. Chọn mức suy luận của từng subagent cho công việc, theo phần Subagent.
 
-Be scientific. Every shipped line traces to runtime evidence. Belt-and-suspenders that "might help" is a hypothesis, not a fix. It does not ship. When evidence refutes a hypothesis, revert what it motivated. The smallest change the evidence justifies ships, nothing more.
+Hãy làm việc một cách khoa học. Mỗi dòng được ship đều truy được về bằng chứng runtime. Phòng thủ thừa thãi kiểu "có thể giúp ích" là một giả thuyết, không phải bản sửa. Nó không được ship. Khi bằng chứng bác bỏ một giả thuyết, hãy revert những gì nó đã thúc đẩy. Thay đổi nhỏ nhất mà bằng chứng biện minh được sẽ được ship, không hơn.
 
-1. Reproduce it yourself on the matching surface via the control skill (Non-negotiables), even when a debug or instrumentation protocol says to ask the user to reproduce. Ask the user only with a stated, specific reason the control surface cannot reach the target, and only after driving it as far as it goes. If it won't reproduce directly, synthesize the trigger, tighten conditions, or instrument until it fires.
-2. Binary-search the cause. Form the candidate hypotheses, then rule them out until one survives. Seed them with a trace of the affected subsystem and the **why** skill for regression history. Each pass, take the split that cuts the most remaining problem space, get runtime evidence, eliminate. When program state is unclear, add instrumentation or logging and read it as the code runs. Don't guess. Drive a long or stubborn hunt with Cursor's `/loop` command. Confirm the surviving *mechanism* with runtime evidence before step 3's `architect` or an `interrogate` fan-out.
-3. Plan the fix. If it crosses a function boundary, `architect` first. Delegate implementation to a subagent using your configured bug-fix model (default `claude-opus-5-5-xhigh-fast`) with a specific scope.
-4. Verify on the same surface. The original repro now passes. "Inconclusive" or wrong-surface is not a pass. Flag it. Unit tests show branch behavior, not bug absence.
-5. Stage the commits so the failing repro lands before the fix in git history. See the **tdd** skill for the failing-test-first cadence when the bug has a cheap local test path. Skip it when the test would be expensive, integration-heavy, or unclear.
-   This is the canonical **sequence-verifiable-units** principle skill, the failing test first and the fix on top.
-6. Run **Opening a PR**.
+1. Tự tái hiện nó trên bề mặt tương ứng qua control skill (phần Những điều không thể thương lượng), kể cả khi một quy trình debug hoặc đo đạc bảo hãy nhờ người dùng tái hiện. Chỉ nhờ người dùng khi có một lý do cụ thể, được nêu rõ, rằng control surface không thể chạm tới mục tiêu, và chỉ sau khi đã điều khiển nó xa nhất có thể. Nếu nó không tái hiện trực tiếp, hãy tổng hợp trigger, siết chặt điều kiện, hoặc gắn công cụ đo cho đến khi nó xảy ra.
+2. Tìm kiếm nhị phân nguyên nhân. Lập các giả thuyết ứng viên, rồi loại trừ chúng cho đến khi chỉ còn một. Gieo chúng bằng một trace của subsystem bị ảnh hưởng và skill **why** cho lịch sử hồi quy. Mỗi lượt, chọn cách chia cắt bỏ nhiều không gian vấn đề còn lại nhất, lấy bằng chứng runtime, loại trừ. Khi state của chương trình không rõ, hãy thêm công cụ đo hoặc logging và đọc nó khi code chạy. Đừng đoán. Lái một cuộc săn dài hoặc dai dẳng bằng lệnh `/loop` của Cursor. Xác nhận *cơ chế* còn sống sót bằng bằng chứng runtime trước `architect` của bước 3 hoặc một lần tỏa ra `interrogate`.
+3. Lập kế hoạch bản sửa. Nếu nó vượt qua ranh giới hàm, chạy `architect` trước. Giao phần cài đặt cho một subagent dùng model bug-fix đã cấu hình của bạn (mặc định `claude-opus-5-5-xhigh-fast`) với phạm vi cụ thể.
+4. Kiểm chứng trên cùng bề mặt. Bản tái hiện ban đầu giờ pass. "Chưa kết luận được" hoặc sai bề mặt không phải là pass. Hãy gắn cờ nó. Unit test cho thấy hành vi của nhánh, không chứng minh bug vắng mặt.
+5. Sắp các commit để bản tái hiện thất bại land trước bản sửa trong lịch sử git. Xem skill **tdd** cho nhịp viết test thất bại trước khi bug có đường test cục bộ rẻ. Bỏ qua nó khi test sẽ tốn kém, nặng về tích hợp, hoặc không rõ ràng.
+   Đây là ví dụ chuẩn mực của principle skill **sequence-verifiable-units**, test thất bại trước và bản sửa ở trên.
+6. Chạy **Opening a PR**.
 
-**Reply:** what was broken, root cause, fix, how you verified. Paste failing-then-passing repro output verbatim.
+**Câu trả lời:** cái gì đã hỏng, nguyên nhân gốc, bản sửa, bạn đã kiểm chứng thế nào. Dán nguyên văn output tái hiện thất bại rồi pass.

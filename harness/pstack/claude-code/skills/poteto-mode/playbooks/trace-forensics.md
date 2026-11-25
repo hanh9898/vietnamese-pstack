@@ -1,14 +1,14 @@
 ### Trace forensics
 
-**You own the diagnosis from the artifact.**
+**Bạn sở hữu chẩn đoán từ artifact.**
 
-Distinct from **Runtime forensics**, which instruments the live process. Here the capture already exists. The artifact is a fixed dataset, read it, don't re-run it. Keep tooling generic: a DevTools or trace parser for cpuprofile and `.json.gz`, a text editor for a spindump, your heap tooling for a heapsnapshot.
+Khác với **Runtime forensics**, vốn gắn công cụ đo vào tiến trình đang chạy. Ở đây bản ghi đã tồn tại. Artifact là một tập dữ liệu cố định, hãy đọc nó, đừng chạy lại. Giữ công cụ ở dạng chung: một DevTools hoặc trace parser cho cpuprofile và `.json.gz`, một trình soạn thảo văn bản cho spindump, công cụ heap của bạn cho heapsnapshot.
 
-1. Identify the format and load it with the right tool. Parse large artifacts in a subagent (the **principle-guard-the-context-window** skill) and keep the reduced finding in the main thread. Pick each subagent's reasoning level for the job, per the Subagents section.
-2. Transform the raw artifact into a form you can query. Dump the trace or heap snapshot into sqlite, one row per sample, frame, or node. Reach the queryable shape before you read.
-3. Narrow to the cause. Query for the frames that hold the most time and walk the call tree to the hot path. For a leak, follow the retainer chain from the leaked object to a GC root. For a spindump, find the thread stuck on-CPU or blocked and its wait reason.
-4. Attribute to source. Map the hot frame to file, symbol, and line via the artifact's own symbols. A frame with no source mapping is not yet a diagnosis. Resolve the symbols, or say plainly the artifact does not carry them.
-5. If you have a paired capture, diff the before and after artifacts to confirm. Otherwise, mark the finding as the strongest hypothesis the artifact supports, not a confirmed cause.
-6. Hand back a cited diagnosis, no fix unless asked. Route to Bug fix or Perf issue once the cause is known. Throughput checkpoint stays one line: `throughput checkpoint: n/a, read-only forensics`.
+1. Xác định định dạng và nạp nó bằng đúng công cụ. Parse các artifact lớn trong một subagent (skill **principle-guard-the-context-window**) và giữ phát hiện đã rút gọn trong thread chính. Chọn mức suy luận của từng subagent cho công việc, theo phần Subagent.
+2. Biến đổi artifact thô thành một dạng bạn có thể truy vấn. Dump trace hoặc heap snapshot vào sqlite, mỗi sample, frame, hoặc node một dòng. Đạt được hình dạng có thể truy vấn trước khi đọc.
+3. Thu hẹp đến nguyên nhân. Truy vấn các frame chiếm nhiều thời gian nhất và đi theo call tree đến hot path. Với rò rỉ bộ nhớ, đi theo chuỗi giữ tham chiếu từ object bị rò đến một GC root. Với spindump, tìm thread bị kẹt trên CPU hoặc bị chặn và lý do chờ của nó.
+4. Quy về source. Ánh xạ frame nóng về file, symbol, và dòng qua chính symbol của artifact. Một frame không có ánh xạ source chưa phải là chẩn đoán. Phân giải các symbol, hoặc nói rõ ràng rằng artifact không mang chúng.
+5. Nếu bạn có một cặp bản ghi, hãy diff artifact trước và sau để xác nhận. Nếu không, đánh dấu phát hiện là giả thuyết mạnh nhất mà artifact hỗ trợ, không phải một nguyên nhân đã xác nhận.
+6. Trả lại một chẩn đoán có trích dẫn, không sửa trừ khi được yêu cầu. Định tuyến sang Bug fix hoặc Perf issue một khi đã biết nguyên nhân. Throughput checkpoint chỉ giữ một dòng: `throughput checkpoint: n/a, read-only forensics`.
 
-**Reply:** the artifact and format, the reduced finding, the source location, the artifact paths, and whether a paired capture confirmed it.
+**Câu trả lời:** artifact và định dạng, phát hiện đã rút gọn, vị trí trong source, đường dẫn artifact, và liệu một cặp bản ghi có xác nhận nó hay không.

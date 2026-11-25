@@ -1,10 +1,10 @@
-# TypeScript patterns
+# Các mẫu TypeScript
 
-Code examples for each rule in `SKILL.md`. The underlying principles are language-agnostic. See the **type-system-discipline** and **boundary-discipline** principle skills.
+Ví dụ code cho mỗi quy tắc trong `SKILL.md`. Các nguyên tắc nền tảng không phụ thuộc ngôn ngữ. Xem các principle skill **type-system-discipline** và **boundary-discipline**.
 
 ## Branded types
 
-Brand primitives so they can't be mixed up. Validate once at the boundary. Downstream code trusts the type.
+Brand các primitive để chúng không bị lẫn lộn. Validate một lần tại ranh giới. Code phía sau tin tưởng type.
 
 ```ts
 type AgentId = string & { readonly __brand: "AgentId" };
@@ -23,11 +23,11 @@ function focusAgent(id: AgentId): void {
 }
 ```
 
-Match the `readonly __brand: 'X'` shape. Don't invent a new convention.
+Khớp với hình dạng `readonly __brand: 'X'`. Đừng tự nghĩ ra một quy ước mới.
 
 ## Discriminated unions
 
-Model variants with a literal discriminant. Every variant shares the field name and each variant's value is unique, so impossible combos can't be represented.
+Mô hình hóa các biến thể bằng một discriminant literal. Mọi biến thể dùng chung tên field và giá trị của mỗi biến thể là duy nhất, nên các tổ hợp không thể không biểu diễn được.
 
 ```ts
 // Don't. Boolean + optionals lets contradictory states exist.
@@ -40,13 +40,13 @@ type DiffState =
   | { kind: "error"; error: string };
 ```
 
-Pick one discriminant name (`kind`, `type`, `tag`) and stick to it.
+Chọn một tên discriminant (`kind`, `type`, `tag`) và giữ nguyên nó.
 
 ## Constructive modeling
 
-Build the type from parts that are all legal instead of restricting a loose type with runtime checks.
+Xây type từ các phần đều hợp lệ thay vì giới hạn một type lỏng lẻo bằng các phép kiểm tra runtime.
 
-Non-empty, via a variadic tuple:
+Không rỗng, qua một variadic tuple:
 
 ```ts
 type NonEmpty<T> = [T, ...T[]];
@@ -63,19 +63,19 @@ function pickWinner(entries: NonEmpty<string>): string {
 }
 ```
 
-Where a plain `T[]` arrives, narrow once with a guard. The fact then travels in the type:
+Ở nơi một `T[]` thường đi vào, hãy thu hẹp một lần bằng một guard. Sự thật đó sau đó đi theo type:
 
 ```ts
 const isNonEmpty = <T>(arr: T[]): arr is NonEmpty<T> => arr.length > 0;
 ```
 
-Even length, as pairs:
+Độ dài chẵn, dưới dạng các cặp:
 
 ```ts
 type Pairs<T> = [T, T][];
 ```
 
-A time range, as start plus duration:
+Một khoảng thời gian, dưới dạng điểm bắt đầu cộng thời lượng:
 
 ```ts
 // Don't: a comment holds the invariant
@@ -85,17 +85,17 @@ type TimeRange = { start: Date; end: Date }; // start <= end
 type TimeRange = { start: Date; durationMs: number };
 ```
 
-Keep `durationMs` a plain number. Brand it (per Branded types) only if a raw number could be passed where a duration is expected, not by reflex. Pick the representation that makes the bad state unconstructable, then expose the reading you need on top (`pairs.flat()`, a `rangeEnd()` helper).
+Giữ `durationMs` là một number thường. Chỉ brand nó (theo phần Branded types) nếu một number thô có thể bị truyền vào nơi cần một thời lượng, không phải theo phản xạ. Chọn cách biểu diễn làm cho trạng thái xấu không thể được tạo ra, rồi cung cấp cách đọc bạn cần ở bên trên (`pairs.flat()`, một helper `rangeEnd()`).
 
 ## Simplest total type
 
-Don't strengthen everything. Keep `T[]` when every operation on it is total:
+Đừng làm chặt mọi thứ. Giữ `T[]` khi mọi thao tác trên nó là toàn phần:
 
 ```ts
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0); // [] is 0, fine
 ```
 
-Strengthen when the loose type forces a lie at a use site. The tells are `!`, `arr[0] as T`, and a "should never happen" throw:
+Làm chặt khi type lỏng lẻo buộc phải nói dối tại một nơi dùng. Dấu hiệu là `!`, `arr[0] as T`, và một throw "không bao giờ nên xảy ra":
 
 ```ts
 // Don't: partiality smuggled past the compiler
@@ -109,11 +109,11 @@ function newestSession(sessions: NonEmpty<Session>): Session {
 }
 ```
 
-Weakening the result to `Session | undefined` is the other total signature.
+Nới lỏng kết quả thành `Session | undefined` là signature toàn phần còn lại.
 
 ## `unknown` over `any`
 
-External data is always `unknown`. Narrow before use.
+Dữ liệu bên ngoài luôn là `unknown`. Thu hẹp trước khi dùng.
 
 ```ts
 // Don't
@@ -129,11 +129,11 @@ function handle(input: unknown) {
 }
 ```
 
-External sources include RPC payloads, `JSON.parse`, `postMessage`, IPC, file contents, environment variables, database results.
+Các nguồn bên ngoài bao gồm payload RPC, `JSON.parse`, `postMessage`, IPC, nội dung file, biến môi trường, kết quả database.
 
 ## Schemas before hand-rolled guards
 
-Before writing a property-by-property type guard for external data, look for the repository's runtime schema library and existing schemas. Let one schema own validation and derive the TypeScript type from it. Do not maintain a schema, a duplicate interface, and a guard that can drift apart.
+Trước khi viết một type guard kiểm tra từng property cho dữ liệu bên ngoài, hãy tìm thư viện schema runtime và các schema có sẵn của repository. Để một schema sở hữu việc validate và suy ra type TypeScript từ nó. Đừng duy trì một schema, một interface trùng lặp, và một guard có thể lệch nhau.
 
 ```ts
 import { z } from "zod";
@@ -150,11 +150,11 @@ function parseUser(input: unknown): User {
 }
 ```
 
-Use `safeParse` when failure is an expected branch. Use the equivalent inference helper when the repository uses another schema library. Do not add a new schema dependency for one guard. This rule prefers the schema system the codebase already trusts.
+Dùng `safeParse` khi thất bại là một nhánh được mong đợi. Dùng helper suy luận tương đương khi repository dùng một thư viện schema khác. Đừng thêm một dependency schema mới chỉ cho một guard. Quy tắc này ưu tiên hệ thống schema mà codebase đã tin tưởng.
 
 ## No `as` casts
 
-Every `as` is a potential runtime crash. Cast only after the type system has verified the claim.
+Mỗi `as` là một lần crash runtime tiềm tàng. Chỉ cast sau khi hệ thống type đã kiểm chứng khẳng định.
 
 ```ts
 import { z } from "zod";
@@ -176,7 +176,7 @@ function parseUser(data: unknown): User {
 }
 ```
 
-When the type comes first, annotate the validator with the type it proves. The compiler then rejects a validator that proves less than the type. Remove `name` from the object below and the assignment fails to compile.
+Khi type có trước, hãy chú thích validator bằng type mà nó chứng minh. Compiler khi đó sẽ từ chối một validator chứng minh ít hơn type. Bỏ `name` khỏi object bên dưới và phép gán sẽ không compile được.
 
 ```ts
 type User = { id: string; name: string };
@@ -184,22 +184,22 @@ type User = { id: string; name: string };
 const userSchema: z.ZodType<User> = z.object({ id: z.string(), name: z.string() });
 ```
 
-When refactoring an `as` out of existing code, identify why TypeScript can't infer:
+Khi refactor để loại một `as` khỏi code hiện có, hãy xác định tại sao TypeScript không suy luận được:
 
-- Missing discriminant: add one, switch to a discriminated union.
-- Overly wide source type (e.g. `Record<string, unknown>`): narrow it.
-- Untyped boundary: parse with the schema that owns the shape. Add a schema only where none exists.
-- Genuinely inexpressible: use a branded type or `satisfies`.
+- Thiếu discriminant: thêm một cái, chuyển sang discriminated union.
+- Type nguồn quá rộng (ví dụ `Record<string, unknown>`): thu hẹp nó.
+- Ranh giới không có type: parse bằng schema sở hữu hình dạng đó. Chỉ thêm schema ở nơi chưa có.
+- Thật sự không thể biểu diễn: dùng branded type hoặc `satisfies`.
 
 ## Narrowing hierarchy
 
-From best to last-resort:
+Từ tốt nhất đến phương án cuối cùng:
 
-1. **Discriminated union switch / if.** Compiler narrows automatically.
-2. **`in` operator.** `"key" in obj` narrows to variants containing that key.
-3. **`typeof` / `instanceof`.** For primitives and class instances.
-4. **User-defined type guard.** When the above aren't enough.
-5. **`as` cast.** Only after validation.
+1. **Switch / if trên discriminated union.** Compiler tự động thu hẹp.
+2. **Toán tử `in`.** `"key" in obj` thu hẹp về các biến thể chứa key đó.
+3. **`typeof` / `instanceof`.** Cho primitive và instance của class.
+4. **Type guard tự định nghĩa.** Khi những cách trên không đủ.
+5. **Cast bằng `as`.** Chỉ sau khi validate.
 
 ```ts
 function area(s: Shape): number {
@@ -210,7 +210,7 @@ function area(s: Shape): number {
 
 ## Type guards
 
-A guard must actually verify the claim. A lying guard is worse than `as`.
+Một guard phải thật sự kiểm chứng khẳng định. Một guard nói dối còn tệ hơn `as`.
 
 ```ts
 function isCircle(s: Shape): s is Shape & { kind: "circle" } {
@@ -218,11 +218,11 @@ function isCircle(s: Shape): s is Shape & { kind: "circle" } {
 }
 ```
 
-Prefer discriminant narrowing when possible.
+Ưu tiên thu hẹp bằng discriminant khi có thể.
 
 ## Exhaustiveness
 
-In default arms, assign the discriminant to a `never`-typed local.
+Trong nhánh default, gán discriminant cho một biến cục bộ có type `never`.
 
 ```ts
 // Value-returning switch
@@ -256,11 +256,11 @@ function handle(s: Shape): void {
 }
 ```
 
-Return-style in value-returning switches, void-style in statement switches.
+Kiểu return trong switch trả về giá trị, kiểu void trong switch dạng câu lệnh.
 
 ## `satisfies` over `as`
 
-`satisfies` validates without widening literal types.
+`satisfies` validate mà không nới rộng literal type.
 
 ```ts
 // Don't. Widens, loses literal types.
@@ -273,15 +273,15 @@ const config = { theme: "dark", cols: 3 } satisfies Config;
 
 ## Boundary validation
 
-Validate once where data crosses in. Trust types inside. See the **boundary-discipline** principle skill.
+Validate một lần ở nơi dữ liệu đi vào. Tin type bên trong. Xem principle skill **boundary-discipline**.
 
-- **Wire formats** (proto, JSON-RPC): parse with `ignoreUnknownFields` so forward-compatible changes don't break old clients.
-- **Persisted JSON:** versioned blob with a try/catch around the parse.
-- **Don't re-validate** deep in call chains.
+- **Định dạng truyền tải** (proto, JSON-RPC): parse với `ignoreUnknownFields` để các thay đổi tương thích về sau không làm hỏng client cũ.
+- **JSON được lưu trữ:** blob có phiên bản với try/catch quanh bước parse.
+- **Đừng validate lại** sâu trong chuỗi lời gọi.
 
 ## Schema-derived types
 
-When a `.proto`, OpenAPI spec, GraphQL schema, or database migration already defines a shape, derive from the generated types instead of duplicating them.
+Khi một `.proto`, đặc tả OpenAPI, schema GraphQL, hoặc migration database đã định nghĩa một hình dạng, hãy suy ra từ các type được sinh ra thay vì nhân bản chúng.
 
 ```ts
 // Don't. Duplicate shape, drifts when the schema changes.
@@ -300,7 +300,7 @@ function renderChecks(s: Pick<ChecksMessage, "totalCount" | "checks">) {
 }
 ```
 
-Reach for `Pick`, `Omit`, `Parameters`, `ReturnType`, `Awaited`, `typeof` before writing a new interface.
+Dùng `Pick`, `Omit`, `Parameters`, `ReturnType`, `Awaited`, `typeof` trước khi viết một interface mới.
 
 ## Object args
 
@@ -325,4 +325,4 @@ openFile({
 });
 ```
 
-Skip on hot paths: per-frame render, tokenizers, parsers, anything in a tight loop where the allocation cost matters.
+Bỏ qua trên hot path: render mỗi frame, tokenizer, parser, bất cứ thứ gì trong một vòng lặp chặt nơi chi phí cấp phát có ý nghĩa.

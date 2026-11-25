@@ -1,21 +1,21 @@
 ---
 name: principle-outcome-oriented-execution
-description: "Apply during planned rewrites and migrations with explicit phase boundaries. Converge on the target architecture; don't preserve smooth intermediate states with throwaway compatibility code."
+description: "Áp dụng trong các lần viết lại và migration có kế hoạch với ranh giới giai đoạn rõ ràng. Hội tụ về kiến trúc đích; đừng giữ các trạng thái trung gian êm ả bằng code tương thích dùng xong bỏ."
 disable-model-invocation: true
 ---
 
 # Outcome-Oriented Execution
 
-Optimize for the intended, verifiable end state rather than preserving smooth intermediate states.
+Tối ưu cho trạng thái cuối dự định và kiểm chứng được thay vì giữ các trạng thái trung gian êm ả.
 
-**Why:** Keeping every intermediate step fully stable often creates temporary compatibility code that becomes long-lived debt. Converge on the target architecture and prove correctness at explicit verification boundaries.
+**Tại sao:** Giữ mọi bước trung gian ổn định hoàn toàn thường tạo ra code tương thích tạm thời rồi trở thành nợ lâu dài. Hội tụ về kiến trúc đích và chứng minh tính đúng đắn tại các ranh giới kiểm chứng rõ ràng.
 
-**Core rule:**
-- Prioritize end-state integrity over transitional stability
-- Intermediate breakage is acceptable when it is planned, scoped, and reversible
+**Quy tắc cốt lõi:**
+- Ưu tiên tính toàn vẹn của trạng thái cuối hơn sự ổn định trong giai đoạn chuyển tiếp
+- Hỏng hóc trung gian là chấp nhận được khi nó được lên kế hoạch, có phạm vi, và có thể đảo ngược
 
-**Guardrails:**
-- Use this for planned rewrites and migrations with explicit phase boundaries
-- Declare where temporary breakage is acceptable
-- Keep high-signal checks for actively touched areas while migrating
-- Require full static and runtime verification at plan completion
+**Rào chắn:**
+- Dùng nguyên tắc này cho các lần viết lại và migration có kế hoạch với ranh giới giai đoạn rõ ràng
+- Tuyên bố nơi nào hỏng hóc tạm thời là chấp nhận được
+- Giữ các phép kiểm tra tín hiệu cao cho những khu vực đang được đụng tới trong lúc migrate
+- Yêu cầu kiểm chứng tĩnh và runtime đầy đủ khi hoàn tất kế hoạch

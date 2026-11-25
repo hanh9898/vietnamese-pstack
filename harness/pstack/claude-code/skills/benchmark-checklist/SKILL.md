@@ -1,39 +1,39 @@
 ---
 name: benchmark-checklist
-description: "Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. Use when you run a benchmark or report a speedup or regression you measured."
+description: "Thẩm định một phép đo hiệu năng (yếu tố giới hạn, tinh chỉnh, giới hạn vật lý, lỗi, khả năng lặp lại, mức liên quan, và liệu công việc có thật sự xảy ra) trước khi bạn báo cáo hoặc hành động dựa trên nó. Dùng khi bạn chạy một benchmark hoặc báo cáo một mức tăng tốc hay hồi quy mà bạn đã đo."
 disable-model-invocation: true
 ---
 
-# Benchmark checklist
+# Checklist benchmark
 
-Use this when you produce a performance number: a PR's before and after, a regression claim, a hillclimb harness, or a library or config choice. Answer each question with evidence from a run, not a guess about the code.
+Dùng skill này khi bạn tạo ra một con số hiệu năng: trước và sau của một PR, một khẳng định về hồi quy, một harness hillclimb, hoặc một lựa chọn thư viện hay cấu hình. Trả lời mỗi câu hỏi bằng bằng chứng từ một lượt chạy, không phải phỏng đoán về code.
 
-For a quick ballpark the user asked for, one run is enough. Still check questions 4 and 7, and say that it is one run. Skip the rest unless that run looks wrong. A choice between options is never a ballpark.
+Với một ước lượng nhanh mà người dùng yêu cầu, một lượt chạy là đủ. Vẫn kiểm tra câu hỏi 4 và 7, và nói rằng đó là một lượt chạy. Bỏ qua phần còn lại trừ khi lượt chạy đó trông có vẻ sai. Một lựa chọn giữa các phương án không bao giờ là ước lượng nhanh.
 
-## Before you run anything
+## Trước khi chạy bất cứ thứ gì
 
-- Write down the claim you expect to make, in the words you would ship ("export is 30% faster at p50 on the 60k-row dataset"). The questions test that sentence.
-- Read the measurement script. Note what it times, counts, and ignores.
-- Check the load average with `uptime` and the core count with `nproc`. If the machine is busy, find out what is running. If you cannot stop it, interleave the sides so both see the same noise, and say so in the report.
+- Viết ra khẳng định bạn dự kiến đưa ra, bằng những từ bạn sẽ ship ("export nhanh hơn 30% ở p50 trên dataset 60k dòng"). Các câu hỏi kiểm tra câu đó.
+- Đọc script đo. Ghi chú nó đo thời gian gì, đếm gì, và bỏ qua gì.
+- Kiểm tra load average bằng `uptime` và số core bằng `nproc`. Nếu máy đang bận, hãy tìm xem cái gì đang chạy. Nếu bạn không thể dừng nó, hãy chạy xen kẽ các phía để cả hai thấy cùng một mức nhiễu, và nói vậy trong báo cáo.
 
-## The questions
+## Các câu hỏi
 
-1. **Why not double?** Name the limiter. Profile in a run you do not report, because profilers and tracers slow the work down. Use CPU per process (`top`, `pidstat`), a runtime profiler (`node --cpu-prof`, `py-spy`, `perf`), I/O wait, and syscall counts (`strace -c` on Linux), then map the hot spot to source. Watch the load generator too: if it saturates first, you measured the load generator. If a change did not move the number, the limiter explains why, so find it before you call the change useless.
-2. **Was it tuned?** Run every side the way production runs it: release builds, production flags and env, batching and transaction settings, connection pools, caches as warm or cold as production sees them, and the same versions and data. If one side runs on defaults, you compared configurations, not implementations. A limiter that is a setting (a commit per row, a debug build, a missing index) means that side is untuned. Tune it and measure again before you pick a winner. If you cannot tune it, do not pick a winner from that run. When the user is choosing what to adopt, narrowing the claim to the code as it ships today does not fix this, because they adopt the option, not today's settings.
-3. **Did it break limits?** Do the arithmetic. Compare bytes per second with disk and network bandwidth, operations per second times cost per operation with your cores, and the time saved with the time the changed piece took. Removing a piece that takes 10% of the run can make the run at most about 11% faster. A result past a limit measured something other than the work, such as a cache, a no-op, or a bug.
-4. **Did it error?** Count failures and non-success responses, and check that outputs are correct, not just present. Rejections are often fast, and timeouts and retries are slow. If the script does not count errors, add the count.
-5. **Does it reproduce?** Run each side at least 5 times, alternating (A, B, A, B, and so on) so warmup, lazy initialization, caches, and drift favor neither. Report the median and range. A gap smaller than the run-to-run variation is no measurable difference. When the call is close, use a rank-sum test or the harness's own statistics.
-6. **Does it matter?** Next to any micro result, measure the end-to-end path a user waits on, with realistic data sizes and concurrency, and report the micro result as a share of the whole. A helper that takes 1% of a request can make the request at most 1% faster, however fast the helper gets.
-7. **Did it even happen?** Confirm the work ran inside the timed region: the request reached the server, the rows were written, the bytes were read, and the code used the result. Lazy code (generators nobody iterates, promises nobody awaits, results the JIT can discard) and timeouts produce numbers for work that never happened.
+1. **Tại sao không gấp đôi?** Gọi tên yếu tố giới hạn. Profile trong một lượt chạy bạn không báo cáo, vì profiler và tracer làm công việc chậm đi. Dùng CPU theo từng process (`top`, `pidstat`), một profiler runtime (`node --cpu-prof`, `py-spy`, `perf`), I/O wait, và số syscall (`strace -c` trên Linux), rồi ánh xạ điểm nóng về source. Theo dõi cả bộ tạo tải: nếu nó bão hòa trước, bạn đã đo bộ tạo tải. Nếu một thay đổi không làm con số dịch chuyển, yếu tố giới hạn giải thích tại sao, nên hãy tìm nó trước khi bạn gọi thay đổi đó là vô ích.
+2. **Nó đã được tinh chỉnh chưa?** Chạy mọi phía theo cách production chạy nó: bản build release, flag và env của production, cài đặt batching và transaction, connection pool, cache nóng hoặc lạnh như production thấy, và cùng phiên bản và dữ liệu. Nếu một phía chạy với mặc định, bạn đã so sánh các cấu hình, không phải các cách cài đặt. Một yếu tố giới hạn là một cài đặt (mỗi dòng một commit, một bản build debug, thiếu một index) nghĩa là phía đó chưa được tinh chỉnh. Tinh chỉnh nó và đo lại trước khi bạn chọn bên thắng. Nếu bạn không thể tinh chỉnh nó, đừng chọn bên thắng từ lượt chạy đó. Khi người dùng đang chọn thứ để áp dụng, thu hẹp khẳng định về code như nó đang ship hôm nay không sửa được điều này, vì họ áp dụng phương án, không phải các cài đặt hôm nay.
+3. **Nó có phá vỡ giới hạn không?** Làm phép tính. So sánh byte mỗi giây với băng thông đĩa và mạng, số thao tác mỗi giây nhân chi phí mỗi thao tác với số core của bạn, và thời gian tiết kiệm được với thời gian mà phần bị thay đổi đã tốn. Loại bỏ một phần chiếm 10% lượt chạy có thể làm lượt chạy nhanh hơn tối đa khoảng 11%. Một kết quả vượt quá giới hạn đã đo thứ khác với công việc, như một cache, một no-op, hoặc một bug.
+4. **Nó có lỗi không?** Đếm các thất bại và phản hồi không thành công, và kiểm tra rằng output là đúng, không chỉ là có mặt. Các lần từ chối thường nhanh, còn timeout và retry thì chậm. Nếu script không đếm lỗi, hãy thêm phép đếm.
+5. **Nó có tái hiện được không?** Chạy mỗi phía ít nhất 5 lần, xen kẽ (A, B, A, B, v.v.) để warmup, khởi tạo lười, cache, và trôi dạt không thiên vị bên nào. Báo cáo trung vị và khoảng. Một khoảng cách nhỏ hơn mức biến thiên giữa các lượt chạy là không có khác biệt đo được. Khi kết quả sát nhau, hãy dùng kiểm định rank-sum hoặc thống kê của chính harness.
+6. **Nó có quan trọng không?** Bên cạnh mọi kết quả vi mô, hãy đo đường end-to-end mà người dùng phải chờ, với kích thước dữ liệu và mức đồng thời thực tế, và báo cáo kết quả vi mô như một phần của tổng thể. Một helper chiếm 1% của một request có thể làm request nhanh hơn tối đa 1%, dù helper có nhanh đến đâu.
+7. **Nó có thật sự xảy ra không?** Xác nhận công việc đã chạy trong vùng được đo thời gian: request đã đến server, các dòng đã được ghi, các byte đã được đọc, và code đã dùng kết quả. Code lười (generator không ai lặp qua, promise không ai await, kết quả mà JIT có thể bỏ đi) và timeout tạo ra con số cho công việc chưa bao giờ xảy ra.
 
-## Report
+## Báo cáo
 
-- Lead with the verdict: faster, slower, no measurable difference, or inconclusive.
-- Give the number with its unit, the run count, the range, and the limiter. For example, "p50 41 ms → 33 ms, median of 7 runs per side, range 32 to 35 ms after, bound by JSON parsing on one core."
-- Call the verdict inconclusive when you claim a difference but cannot name the limiter, when a side ran untuned, or when you could not check questions 4 and 7. Name the gap.
-- Keep a PR body to one primary number. Put the runs, range, and limiter evidence in a linked artifact or notes file.
+- Mở đầu bằng phán quyết: nhanh hơn, chậm hơn, không có khác biệt đo được, hoặc không kết luận được.
+- Đưa ra con số kèm đơn vị, số lượt chạy, khoảng, và yếu tố giới hạn. Ví dụ, "p50 41 ms → 33 ms, trung vị của 7 lượt chạy mỗi phía, khoảng 32 đến 35 ms sau thay đổi, bị giới hạn bởi việc parse JSON trên một core."
+- Gọi phán quyết là không kết luận được khi bạn khẳng định có khác biệt nhưng không thể gọi tên yếu tố giới hạn, khi một phía chạy chưa tinh chỉnh, hoặc khi bạn không thể kiểm tra câu hỏi 4 và 7. Gọi tên khoảng trống.
+- Giữ phần thân PR ở một con số chính. Đặt các lượt chạy, khoảng, và bằng chứng về yếu tố giới hạn trong một artifact hoặc file ghi chú được liên kết.
 
-## Other perf material
+## Tài liệu hiệu năng khác
 
-- Vet the **Perf issue** playbook's baseline before the playbook plans from it, and every number after that.
-- Vet the **Hillclimb** playbook's harness before it is frozen. The frozen harness then prints error and work counts, so each keep-or-revert checks questions 4 and 7 for free.
+- Thẩm định baseline của playbook **Perf issue** trước khi playbook lập kế hoạch từ nó, và mọi con số sau đó.
+- Thẩm định harness của playbook **Hillclimb** trước khi nó bị đóng băng. Harness đã đóng băng sau đó in ra số lỗi và số công việc, nên mỗi lần giữ-hay-revert kiểm tra câu hỏi 4 và 7 miễn phí.

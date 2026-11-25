@@ -14,7 +14,7 @@ const ADAPTER = "docs/harness/claude-code.md";
 const GUIDE = "docs/guide";
 const MANIFESTS = ["plugin.json", ".claude-plugin/plugin.json"];
 const COMMAND = "node scripts/generate-pstack-harness-trees.mjs";
-const GITHUB = "https://github.com/cursor/plugins";
+const GITHUB = "https://github.com/hanh9898/vietnamese-pstack";
 const LINK = /\]\(([^)\s]+)\)/g;
 const README = `# pstack harness tree
 
@@ -47,9 +47,9 @@ const TERMS = [
   { key: "~/.cursor/plugins/", re: /\.cursor\/plugins|\.cursor-plugin/ },
   { key: ".cursor/rules/", re: /\.cursor\/rules|always-applied rule/ },
   { key: "agent-transcripts", re: /agent-transcripts|\.cursor\/projects/ },
-  { key: "Cursor-only features", re: /Bugbot|Cursor [Aa]utomation|cursor\.(sh|com)\/automations|[Cc]loud [Aa]gent|built-in PR tool/ },
+  { key: "Tính năng chỉ có trên Cursor", re: /Bugbot|Cursor [Aa]utomation|cursor\.(sh|com)\/automations|[Cc]loud [Aa]gent|built-in PR tool/ },
 ];
-const ROUTE_KEY = "Run another pstack skill";
+const ROUTE_KEY = "Chạy một skill pstack khác";
 const SKILL_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function walk(dir) {
@@ -126,8 +126,8 @@ function render() {
   ];
   const files = new Map(copies.map((path) => [relative(PSTACK, path), file(path)]));
   const line =
-    `In Claude Code, read [the Claude Code adapter](../../${ADAPTER}) once per session before you follow this skill. ` +
-    "It maps the Cursor names in pstack skills to Claude Code.";
+    `Trong Claude Code, hãy đọc [adapter Claude Code](../../${ADAPTER}) một lần mỗi session trước khi làm theo skill này. ` +
+    "Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.";
   for (const [skill, { wrap }] of classes) {
     const path = `skills/${skill}/SKILL.md`;
     const text = files.get(path).bytes.toString("utf8");

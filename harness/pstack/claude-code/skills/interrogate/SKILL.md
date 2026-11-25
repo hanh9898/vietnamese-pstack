@@ -1,33 +1,33 @@
 ---
 name: interrogate
-description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Adversaries try to break a change or design, and only findings proven by a run survive."
+description: "Dùng cho \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", hoặc \"tear this apart\" (hoặc các yêu cầu tương đương như \"chất vấn cái này\", \"review đối kháng\", \"tìm điểm mù\"). Các đối thủ cố phá vỡ một thay đổi hoặc thiết kế, và chỉ những phát hiện được chứng minh bằng một lượt chạy mới sống sót."
 disable-model-invocation: true
 ---
 
 # Interrogate
 
-In Claude Code, read [the Claude Code adapter](../../docs/harness/claude-code.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
-Adversaries try to break a change or a design. A finding survives only when a run proves it. Report the findings. Do not apply fixes.
+Các đối thủ cố phá vỡ một thay đổi hoặc một thiết kế. Một phát hiện chỉ sống sót khi một lượt chạy chứng minh nó. Báo cáo các phát hiện. Không áp dụng bản sửa.
 
-## Frame
+## Đóng khung
 
-The scope is what the user names. Otherwise it is the branch diff from its merge base with the base branch, through the working tree. State the intent with the **in-your-own-words** skill, from the user's message, the commits, and the PR description. Ask the user when the intent is unclear.
+Phạm vi là những gì người dùng gọi tên. Nếu không, đó là diff của branch tính từ merge base với base branch, đến working tree. Nêu ý định bằng skill **in-your-own-words**, từ tin nhắn của người dùng, các commit, và mô tả PR. Hỏi người dùng khi ý định không rõ.
 
-## Fan out
+## Tỏa ra
 
-Run Phase A steps 3 and 4 and Phase B of the **arena** skill, with four changes. Read the `interrogate reviewers` line in place of `arena runners`. Copy the scope's uncommitted changes into each worktree. Spawn each adversary as `generalPurpose`. In place of the arena task and rationale, give each adversary the scope, the intent, and this brief:
+Chạy bước 3 và 4 của Phase A và Phase B của skill **arena**, với bốn thay đổi. Đọc dòng `interrogate reviewers` thay cho `arena runners`. Chép các thay đổi chưa commit trong phạm vi vào mỗi worktree. Khởi chạy mỗi đối thủ dưới dạng `generalPurpose`. Thay cho task và lý do của arena, đưa cho mỗi đối thủ phạm vi, ý định, và brief này:
 
-> Break this change. Prove each finding with a run against the real code, such as a failing test, a repro script, or command output that shows the wrong behavior. For a design or plan, run a prototype or probe the current tree. Keep repros in your own worktree. Report each finding with a title, the exact command, the output it printed, and the output the intent requires. Leave out anything you did not run. That covers style, naming, structure, and risks that need a future change to matter. No findings is a valid result.
+> Hãy phá vỡ thay đổi này. Chứng minh mỗi phát hiện bằng một lượt chạy với code thật, như một test thất bại, một script tái hiện, hoặc output của lệnh cho thấy hành vi sai. Với một thiết kế hoặc kế hoạch, hãy chạy một prototype hoặc thăm dò tree hiện tại. Giữ các bản tái hiện trong worktree của riêng bạn. Báo cáo mỗi phát hiện với một tiêu đề, lệnh chính xác, output nó in ra, và output mà ý định yêu cầu. Bỏ ra ngoài bất cứ thứ gì bạn không chạy. Điều đó bao gồm style, cách đặt tên, cấu trúc, và các rủi ro cần một thay đổi trong tương lai mới trở nên quan trọng. Không có phát hiện nào là một kết quả hợp lệ.
 
-## Verify
+## Kiểm chứng
 
-Verify each finding per arena Phase F by rerunning its command. Keep a finding when the output shows the failure and the failure breaks the intent. Drop the rest. Merge findings that share a root cause.
+Kiểm chứng mỗi phát hiện theo Phase F của arena bằng cách chạy lại lệnh của nó. Giữ một phát hiện khi output cho thấy thất bại và thất bại đó phá vỡ ý định. Bỏ phần còn lại. Gộp các phát hiện có chung nguyên nhân gốc.
 
-Skip arena Phases C, D, and E. Adversaries find different failures, so the verdict keeps every verified finding, not one adversary's list.
+Bỏ qua Phase C, D, và E của arena. Các đối thủ tìm ra những thất bại khác nhau, nên phán quyết giữ mọi phát hiện đã kiểm chứng, không phải danh sách của một đối thủ.
 
 ## Output
 
-- **Intent**: the restatement.
-- **Findings**: for each verified finding, the command, its output, how it breaks the intent, and the adversaries that found it. Say "no verified findings" when none survive.
-- **Dropped**: for each adversary, the count of dropped findings and why.
+- **Ý định**: bản nhắc lại.
+- **Phát hiện**: với mỗi phát hiện đã kiểm chứng, lệnh, output của nó, cách nó phá vỡ ý định, và các đối thủ đã tìm ra nó. Nói "không có phát hiện nào được kiểm chứng" khi không có gì sống sót.
+- **Đã bỏ**: với mỗi đối thủ, số phát hiện đã bỏ và lý do.

@@ -1,66 +1,66 @@
-# Set up pstack
+# Cài đặt pstack
 
-In this page you install the plugin, pick which models pstack uses, and run your first task. Setup is one command plus a short conversation.
+Trong trang này bạn cài plugin, chọn các model pstack sẽ dùng, và chạy task đầu tiên. Cài đặt chỉ gồm một lệnh cộng một cuộc trò chuyện ngắn.
 
-## Install the plugin
+## Cài plugin
 
-In a Cursor chat, run:
+Trong một chat Cursor, chạy:
 
 ```text
 /add-plugin pstack
 ```
 
-Cursor confirms the plugin is installed.
+Cursor xác nhận plugin đã được cài.
 
-In Claude Code, run `/plugin marketplace add cursor/plugins`, then `/plugin install pstack@cursor-plugins`. Claude Code prefixes plugin commands, so each command in this guide takes a `pstack:` prefix there, such as `/pstack:setup-pstack`, which writes its model rule to `~/.claude/rules/pstack-models.md`. The [Claude Code adapter](../harness/claude-code.md) covers the other differences.
+Trong Claude Code, chạy `/plugin marketplace add cursor/plugins`, rồi `/plugin install pstack@cursor-plugins`. Claude Code thêm tiền tố cho lệnh của plugin, nên mỗi lệnh trong hướng dẫn này cần tiền tố `pstack:` ở đó, ví dụ `/pstack:setup-pstack`, lệnh này ghi rule model vào `~/.claude/rules/pstack-models.md`. [Bộ chuyển đổi Claude Code](../harness/claude-code.md) đề cập các khác biệt còn lại.
 
-## Pick your models
+## Chọn model
 
-Run:
+Chạy:
 
 ```text
 /setup-pstack
 ```
 
-[`/setup-pstack`](../../skills/setup-pstack/SKILL.md) detects the models you have access to, asks for a reasoning budget, shows you each role (code delegates, judgment, the review panels), and asks what you want. Answer the questions. It writes `~/.cursor/rules/pstack-models.mdc`, a small rule every pstack skill reads.
+[`/setup-pstack`](../../skills/setup-pstack/SKILL.md) phát hiện các model bạn có quyền truy cập, hỏi mức ngân sách suy luận (reasoning budget), cho bạn xem từng vai trò (code delegate, phán đoán, các review panel), và hỏi bạn muốn gì. Hãy trả lời các câu hỏi. Nó ghi `~/.cursor/rules/pstack-models.mdc`, một rule nhỏ mà mọi skill pstack đều đọc.
 
-The defaults are the same as the `large` budget. Code, prose, and judgment run on Opus 5.5 at `xhigh` reasoning, and the review panels and swarm workers run at `high`. No role runs above `xhigh`. Outside a review panel, Fable 5.2 runs only when you name it for a task or after two Opus 5.5 runs of the same brief fail their check. `medium` lowers each role one level and `small` lowers it two, and both spend fewer tokens.
+Các giá trị mặc định giống với budget `large`. Code, văn bản và phán đoán chạy trên Opus 5.5 với mức suy luận `xhigh`, còn các review panel và swarm worker chạy ở `high`. Không vai trò nào chạy trên `xhigh`. Ngoài review panel, Fable 5.2 chỉ chạy khi bạn gọi tên nó cho một task hoặc sau khi hai lần chạy Opus 5.5 với cùng một brief đều không qua được bước kiểm tra. `medium` hạ mỗi vai trò xuống một mức và `small` hạ hai mức, cả hai đều tốn ít token hơn.
 
-You only override what you care about. A role with no line in the rule keeps the skill's default. To restore a default, delete that role's line. A rerun of `/setup-pstack` keeps any role whose model differs from the default. When a default changes, a rule written before the change still pins the old default until you run `/setup-pstack` again. That run replaces the old defaults it recognizes, tells you which, and keeps your other choices. To drop a pin it does not recognize, delete that role's line or the file first.
+Bạn chỉ ghi đè những gì mình quan tâm. Vai trò nào không có dòng trong rule sẽ giữ mặc định của skill. Để khôi phục mặc định, xóa dòng của vai trò đó. Chạy lại `/setup-pstack` sẽ giữ mọi vai trò có model khác với mặc định. Khi một mặc định thay đổi, rule được ghi trước thay đổi đó vẫn ghim mặc định cũ cho đến khi bạn chạy lại `/setup-pstack`. Lần chạy đó thay các mặc định cũ mà nó nhận ra, cho bạn biết là những cái nào, và giữ các lựa chọn khác của bạn. Để bỏ một giá trị ghim mà nó không nhận ra, hãy xóa dòng của vai trò đó hoặc xóa file trước.
 
-You might be wondering what happens if you use Auto. Set a role to `inherit-parent` or `auto` and pstack omits the subagent `model` field, so the subagent inherits your parent chat model. Both values mean the same thing, and neither is a model slug. For a panel role the value is a list, and one subagent runs per entry, so the list length sets the panel size. Setup also configures `swarm workers`, the default model for every `/swarm` worker unless a race names a model for each arm.
+Có thể bạn đang thắc mắc điều gì xảy ra nếu dùng Auto. Đặt một vai trò thành `inherit-parent` hoặc `auto` và pstack sẽ bỏ trường `model` của subagent, nên subagent kế thừa model của chat cha. Hai giá trị này có cùng ý nghĩa, và không cái nào là model slug. Với vai trò panel, giá trị là một danh sách, và mỗi phần tử chạy một subagent, nên độ dài danh sách quyết định kích thước panel. Cài đặt cũng cấu hình `swarm workers`, model mặc định cho mọi worker của `/swarm` trừ khi một cuộc đua (race) chỉ định model cho từng nhánh.
 
-## Accept the verification offers, or don't
+## Chấp nhận các đề xuất kiểm chứng, hoặc không
 
-At the end of setup, `/setup-pstack` looks for a way to prove app behavior in your project, either a `verify-*` skill or an existing harness. If it finds neither, it offers once to generate one with [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md).
+Cuối quá trình cài đặt, `/setup-pstack` tìm một cách để chứng minh hành vi ứng dụng trong dự án của bạn, hoặc là một skill `verify-*` hoặc là một harness có sẵn. Nếu không thấy cái nào, nó đề xuất một lần việc sinh ra một cái bằng [`/create-verification-skill`](../../skills/create-verification-skill/SKILL.md).
 
-Say yes and it writes `.cursor/skills/verify-<app>/`, a project-local skill that teaches agents to drive your app the way a user does. It proves the skill works once before handing it over. Say no and setup moves on. You can run `/create-verification-skill` yourself any time. [Verify and ship](./06-verify-and-ship.md#create-a-project-verification-skill) covers it in depth.
+Đồng ý thì nó ghi `.cursor/skills/verify-<app>/`, một skill cục bộ của dự án dạy agent điều khiển ứng dụng của bạn theo cách người dùng làm. Nó chứng minh skill hoạt động một lần trước khi bàn giao. Từ chối thì quá trình cài đặt tiếp tục. Bạn có thể tự chạy `/create-verification-skill` bất cứ lúc nào. [Kiểm chứng và ship](./06-verify-and-ship.md#tạo-một-verification-skill-cho-dự-án) đề cập chi tiết.
 
-If you're new to pstack, say yes. An agent that can check its own work keeps going until the check passes. An agent that can't hands every result back to you to check by hand. Of everything in this guide, the verification skill pays off the most.
+Nếu bạn mới dùng pstack, hãy đồng ý. Một agent có thể kiểm tra công việc của chính nó sẽ tiếp tục cho đến khi bước kiểm tra pass. Một agent không làm được vậy sẽ trả mọi kết quả về cho bạn kiểm tra bằng tay. Trong mọi thứ ở hướng dẫn này, verification skill là thứ đáng giá nhất.
 
-Then setup offers once to generate a formal verification skill with [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md), unless the project already has one. Tests check the cases someone thought to write. A formal verification skill checks one key property of your code, such as "a job never runs twice at once", in every case within a stated scope. Say yes when your code has concurrency, retries, a state machine, or a parser, where a bug is costly and tests rarely reach the case that breaks. Otherwise say no, and run it later if that changes. [Verify and ship](./06-verify-and-ship.md#prove-a-property-with-a-formal-verification-skill) covers it.
+Sau đó cài đặt đề xuất một lần việc sinh một formal verification skill bằng [`/create-formal-verification-skill`](../../skills/create-formal-verification-skill/SKILL.md), trừ khi dự án đã có. Test kiểm tra những trường hợp mà ai đó đã nghĩ ra để viết. Formal verification skill kiểm tra một thuộc tính then chốt trong code của bạn, ví dụ "một job không bao giờ chạy hai lần cùng lúc", trong mọi trường hợp thuộc một phạm vi đã nêu. Hãy đồng ý khi code của bạn có concurrency, retry, state machine, hoặc parser, nơi một bug gây tốn kém và test hiếm khi chạm tới trường hợp gây lỗi. Nếu không thì từ chối, và chạy nó sau nếu tình hình thay đổi. [Kiểm chứng và ship](./06-verify-and-ship.md#chứng-minh-một-thuộc-tính-bằng-formal-verification-skill) đề cập phần này.
 
-After setup, start a new chat. The model rule applies to new sessions.
+Sau khi cài đặt, hãy mở một chat mới. Rule model áp dụng cho các session mới.
 
-## Keep the cost in check
+## Kiểm soát chi phí
 
-pstack spends extra tokens on subagents and review panels. That's the price of the rigor. To spend fewer:
+pstack tiêu thêm token cho subagent và review panel. Đó là cái giá của sự chặt chẽ. Để tiêu ít hơn:
 
-- Rerun `/setup-pstack` and pick a smaller reasoning budget or cheaper models. A strong model in the main chat with cheaper, faster models in the code roles is a good split.
-- Set a role to `auto` or `inherit-parent` so it runs on the chat's own model.
-- Shorten a panel list. Each entry runs one subagent.
-- Save `/poteto-mode` for work that needs rigor. A small, obvious edit doesn't.
+- Chạy lại `/setup-pstack` và chọn reasoning budget nhỏ hơn hoặc model rẻ hơn. Một model mạnh ở chat chính cùng các model rẻ hơn, nhanh hơn ở các vai trò viết code là một cách chia tốt.
+- Đặt một vai trò thành `auto` hoặc `inherit-parent` để nó chạy trên chính model của chat.
+- Rút ngắn danh sách panel. Mỗi phần tử chạy một subagent.
+- Để dành `/poteto-mode` cho công việc cần sự chặt chẽ. Một chỉnh sửa nhỏ, hiển nhiên thì không cần.
 
-## Run your first task
+## Chạy task đầu tiên
 
-Pick something real but small, and describe it the way you'd describe it to a colleague:
+Chọn một việc thật nhưng nhỏ, và mô tả nó như cách bạn mô tả với một đồng nghiệp:
 
 ```text
-/poteto-mode add a --json flag to this command. text output stays byte-identical. verify both.
+/poteto-mode thêm flag --json cho lệnh này. output dạng text phải giữ nguyên từng byte. kiểm chứng cả hai.
 ```
 
-Watch the todo list. Its first items are the matched playbook's steps copied in, the Feature playbook for this prompt.
+Theo dõi todo list. Các mục đầu tiên là các bước của playbook được khớp, chép vào nguyên văn, với prompt này là playbook Feature.
 
-From here you can type normal follow-ups. To keep `/poteto-mode` on for the whole chat, pick it from the `/` menu with Option+Enter (Mac) or Alt+Enter (Windows) instead of Enter. That makes it a [Custom Mode](https://cursor.com/docs/skills#using-a-skill-as-a-custom-mode), which stays in context on every turn until you exit it. Custom Modes are available in the Agents Window and the CLI. Plain Enter attaches the skill to one message, and it fades as the chat moves on.
+Từ đây bạn có thể gõ các câu hỏi tiếp theo bình thường. Để giữ `/poteto-mode` bật cho cả chat, chọn nó từ menu `/` bằng Option+Enter (Mac) hoặc Alt+Enter (Windows) thay vì Enter. Việc đó biến nó thành một [Custom Mode](https://cursor.com/docs/skills#using-a-skill-as-a-custom-mode), ở lại trong context mọi lượt cho đến khi bạn thoát. Custom Mode có trong Agents Window và CLI. Nhấn Enter thường chỉ đính kèm skill vào một tin nhắn, và nó mờ dần khi chat tiếp diễn.
 
-Next: [Route work through `/poteto-mode`](./02-poteto-mode.md).
+Tiếp theo: [Chuyển công việc qua `/poteto-mode`](./02-poteto-mode.md).

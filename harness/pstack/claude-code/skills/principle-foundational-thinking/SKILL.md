@@ -1,13 +1,13 @@
 ---
 name: principle-foundational-thinking
-description: "Apply before writing logic: choosing core types and data structures, sequencing scaffold-vs-feature work, asking what concurrent actors share. Get the data structures right so downstream code becomes obvious."
+description: "Áp dụng trước khi viết logic: chọn các type và cấu trúc dữ liệu cốt lõi, sắp thứ tự giữa khung sườn và feature, hỏi xem các tác nhân đồng thời chia sẻ gì. Làm đúng cấu trúc dữ liệu để code phía sau trở nên hiển nhiên."
 disable-model-invocation: true
 ---
 
 # Foundational Thinking
 
-Get the data shape right before writing logic. Define core types early, trace every access pattern, and choose structures that match the dominant paths. DRY the structure, not every line.
+Làm đúng hình dạng dữ liệu trước khi viết logic. Định nghĩa các type cốt lõi sớm, lần theo mọi kiểu truy cập, và chọn các cấu trúc khớp với những đường chính. DRY ở cấu trúc, không phải ở từng dòng.
 
-Before sharing state between actors, ask what happens if another actor modifies it concurrently. If the answer is not "nothing", isolate.
+Trước khi chia sẻ state giữa các tác nhân, hãy hỏi điều gì xảy ra nếu một tác nhân khác sửa nó đồng thời. Nếu câu trả lời không phải là "không có gì", hãy cô lập.
 
-Scaffold first. Whatever helps every later phase (CI, tests, shared types) goes first, after removing dead code. Keep commits small and single-purpose.
+Dựng khung sườn trước. Bất cứ thứ gì giúp mọi giai đoạn sau (CI, test, type dùng chung) đi trước, sau khi đã xóa code chết. Giữ các commit nhỏ và đơn mục đích.

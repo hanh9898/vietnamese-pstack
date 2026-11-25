@@ -1,23 +1,23 @@
 ---
 name: how
-description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation."
+description: "Dùng cho \"X hoạt động thế nào\", đi qua code trước khi thay đổi gì đó, và các câu hỏi về vị trí / quyền sở hữu / phân lớp (\"cái này nên nằm ở đâu\", \"package nào sở hữu cái này\", \"đây có phải đúng lớp không\"). Giải thích kiến trúc subsystem, luồng runtime, mô hình tư duy để làm quen. Dùng why cho động cơ."
 disable-model-invocation: true
 ---
 
 # How
 
-In Claude Code, read [the Claude Code adapter](../../docs/harness/claude-code.md) once per session before you follow this skill. It maps the Cursor names in pstack skills to Claude Code.
+Trong Claude Code, hãy đọc [adapter Claude Code](../../docs/harness/claude-code.md) một lần mỗi session trước khi làm theo skill này. Nó ánh xạ các tên Cursor trong các skill pstack sang Claude Code.
 
-Explore the codebase to answer "how does X work?" questions.
+Khám phá codebase để trả lời các câu hỏi "X hoạt động thế nào?".
 
-If the scope is ambiguous, state your interpretation and explore. The user can redirect.
+Nếu phạm vi mơ hồ, hãy nêu cách hiểu của bạn và khám phá. Người dùng có thể chuyển hướng.
 
-## 1. Explain
+## 1. Giải thích
 
-Spawn one Task subagent with `subagent_type: generalPurpose` and `readonly: true` that explores and explains in one pass. Give it the user's question and this brief:
+Khởi chạy một Task subagent với `subagent_type: generalPurpose` và `readonly: true` khám phá và giải thích trong một lượt. Đưa cho nó câu hỏi của người dùng và brief này:
 
-> You are writing an architectural explanation for a senior engineer. Explore the codebase and write an explanation that a senior engineer unfamiliar with this area could read and walk away with a solid mental model. They should understand the architecture well enough to start working in it confidently. You have read-only access to the codebase.
+> Bạn đang viết một bản giải thích kiến trúc cho một kỹ sư senior. Khám phá codebase và viết một bản giải thích mà một kỹ sư senior chưa quen khu vực này có thể đọc và có được một mô hình tư duy vững chắc. Họ nên hiểu kiến trúc đủ rõ để bắt đầu làm việc trong đó một cách tự tin. Bạn có quyền truy cập chỉ đọc vào codebase.
 
-## 2. Present
+## 2. Trình bày
 
-Present the subagent's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
+Trình bày output của subagent. Chỉnh sửa nhẹ cho rõ ràng hoặc bổ sung context từ cuộc trò chuyện là được. Đừng viết lại nó một cách đáng kể.

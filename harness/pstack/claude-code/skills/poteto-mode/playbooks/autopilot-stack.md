@@ -1,8 +1,8 @@
 ### Autopilot-stack
 
-Run the Autopilot-full playbook, but do not merge.
+Chạy playbook Autopilot-full, nhưng không merge.
 
-1. **In place of step 5, stop at verified.** Stop when each PR is verified and green at its current head, then hand the PRs to the operator. After the handoff, nobody pushes without the operator's go. Every loop tick prompt names this file, so each tick sees the no-merge rule.
-2. **Stack a PR only when it builds on another PR.** This is the one exception to step 3. Base the PR on the other PR's branch in place of trunk, per `playbooks/opening-a-pr.md`. In place of step 2's rebase onto trunk, each PR rebases onto its parent PR's branch, and the stack root rebases onto trunk. A new head on the lower PR restacks the PRs above it, and a PR whose `git patch-id` the restack leaves unchanged keeps its verdict.
+1. **Thay cho bước 5, dừng ở trạng thái đã kiểm chứng.** Dừng khi mỗi PR đã được kiểm chứng và xanh tại head hiện tại của nó, rồi bàn giao các PR cho operator. Sau khi bàn giao, không ai push mà không có sự đồng ý của operator. Mọi prompt cho mỗi nhịp vòng lặp đều nêu tên file này, để mỗi nhịp thấy quy tắc không merge.
+2. **Chỉ xếp chồng một PR khi nó xây dựa trên một PR khác.** Đây là ngoại lệ duy nhất đối với bước 3. Đặt base của PR là branch của PR kia thay vì trunk, theo `playbooks/opening-a-pr.md`. Thay cho việc rebase lên trunk ở bước 2, mỗi PR rebase lên branch của PR cha của nó, và gốc của stack rebase lên trunk. Một head mới trên PR bên dưới sẽ xếp chồng lại các PR phía trên nó, và một PR có `git patch-id` không đổi sau lần xếp chồng lại thì giữ nguyên phán quyết của nó.
 
-**Reply:** list each PR with its verdict, in place of what merged.
+**Câu trả lời:** liệt kê từng PR kèm phán quyết của nó, thay cho những gì đã được merge.
