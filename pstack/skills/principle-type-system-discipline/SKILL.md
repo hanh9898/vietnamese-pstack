@@ -1,15 +1,15 @@
 ---
 name: principle-type-system-discipline
-description: "Apply when designing types, reviewing a function signature, or writing code in any statically-typed language. Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, exhaust variants, derive from authoritative schemas."
+description: "Áp dụng khi thiết kế type, review một function signature, hoặc viết code trong bất kỳ ngôn ngữ có type tĩnh nào. Làm cho các trạng thái bất hợp lệ không thể biểu diễn, brand các primitive mang ngữ nghĩa, parse dữ liệu bên ngoài tại ranh giới, xử lý hết các biến thể, suy ra từ các schema có thẩm quyền."
 disable-model-invocation: true
 ---
 
 # Type System Discipline
 
-Make the compiler reject impossible states, mismatched primitives, and unhandled variants.
+Làm cho compiler từ chối các trạng thái không thể, các primitive không khớp, và các biến thể chưa được xử lý.
 
-- **Brand semantic primitives.** If two arguments share a primitive type but mean different things, give each its own type. Validate once at creation.
-- **External data is untyped until parsed.** JSON, RPC payloads, CLI args, config, environment variables, and database rows go through a parse function at the boundary that returns the typed model.
-- **Derive types from authoritative schemas.** When a schema file owns a shape, derive the type from it instead of hand-rolling a parallel one.
+- **Brand các primitive mang ngữ nghĩa.** Nếu hai tham số có cùng kiểu primitive nhưng mang nghĩa khác nhau, hãy cho mỗi cái type riêng. Validate một lần khi tạo.
+- **Dữ liệu bên ngoài là không có type cho đến khi được parse.** JSON, payload RPC, tham số CLI, config, biến môi trường, và các dòng database đi qua một hàm parse tại ranh giới trả về typed model.
+- **Suy ra type từ các schema có thẩm quyền.** Khi một file schema sở hữu một hình dạng, hãy suy ra type từ nó thay vì tự viết một bản song song.
 
-For TypeScript syntax, see the **typescript-best-practices** skill.
+Về cú pháp TypeScript, xem skill **typescript-best-practices**.

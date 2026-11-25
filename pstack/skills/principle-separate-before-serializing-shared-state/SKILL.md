@@ -1,11 +1,11 @@
 ---
 name: principle-separate-before-serializing-shared-state
-description: "Apply when concurrent actors might write to the same file, branch, key, or state object. Eliminate the sharing first; serialize structurally only when one shared writer is a real invariant."
+description: "Áp dụng khi các tác nhân đồng thời có thể ghi vào cùng một file, branch, key, hoặc state object. Loại bỏ việc dùng chung trước; chỉ tuần tự hóa về mặt cấu trúc khi một bên ghi dùng chung duy nhất là một bất biến thật."
 disable-model-invocation: true
 ---
 
 # Separate Before Serializing Shared State
 
-When concurrent actors might write the same file, branch, key, or object, first ask whether they need one shared object or are publishing independent facts. Default to giving each actor its own file, key, branch, or state directory, and merge only where the state is read. Two workers writing their own field into one `state.json` is still shared mutation.
+Khi các tác nhân đồng thời có thể ghi vào cùng một file, branch, key, hoặc object, trước hết hãy hỏi chúng cần một object dùng chung hay đang công bố các sự thật độc lập. Mặc định cho mỗi tác nhân file, key, branch, hoặc thư mục state riêng, và chỉ hợp nhất ở nơi state được đọc. Hai worker ghi trường riêng của mình vào một `state.json` vẫn là thay đổi dùng chung.
 
-Only when one shared write target is a real invariant, serialize access structurally (a lockfile, a single writer, sequential phases, compare-and-swap). Instructions are not concurrency control, and "we need a lock" is a smell to check first.
+Chỉ khi một đích ghi dùng chung là một bất biến thật, hãy tuần tự hóa việc truy cập về mặt cấu trúc (một lockfile, một bên ghi duy nhất, các giai đoạn tuần tự, compare-and-swap). Chỉ dẫn không phải là kiểm soát đồng thời, và "ta cần một lock" là một mùi cần kiểm tra trước.

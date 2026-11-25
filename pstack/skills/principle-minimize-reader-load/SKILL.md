@@ -1,15 +1,15 @@
 ---
 name: principle-minimize-reader-load
-description: "Apply when reviewing or shaping code that's hard to trace. Count layers between question and answer, and hidden state in the reader's head; collapse one-caller wrappers and shrink mutable scope."
+description: "Áp dụng khi review hoặc định hình code khó lần theo. Đếm số lớp giữa câu hỏi và câu trả lời, và state ẩn trong đầu người đọc; gộp các wrapper chỉ có một caller và thu hẹp phạm vi có thể thay đổi."
 disable-model-invocation: true
 ---
 
 # Minimize Reader Load
 
-Reader load is the work a reader must do to understand code. It has two independent axes: layers to trace between the question and the answer, and hidden or mutable state to hold in their head. Guard both.
+Tải cho người đọc là công sức mà người đọc phải bỏ ra để hiểu code. Nó có hai trục độc lập: số lớp phải lần theo giữa câu hỏi và câu trả lời, và state ẩn hoặc có thể thay đổi mà họ phải giữ trong đầu. Hãy canh giữ cả hai.
 
-- Collapse layers that only forward: wrappers with one caller, adapters with no second implementation, pass-through methods. Inline them.
-- Shrink state scope: returns over mutations, locals over fields, fields over module state, module state over globals. Derive instead of sync.
-- Name an invariant once at the boundary, not in every consumer.
+- Gộp các lớp chỉ chuyển tiếp: wrapper chỉ có một caller, adapter không có bản cài đặt thứ hai, method chỉ truyền qua. Inline chúng.
+- Thu hẹp phạm vi state: return thay vì mutation, biến cục bộ thay vì field, field thay vì state của module, state của module thay vì biến toàn cục. Suy ra thay vì đồng bộ.
+- Gọi tên một bất biến một lần tại ranh giới, không phải ở mọi nơi dùng.
 
-The test: can a new reader answer "where does X come from?" and "what can change X?" in under 30 seconds? If not, cut layers or cut state.
+Phép thử: một người đọc mới có thể trả lời "X đến từ đâu?" và "cái gì có thể thay đổi X?" trong dưới 30 giây không? Nếu không, hãy cắt bớt lớp hoặc cắt bớt state.
