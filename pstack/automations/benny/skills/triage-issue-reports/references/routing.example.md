@@ -1,8 +1,8 @@
-# Routing map example
+# Ví dụ bản đồ định tuyến
 
-Copy this file outside `.cursor/automations/benny/`, for example to `.cursor/benny/routing.md`, and replace every placeholder. Point `routing.map_path` at the copy. Pack refreshes must not overwrite it.
+Sao chép file này ra bên ngoài `.cursor/automations/benny/`, ví dụ đến `.cursor/benny/routing.md`, và thay thế mọi placeholder. Trỏ `routing.map_path` đến bản sao. Các lần làm mới pack không được ghi đè lên nó.
 
-The triage skill treats this as data. A route needs evidence from the report or cause trace. A keyword match alone is not enough.
+Triage skill coi file này là dữ liệu. Một route cần bằng chứng từ báo cáo hoặc dấu vết nguyên nhân. Chỉ khớp từ khóa thôi là không đủ.
 
 ```yaml
 routes:
@@ -51,11 +51,11 @@ ping_policy:
     - "unverified-owner"
 ```
 
-## Rules
+## Quy tắc
 
-- Leave `fallback.destination` empty unless one team accepts all unmatched reports.
-- Use stable product areas, code paths, and error signatures.
-- Do not include private data in a public copy.
-- Do not paste raw user or channel IDs into an example that will be published.
-- Keep feature-owner pings off until the target team agrees to them.
-- A reroute tells the reporter where to go. The automation never cross-posts.
+- Để trống `fallback.destination` trừ khi có một team chấp nhận mọi báo cáo không khớp.
+- Dùng các khu vực sản phẩm, đường dẫn code, và chữ ký lỗi ổn định.
+- Đừng đưa dữ liệu riêng tư vào một bản sao công khai.
+- Đừng dán ID người dùng hoặc channel thô vào một ví dụ sẽ được công bố.
+- Giữ tắt việc ping feature owner cho đến khi team đích đồng ý.
+- Một lần định tuyến lại cho người báo cáo biết nên đi đâu. Automation không bao giờ đăng chéo.

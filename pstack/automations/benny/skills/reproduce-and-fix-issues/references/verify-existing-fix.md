@@ -1,93 +1,93 @@
-# Verify an existing fix
+# Kiểm chứng một bản sửa đã có
 
-Use this mode when an open pull request or merged commit plausibly fixes the report.
+Dùng chế độ này khi một pull request đang mở hoặc một commit đã merge có vẻ đã sửa báo cáo.
 
-The existing artifact owns the fix. Verify it. Do not edit it, author a competing patch, or open another pull request.
+Artifact đã có sở hữu bản sửa. Kiểm chứng nó. Đừng sửa nó, viết một patch cạnh tranh, hay mở một pull request khác.
 
-## Qualify the artifact
+## Xác định artifact đủ điều kiện
 
-Require one concrete artifact:
+Yêu cầu một artifact cụ thể:
 
-- An open pull request with code changes that address the symptom
-- A merged pull request
-- A merged commit with matching code and intent
+- Một pull request đang mở có thay đổi code giải quyết triệu chứng
+- Một pull request đã merge
+- Một commit đã merge có code và ý định khớp
 
-A thread claim, tracker status, branch name, or cause hypothesis without a pull request or commit is not enough.
+Một khẳng định trong thread, trạng thái tracker, tên branch, hoặc giả thuyết nguyên nhân mà không có pull request hay commit là không đủ.
 
-When several artifacts exist, choose the one linked from the source thread or tracker. Otherwise choose the closest match to the affected code and state why.
+Khi có nhiều artifact, hãy chọn cái được link từ thread nguồn hoặc tracker. Nếu không, chọn cái khớp nhất với code bị ảnh hưởng và nêu lý do.
 
-## Protect the working tree
+## Bảo vệ working tree
 
-Use an isolated worktree or another clean checkout when the repository supports it. Do not overwrite user changes.
+Dùng một worktree cô lập hoặc một checkout sạch khác khi repository hỗ trợ. Đừng ghi đè lên thay đổi của người dùng.
 
-Record:
+Ghi lại:
 
-- Baseline revision
-- Patched revision
-- Pull request or commit URL
-- Build and environment inputs shared by both runs
+- Revision baseline
+- Revision đã patch
+- URL của pull request hoặc commit
+- Các input build và môi trường dùng chung cho cả hai lượt chạy
 
-Use regular `github.com` pull request links.
+Dùng link pull request `github.com` thông thường.
 
-## Measure the baseline
+## Đo baseline
 
-For an open pull request, use its base branch as the baseline.
+Với một pull request đang mở, dùng base branch của nó làm baseline.
 
-For a merged fix, use the revision immediately before the fix when that revision builds and represents the old behavior.
+Với một bản sửa đã merge, dùng revision ngay trước bản sửa khi revision đó build được và thể hiện hành vi cũ.
 
-Through the configured control adapter:
+Thông qua control adapter đã cấu hình:
 
-1. Bring up the baseline app.
-2. Confirm the correct app and environment.
-3. Run the reported path through real UI actions.
-4. Observe the discriminating symptom.
-5. Reset and repeat it.
-6. Capture baseline recording, screenshot, and state check.
+1. Khởi động app baseline.
+2. Xác nhận đúng app và môi trường.
+3. Chạy đường đi được báo cáo bằng các thao tác UI thật.
+4. Quan sát triệu chứng phân biệt.
+5. Reset và lặp lại.
+6. Thu bản ghi màn hình, screenshot, và phép kiểm tra trạng thái của baseline.
 
-If the symptom does not appear twice on the baseline, there is no baseline. Do not claim that the fix works.
+Nếu triệu chứng không xuất hiện hai lần trên baseline, thì không có baseline. Đừng khẳng định bản sửa hoạt động.
 
-## Measure the patched build
+## Đo bản build đã patch
 
-Build and run the pull request or fix commit with the same environment and data.
+Build và chạy pull request hoặc commit sửa với cùng môi trường và dữ liệu.
 
-1. Run the same UI path.
-2. Repeat it twice.
-3. Confirm that the broken state is gone.
-4. Confirm the expected state appears.
-5. Capture after recording, screenshot, and the same state check.
+1. Chạy cùng đường đi UI.
+2. Lặp lại hai lần.
+3. Xác nhận trạng thái hỏng đã biến mất.
+4. Xác nhận trạng thái mong đợi xuất hiện.
+5. Thu bản ghi màn hình, screenshot sau, và cùng phép kiểm tra trạng thái.
 
-Do not stop at compilation or tests. The after result must come from a running patched app.
+Đừng dừng ở việc biên dịch hay test. Kết quả sau phải đến từ một app đã patch đang chạy.
 
-## Outcomes
+## Kết quả
 
 ### Confirmed
 
-The baseline reproduces twice and the patched build resolves it twice.
+Baseline tái hiện hai lần và bản build đã patch giải quyết nó hai lần.
 
-- Mark operations status as verified.
-- Link the artifact.
-- Post one concise source-thread reply after the source preflight.
-- Include the before and after result.
-- Open no pull request.
+- Đánh dấu trạng thái vận hành là đã kiểm chứng.
+- Link đến artifact.
+- Đăng một câu trả lời ngắn gọn trong thread nguồn sau bước kiểm tra trước nguồn.
+- Bao gồm kết quả trước và sau.
+- Không mở pull request nào.
 
 ### Insufficient fix
 
-The symptom appears on both baseline and patched builds.
+Triệu chứng xuất hiện trên cả bản build baseline và bản đã patch.
 
-- Mark operations status as reproduced but not fixed.
-- Link the artifact and say it did not resolve the symptom.
-- Post the normal confirmed-repro source update if the run has not already used it.
-- Open no competing pull request.
+- Đánh dấu trạng thái vận hành là đã tái hiện nhưng chưa sửa.
+- Link đến artifact và nói rằng nó đã không giải quyết triệu chứng.
+- Đăng cập nhật nguồn bình thường cho bản tái hiện đã xác nhận nếu lượt chạy chưa dùng nó.
+- Không mở pull request cạnh tranh nào.
 
 ### Inconclusive
 
-The baseline does not reproduce, the patched app cannot run, or the evidence does not show the discriminating state.
+Baseline không tái hiện, app đã patch không chạy được, hoặc bằng chứng không cho thấy trạng thái phân biệt.
 
-- Do not claim success.
-- State which half could not be measured.
-- Keep the result in the operations thread or run output.
-- Post nothing in the source thread unless a direct question requires an answer.
+- Đừng khẳng định thành công.
+- Nêu nửa nào không thể đo được.
+- Giữ kết quả trong thread vận hành hoặc output của lượt chạy.
+- Không đăng gì trong thread nguồn trừ khi một câu hỏi trực tiếp đòi hỏi câu trả lời.
 
-## Cleanup
+## Dọn dẹp
 
-Stop both builds, remove temporary profiles and captures according to retention policy, and return the repository to its prior state without discarding user work.
+Dừng cả hai bản build, xóa các profile và bản thu tạm theo chính sách lưu giữ, và đưa repository về trạng thái trước đó mà không bỏ đi công việc của người dùng.
