@@ -1,41 +1,41 @@
 ---
 name: swarm
-description: "Fan out N parallel workers, drain them, and return one report. Use for /swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration."
+description: "Tỏa ra N worker song song, chờ chúng xong hết, và trả về một báo cáo. Dùng cho /swarm, 'swarm this', hoặc để bao phủ song song, chạy đua, thử thách, và khám phá."
 disable-model-invocation: true
 ---
 
 # Swarm
 
-## Start
+## Bắt đầu
 
-Open a todolist with one entry per phase before launching anything.
+Mở một todolist với mỗi giai đoạn một mục trước khi khởi chạy bất cứ thứ gì.
 
-1. Frame
-2. Fan out
-3. Aggregate
-4. Report
+1. Đóng khung
+2. Tỏa ra
+3. Tổng hợp
+4. Báo cáo
 
-## Phase A: Frame
+## Phase A: Đóng khung
 
-1. State the done predicate and the artifact or report the swarm must return.
-2. Choose the shape. Partition into slices, race N workers on identical briefs, or mix both. For a race or mixed shape, declare `first pass`, `rank all`, or `best-of` before spawning.
-3. Pick the worker model from the `swarm workers` line in `~/.cursor/rules/pstack-models.mdc`. If the rule or that line is missing, use `claude-opus-5-5-high-fast`. For `auto` or `inherit-parent`, omit `model` so the workers run on the parent model. If the Task tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message. For a model race, name each arm's model up front. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
-4. Give each worker its own writable output when it writes. When workers verify or measure commits, each brief names the exact SHAs. A measurement brief also names the method (sample count, what one sample is, order). The worker records both in its result.
+1. Nêu vị từ hoàn thành và artifact hoặc báo cáo mà swarm phải trả về.
+2. Chọn hình dạng. Chia thành các lát cắt, cho N worker chạy đua trên các brief giống hệt nhau, hoặc kết hợp cả hai. Với hình dạng chạy đua hoặc kết hợp, hãy tuyên bố `first pass`, `rank all`, hoặc `best-of` trước khi khởi chạy.
+3. Chọn model worker từ dòng `swarm workers` trong `~/.cursor/rules/pstack-models.mdc`. Nếu rule hoặc dòng đó không có, dùng `claude-opus-5-5-high-fast`. Với `auto` hoặc `inherit-parent`, bỏ `model` để các worker chạy trên model của cha. Nếu tool Task từ chối một slug, dùng mặc định và nói vậy. Nếu nó từ chối mặc định, dùng slug hợp lệ gần nhất cùng họ từ thông báo lỗi của nó. Với một cuộc đua model, gọi tên model của mỗi nhánh ngay từ đầu. Chọn mức suy luận của từng subagent cho công việc, theo phần Subagent của skill **poteto-mode**.
+4. Cho mỗi worker output có thể ghi riêng của nó khi nó ghi. Khi các worker kiểm chứng hoặc đo các commit, mỗi brief gọi tên chính xác các SHA. Một brief đo đạc cũng gọi tên phương pháp (số mẫu, một mẫu là gì, thứ tự). Worker ghi lại cả hai trong kết quả của nó.
 
-## Phase B: Fan out
+## Phase B: Tỏa ra
 
-Spawn all N workers in one message with `subagent_type: generalPurpose`, `environment: "cloud"`, `run_in_background: true`, and the step 3 model, left unset for `auto` or `inherit-parent`. Use `environment: "local"` only when the worker needs access to something on the user's computer.
+Khởi chạy cả N worker trong một tin nhắn với `subagent_type: generalPurpose`, `environment: "cloud"`, `run_in_background: true`, và model của bước 3, để trống với `auto` hoặc `inherit-parent`. Chỉ dùng `environment: "local"` khi worker cần truy cập thứ gì đó trên máy tính của người dùng.
 
-When a worker must start from a non-default pushed branch, pass `cloud_base_branch`.
+Khi một worker phải bắt đầu từ một branch đã push không phải mặc định, hãy truyền `cloud_base_branch`.
 
-Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence. A worker that can prove a defect reports `ISSUES` and lists every issue it can prove, not only the first.
+Mỗi brief tự đứng được. Bao gồm mục tiêu, phạm vi, lát cắt hoặc nhánh đua chính xác, cách kiểm chứng, và những gì cần báo cáo. Báo cáo dùng `PASS`, `ISSUES`, hoặc `BLOCKED` kèm bằng chứng. Một worker có thể chứng minh một lỗi thì báo cáo `ISSUES` và liệt kê mọi vấn đề nó có thể chứng minh, không chỉ vấn đề đầu tiên.
 
-If a worker drops out, proceed with N-1 and note it.
+Nếu một worker bỏ cuộc, tiếp tục với N-1 và ghi chú lại.
 
-## Phase C: Aggregate
+## Phase C: Tổng hợp
 
-Read the terminal results. Drop a result that does not record the SHAs and method its brief names, and respawn that worker once. After a second miss, record a gap. A gap does not count as a pass. For coverage, every required slice needs a result. For a race, apply the selection rule declared up front. Use first pass, rank all, or best-of. Do not paste raw worker dumps.
+Đọc các kết quả cuối cùng. Bỏ một kết quả không ghi lại các SHA và phương pháp mà brief của nó gọi tên, và khởi chạy lại worker đó một lần. Sau lần thiếu thứ hai, ghi lại một khoảng trống. Một khoảng trống không được tính là pass. Với việc bao phủ, mọi lát cắt bắt buộc đều cần một kết quả. Với một cuộc đua, áp dụng quy tắc lựa chọn đã tuyên bố từ đầu. Dùng first pass, rank all, hoặc best-of. Đừng dán nguyên output thô của worker.
 
-## Phase D: Report
+## Phase D: Báo cáo
 
-Return one consolidated in-chat report with a result table, issue one-liners, gaps or dropouts, and the race rule when used.
+Trả về một báo cáo hợp nhất trong chat với một bảng kết quả, mỗi vấn đề một dòng, các khoảng trống hoặc worker bỏ cuộc, và quy tắc chạy đua khi có dùng.
