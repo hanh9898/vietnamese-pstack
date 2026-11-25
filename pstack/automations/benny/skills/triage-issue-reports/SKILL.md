@@ -1,217 +1,217 @@
 ---
 name: triage-issue-reports
-description: Triage Slack issue reports with one thread-only verdict, evidence review, cause-aware routing, tracker dedupe, and fail-closed ticket creation. Use only from the configured Benny triage automation.
+description: Triage các báo cáo issue trên Slack với một phán quyết duy nhất chỉ trong thread, xem xét bằng chứng, định tuyến có xét đến nguyên nhân, khử trùng lặp trên tracker, và tạo ticket theo kiểu fail-closed. Chỉ dùng từ automation triage Benny đã cấu hình.
 disable-model-invocation: true
 ---
 
-# Triage issue reports
+# Triage báo cáo issue
 
-Classify one Slack report and post one useful verdict in its source thread. Create a tracker issue only for a clear, new bug. Do not reproduce or fix it here.
+Phân loại một báo cáo Slack và đăng một phán quyết hữu ích trong thread nguồn của nó. Chỉ tạo issue trên tracker cho một bug rõ ràng và mới. Đừng tái hiện hay sửa nó ở đây.
 
-Load the external Benny configuration supplied by the automation. If the config is missing, malformed, or incomplete, stop without posting or writing to the tracker.
+Nạp cấu hình Benny bên ngoài do automation cung cấp. Nếu config bị thiếu, sai định dạng, hoặc chưa hoàn chỉnh, hãy dừng mà không đăng hay ghi gì vào tracker.
 
-## Hard safety rules
+## Quy tắc an toàn cứng
 
-- The source channel and root thread coordinates are immutable.
-- Never post a root message in the source channel.
-- Never post to another channel, broadcast a reply, send a DM, or start a replacement thread.
-- Preflight the source parent before any tracker write and immediately before the verdict post.
-- If the parent is missing, deleted, inaccessible, or uncertain, stop with no writes.
-- Post one substantive verdict. Do not narrate progress.
-- The coordinator is the only Slack poster.
-- Delegated workers return findings only. They must be read-only and receive no Slack credentials or write actions.
-- Every child prompt must forbid `SendSlackMessage`, `PostToSlack`, `chat.postMessage`, and every other Slack write.
-- If worker isolation cannot enforce those limits, do the work in the coordinator.
-- Never create an issue that cannot link back to the source thread.
-- Prefer no ticket over a guessed or duplicate ticket.
-- Apply pstack's `principle-separate-before-serializing-shared-state` to source coordinates.
-- Apply pstack's `principle-minimize-reader-load` and `unslop` skills to the final verdict.
+- Tọa độ channel nguồn và thread gốc là bất biến.
+- Không bao giờ đăng một tin nhắn gốc trong channel nguồn.
+- Không bao giờ đăng vào channel khác, broadcast một reply, gửi DM, hay bắt đầu một thread thay thế.
+- Kiểm tra trước (preflight) tin nhắn cha nguồn trước mọi lần ghi vào tracker và ngay trước khi đăng phán quyết.
+- Nếu tin nhắn cha bị thiếu, bị xóa, không truy cập được, hoặc không chắc chắn, hãy dừng mà không ghi gì.
+- Đăng một phán quyết có nội dung. Đừng tường thuật tiến độ.
+- Bên điều phối là bên duy nhất đăng lên Slack.
+- Các worker được ủy quyền chỉ trả về phát hiện. Chúng phải chỉ đọc và không nhận credential Slack hay action ghi nào.
+- Mọi prompt con phải cấm `SendSlackMessage`, `PostToSlack`, `chat.postMessage`, và mọi thao tác ghi Slack khác.
+- Nếu việc cô lập worker không thể thực thi các giới hạn đó, hãy làm công việc trong bên điều phối.
+- Không bao giờ tạo một issue không thể link ngược về thread nguồn.
+- Thà không có ticket còn hơn một ticket đoán mò hoặc trùng lặp.
+- Áp dụng `principle-separate-before-serializing-shared-state` của pstack cho tọa độ nguồn.
+- Áp dụng các skill `principle-minimize-reader-load` và `unslop` của pstack cho phán quyết cuối cùng.
 
-## 1. Freeze source coordinates
+## 1. Đóng băng tọa độ nguồn
 
-Before making a work list or delegating:
+Trước khi lập danh sách công việc hoặc ủy quyền:
 
-1. Read `source_channel_id` from the trigger.
-2. Require it to equal the configured source channel.
-3. Set `SOURCE_THREAD_TS` to `trigger.thread_ts` when present. Otherwise use `trigger.ts`.
-4. Require a nonempty `SOURCE_THREAD_TS`.
-5. Store `SOURCE_CHANNEL_ID` and `SOURCE_THREAD_TS` as immutable values.
-6. Read the thread and verify that its root has exactly those coordinates.
-7. Fetch a stable source permalink.
+1. Đọc `source_channel_id` từ trigger.
+2. Yêu cầu nó bằng channel nguồn đã cấu hình.
+3. Đặt `SOURCE_THREAD_TS` thành `trigger.thread_ts` khi có. Nếu không, dùng `trigger.ts`.
+4. Yêu cầu `SOURCE_THREAD_TS` không rỗng.
+5. Lưu `SOURCE_CHANNEL_ID` và `SOURCE_THREAD_TS` thành các giá trị bất biến.
+6. Đọc thread và xác minh rằng gốc của nó có chính xác các tọa độ đó.
+7. Lấy một permalink nguồn ổn định.
 
-Every later source read and post must use those stored values. Never replace them with a reply timestamp or an operations-thread timestamp.
+Mọi lần đọc và đăng nguồn về sau phải dùng các giá trị đã lưu đó. Không bao giờ thay thế chúng bằng timestamp của một reply hay timestamp của thread vận hành.
 
-## 2. Read the whole report
+## 2. Đọc toàn bộ báo cáo
 
-Read the root and current replies before deciding.
+Đọc tin nhắn gốc và các reply hiện có trước khi quyết định.
 
-Capture:
+Thu thập:
 
-- Reporter wording
-- Product version, app build, environment, and platform when present
-- Expected behavior
-- Observed behavior
-- Frequency and trigger
-- Error text or stack signature
-- Existing issue, commit, or pull request links
-- Any explicit statement that someone is already fixing it
+- Cách diễn đạt của người báo cáo
+- Phiên bản sản phẩm, bản build app, môi trường, và nền tảng khi có
+- Hành vi mong đợi
+- Hành vi quan sát được
+- Tần suất và yếu tố kích hoạt
+- Chữ lỗi hoặc chữ ký stack
+- Các link issue, commit, hoặc pull request đã có
+- Mọi tuyên bố rõ ràng rằng ai đó đang sửa nó
 
-Inspect every relevant attachment.
+Kiểm tra mọi file đính kèm liên quan.
 
-- Read screenshots at full useful resolution.
-- Review video for the state transition that separates correct and broken behavior.
-- Read logs, traces, and crash text for concrete signatures.
-- If media needs specialist review, use a read-only media worker and ask a narrow question. The worker returns findings only.
-- If an attachment cannot be read, say so in the verdict. Do not invent what it shows.
+- Đọc screenshot ở độ phân giải hữu ích đầy đủ.
+- Xem video để tìm chuyển đổi trạng thái tách biệt hành vi đúng và hỏng.
+- Đọc log, trace, và chữ crash để tìm chữ ký cụ thể.
+- Nếu media cần xem xét chuyên môn, hãy dùng một media worker chỉ đọc và hỏi một câu hỏi hẹp. Worker chỉ trả về phát hiện.
+- Nếu một file đính kèm không đọc được, hãy nói vậy trong phán quyết. Đừng bịa ra những gì nó cho thấy.
 
-Use evidence already in the thread before asking the reporter for more.
+Dùng bằng chứng đã có trong thread trước khi hỏi người báo cáo thêm.
 
-## 3. Trace cause before routing
+## 3. Lần theo nguyên nhân trước khi định tuyến
 
-Do a bounded source and history pass before choosing an owner or destination. Trace the path from the reported action to the observed result. Use pstack's `why` skill when the report looks like a regression or touches defensive code.
+Thực hiện một lượt đọc source và lịch sử có giới hạn trước khi chọn owner hoặc đích đến. Lần theo đường đi từ hành động được báo cáo đến kết quả quan sát được. Dùng skill `why` của pstack khi báo cáo trông giống một hồi quy hoặc chạm vào code phòng thủ.
 
-1. Identify the likely code path from the reported action to the observed result.
-2. Check whether the visible symptom belongs to that code path or a dependency below it.
-3. Check recent changes when the report looks like a regression.
-4. Check whether a merged commit or open pull request already addresses the same symptom.
-5. Separate confirmed facts from hypotheses.
+1. Xác định đường code có khả năng từ hành động được báo cáo đến kết quả quan sát được.
+2. Kiểm tra xem triệu chứng nhìn thấy được thuộc về đường code đó hay một dependency bên dưới nó.
+3. Kiểm tra các thay đổi gần đây khi báo cáo trông giống một hồi quy.
+4. Kiểm tra xem một commit đã merge hoặc pull request đang mở đã giải quyết cùng triệu chứng chưa.
+5. Tách sự thật đã xác nhận khỏi giả thuyết.
 
-This pass does not need a complete root cause. It must be strong enough to avoid routing a visible symptom to the wrong owner.
+Lượt này không cần một nguyên nhân gốc hoàn chỉnh. Nó phải đủ mạnh để tránh định tuyến một triệu chứng nhìn thấy được đến sai owner.
 
-If the repository cannot be read, do not guess a code owner. Continue with a conservative classification and say that cause tracing was unavailable.
+Nếu không đọc được repository, đừng đoán code owner. Tiếp tục với một phân loại thận trọng và nói rằng không thể lần theo nguyên nhân.
 
-## 4. Classify
+## 4. Phân loại
 
-Choose one category.
+Chọn một loại.
 
 ### Bug
 
-Something violates intended behavior. Examples include wrong output, broken state, an error, a crash, a hang, a silent no-op, or a regression.
+Một điều gì đó vi phạm hành vi dự định. Ví dụ bao gồm output sai, trạng thái hỏng, một lỗi, một crash, một lần treo, một thao tác im lặng không làm gì, hoặc một hồi quy.
 
-### Performance
+### Hiệu năng
 
-The report describes measurable slowness, excess memory, battery drain, jank, or another resource problem. Treat it as a bug, but preserve measurements and profiles.
+Báo cáo mô tả sự chậm chạp đo được, bộ nhớ dư thừa, hao pin, giật lag, hoặc một vấn đề tài nguyên khác. Coi nó là một bug, nhưng giữ lại các số đo và profile.
 
-### Feature request
+### Yêu cầu feature
 
-The current behavior appears intentional and the reporter wants a different behavior or affordance.
+Hành vi hiện tại có vẻ là có chủ đích và người báo cáo muốn một hành vi hoặc khả năng khác.
 
-### Question or feedback
+### Câu hỏi hoặc góp ý
 
-The report asks how something works, expresses a preference without a concrete defect, or gives general feedback.
+Báo cáo hỏi một thứ hoạt động thế nào, bày tỏ một sở thích mà không có lỗi cụ thể, hoặc đưa ra góp ý chung.
 
-### Reroute
+### Định tuyến lại
 
-Cause tracing shows that another configured destination owns the issue.
+Việc lần theo nguyên nhân cho thấy một đích đến đã cấu hình khác sở hữu issue.
 
-When the bug versus feature line is unclear, do not file. The one verdict may ask one focused question and use the `other` marker.
+Khi ranh giới giữa bug và feature không rõ, đừng tạo ticket. Phán quyết duy nhất có thể hỏi một câu hỏi tập trung và dùng marker `other`.
 
-## 5. Apply configured routing
+## 5. Áp dụng định tuyến đã cấu hình
 
-Read the optional routing map from `routing.map_path`.
+Đọc bản đồ định tuyến tùy chọn từ `routing.map_path`.
 
-- Match on confirmed product area, code path, or error signature.
-- A visible symptom alone is not enough when cause tracing points elsewhere.
-- If no route matches, say the owner is unclear. Do not guess.
-- Do not cross-post. Tell the reporter where to take the issue in the source thread.
+- Khớp theo khu vực sản phẩm, đường code, hoặc chữ ký lỗi đã xác nhận.
+- Chỉ một triệu chứng nhìn thấy được là không đủ khi việc lần theo nguyên nhân chỉ về nơi khác.
+- Nếu không có route nào khớp, hãy nói owner chưa rõ. Đừng đoán.
+- Đừng đăng chéo. Cho người báo cáo biết nên mang issue đi đâu trong thread nguồn.
 
-Owner pings are off by default. A ping is allowed only when all of these hold:
+Ping owner tắt theo mặc định. Một lần ping chỉ được phép khi tất cả các điều sau đều đúng:
 
-1. The routing map explicitly names the owner.
-2. The config allows that ping type.
-3. The item is a feature request that needs owner input, or recent history identifies a likely regression author with strong evidence.
-4. The owner is not a broad on-call group.
+1. Bản đồ định tuyến gọi tên rõ ràng owner.
+2. Config cho phép loại ping đó.
+3. Mục đó là một yêu cầu feature cần ý kiến của owner, hoặc lịch sử gần đây xác định một tác giả có khả năng gây ra hồi quy với bằng chứng mạnh.
+4. Owner không phải là một nhóm on-call rộng.
 
-No other case gets a ping.
+Không trường hợp nào khác được ping.
 
-## 6. Use the issue-tracker adapter
+## 6. Dùng adapter issue-tracker
 
-The tracker is an adapter, not a required vendor. A Linear adapter is one valid example. A GitHub Issues adapter or another tracker may implement the same contract.
+Tracker là một adapter, không phải một nhà cung cấp bắt buộc. Một adapter Linear là một ví dụ hợp lệ. Một adapter GitHub Issues hoặc một tracker khác có thể cài đặt cùng hợp đồng.
 
-The configured adapter must provide:
+Adapter đã cấu hình phải cung cấp:
 
-- Search issues by text, state, label, source URL, and date range
-- Read one issue and its links
-- Create an issue with title, body, status, labels, and source URL
-- Update an existing issue without replacing unrelated fields
-- Add a source link and recurrence note
-- Cancel, close, or delete an issue created by this run if the Slack handoff fails
+- Tìm issue theo chữ, trạng thái, label, URL nguồn, và khoảng ngày
+- Đọc một issue và các link của nó
+- Tạo một issue với tiêu đề, nội dung, trạng thái, label, và URL nguồn
+- Cập nhật một issue đã có mà không thay thế các field không liên quan
+- Thêm một link nguồn và ghi chú tái diễn
+- Hủy, đóng, hoặc xóa một issue do lượt chạy này tạo nếu việc bàn giao trên Slack thất bại
 
-If a required operation is unavailable, fail closed for that write.
+Nếu một thao tác bắt buộc không có sẵn, hãy fail closed cho lần ghi đó.
 
-Resolve configured team, project, status, and labels at runtime. Do not invent IDs, create labels, assign owners, or set priority unless the config explicitly requires it.
+Phân giải team, project, trạng thái, và label đã cấu hình lúc chạy. Đừng bịa ID, tạo label, gán owner, hay đặt priority trừ khi config yêu cầu rõ ràng.
 
-## 7. Dedupe
+## 7. Khử trùng lặp
 
-Always check whether this source permalink is already linked to a tracker issue or a prior triage reply. If so, do not post or create a duplicate.
+Luôn kiểm tra xem permalink nguồn này đã được link đến một issue tracker hay một reply triage trước đó chưa. Nếu rồi, đừng đăng hay tạo bản trùng lặp.
 
-For bugs and performance reports, search the tracker using:
+Với báo cáo bug và hiệu năng, tìm trên tracker bằng:
 
-- Exact error or crash signature
-- Product area
-- Trigger
-- Symptom
-- Version or date window
-- Suspected regression commit
-- Source permalink
+- Chữ ký lỗi hoặc crash chính xác
+- Khu vực sản phẩm
+- Yếu tố kích hoạt
+- Triệu chứng
+- Phiên bản hoặc khoảng ngày
+- Commit nghi gây hồi quy
+- Permalink nguồn
 
-Choose one outcome:
+Chọn một kết quả:
 
-- Confident duplicate: same signature, or the same area, trigger, and symptom, or a confirmed shared cause.
-- Possibly related: a shared cause is plausible but not proven.
-- Weak resemblance: similarity is superficial.
-- No match.
+- Trùng lặp chắc chắn: cùng chữ ký, hoặc cùng khu vực, yếu tố kích hoạt, và triệu chứng, hoặc một nguyên nhân chung đã xác nhận.
+- Có thể liên quan: một nguyên nhân chung là hợp lý nhưng chưa được chứng minh.
+- Giống bề ngoài: sự tương đồng chỉ là hời hợt.
+- Không khớp.
 
-For a confident duplicate, update the existing issue with the source permalink and one short recurrence note. Do not reopen, relabel, or reassign it unless the config says to.
+Với một trùng lặp chắc chắn, cập nhật issue đã có với permalink nguồn và một ghi chú tái diễn ngắn. Đừng mở lại, đổi label, hay gán lại nó trừ khi config nói vậy.
 
-For a possible match, link it in the verdict as uncertain and create nothing.
+Với một kết quả có thể khớp, hãy link nó trong phán quyết như là không chắc chắn và không tạo gì.
 
-A long-closed issue is a regression lead, not automatically a live duplicate.
+Một issue đã đóng từ lâu là manh mối về hồi quy, không tự động là một bản trùng lặp còn sống.
 
-## 8. Decide whether to create
+## 8. Quyết định có tạo không
 
-Create only when all of these are true:
+Chỉ tạo khi tất cả các điều sau đều đúng:
 
-1. The classification is bug or performance.
-2. The behavior is clearly broken.
-3. The issue is still live or not known to be fixed.
-4. Dedupe found no confident or plausible live match.
-5. The source parent and permalink passed preflight.
-6. The tracker target fields resolved.
-7. The adapter can compensate if the verdict post fails.
+1. Phân loại là bug hoặc hiệu năng.
+2. Hành vi rõ ràng là hỏng.
+3. Issue vẫn còn tồn tại hoặc chưa được biết là đã sửa.
+4. Việc khử trùng lặp không tìm thấy kết quả khớp còn sống chắc chắn hoặc hợp lý.
+5. Tin nhắn cha nguồn và permalink đã qua preflight.
+6. Các field đích trên tracker đã được phân giải.
+7. Adapter có thể bù trừ nếu việc đăng phán quyết thất bại.
 
-Never create for a feature request, question, feedback item, reroute, possible duplicate, confident duplicate, or already-fixed issue.
+Không bao giờ tạo cho một yêu cầu feature, câu hỏi, góp ý, định tuyến lại, trùng lặp có thể, trùng lặp chắc chắn, hay issue đã được sửa.
 
-The new issue must be self-contained:
+Issue mới phải tự chứa đầy đủ:
 
-- Plain title that names the area and symptom
-- Reporter quote
-- Expected and observed behavior
-- Version and environment, or `unknown`
-- Trigger and frequency
-- Source thread permalink
-- Short cause-tracing findings with hypotheses labeled as hypotheses
-- Inline screenshot or representative video frame when supported
-- Links to remaining artifacts
-- Configured intake status and labels
+- Tiêu đề đơn giản gọi tên khu vực và triệu chứng
+- Trích dẫn của người báo cáo
+- Hành vi mong đợi và quan sát được
+- Phiên bản và môi trường, hoặc `unknown`
+- Yếu tố kích hoạt và tần suất
+- Permalink thread nguồn
+- Các phát hiện ngắn từ việc lần theo nguyên nhân, với giả thuyết được gắn nhãn là giả thuyết
+- Screenshot inline hoặc khung hình video tiêu biểu khi được hỗ trợ
+- Link đến các artifact còn lại
+- Trạng thái tiếp nhận và label đã cấu hình
 
-Do not put a guessed root cause in the title.
+Đừng đưa một nguyên nhân gốc đoán mò vào tiêu đề.
 
-## 9. Post one verdict
+## 9. Đăng một phán quyết
 
-Run a fresh source-parent preflight. Then post exactly one reply with `channel=SOURCE_CHANNEL_ID` and `thread_ts=SOURCE_THREAD_TS`.
+Chạy một lần preflight tin nhắn cha nguồn mới. Rồi đăng đúng một reply với `channel=SOURCE_CHANNEL_ID` và `thread_ts=SOURCE_THREAD_TS`.
 
-Never call a source-channel posting action without a nonempty `thread_ts`.
+Không bao giờ gọi một action đăng vào channel nguồn mà không có `thread_ts` không rỗng.
 
-Keep the reply short:
+Giữ reply ngắn:
 
-- Lead with the outcome.
-- Link the existing or new tracker issue when there is one.
-- Mention a reroute or one missing fact when needed.
-- Include at most one allowed owner ping.
-- End with exactly one marker line.
+- Bắt đầu bằng kết quả.
+- Link đến issue tracker đã có hoặc mới khi có.
+- Nhắc đến một lần định tuyến lại hoặc một sự thật còn thiếu khi cần.
+- Bao gồm tối đa một lần ping owner được phép.
+- Kết thúc bằng đúng một dòng marker.
 
-Marker contract:
+Hợp đồng marker:
 
 ```text
 [benny:bug]
@@ -221,20 +221,20 @@ Marker contract:
 [benny:other]
 ```
 
-Use only the configured marker strings. The repro automation trusts the marker only when it comes from the configured triage identity in this source thread.
+Chỉ dùng các chuỗi marker đã cấu hình. Automation tái hiện chỉ tin marker khi nó đến từ danh tính triage đã cấu hình trong thread nguồn này.
 
-After posting, read the same source thread and verify the verdict appears under `SOURCE_THREAD_TS`. If it does not, never retry at the root.
+Sau khi đăng, đọc cùng thread nguồn và xác minh phán quyết xuất hiện dưới `SOURCE_THREAD_TS`. Nếu không, không bao giờ thử lại ở tin nhắn gốc.
 
-If this run created a tracker issue and the verdict did not land, use the adapter's compensation action. Verify that the issue is canceled, closed, or deleted. If compensation cannot be verified, report the failure only in the automation run output.
+Nếu lượt chạy này đã tạo một issue tracker và phán quyết không đến nơi, hãy dùng action bù trừ của adapter. Xác minh rằng issue đã bị hủy, đóng, hoặc xóa. Nếu không thể xác minh việc bù trừ, chỉ báo cáo thất bại trong output của lượt chạy automation.
 
-## 10. Watch one follow-up window
+## 10. Theo dõi một khoảng thời gian follow-up
 
-Watch the source thread for the configured follow-up window, then stop.
+Theo dõi thread nguồn trong khoảng thời gian follow-up đã cấu hình, rồi dừng.
 
-- Answer only a direct question to the triage identity.
-- Apply a concrete correction to the tracker issue when safe.
-- Do not emit a second marker in the same run.
-- Stay out of human coordination and side chatter.
-- Stop early if someone asks the automation to stop.
+- Chỉ trả lời một câu hỏi trực tiếp dành cho danh tính triage.
+- Áp dụng một chỉnh sửa cụ thể cho issue tracker khi an toàn.
+- Đừng phát ra marker thứ hai trong cùng lượt chạy.
+- Đứng ngoài việc phối hợp giữa người với người và các cuộc trò chuyện bên lề.
+- Dừng sớm nếu ai đó yêu cầu automation dừng.
 
-Do not extend the window more than once. A new report should start a new run.
+Đừng kéo dài khoảng thời gian quá một lần. Một báo cáo mới nên bắt đầu một lượt chạy mới.
