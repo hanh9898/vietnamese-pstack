@@ -83,14 +83,14 @@ Marker này thay thế cho danh tính bot riêng tư và việc khớp phán quy
 
 ### Ai đó đang sửa nó một cách rõ ràng
 
-Dừng khi một người tuyên bố rõ ràng nhận việc sửa, đưa ra một kế hoạch cài đặt cụ thể, hoặc yêu cầu một agent khác cài đặt, patch, sửa, hoặc mở một pull request.
+Dừng khi một người nói rõ họ sẽ nhận việc sửa lỗi, đưa ra kế hoạch sửa cụ thể, hoặc yêu cầu một agent khác thực hiện bản sửa, tạo patch, sửa lỗi hay mở pull request.
 
 Đừng coi những điều sau là quyền sở hữu bản sửa:
 
 - Một bot tóm tắt bằng chứng.
 - Một công cụ tra cứu log hoặc ticket.
 - Ai đó yêu cầu một bot chẩn đoán, giải thích, kiểm tra, hoặc tái hiện.
-- Một bot đăng một giả thuyết nguyên nhân mà không đồng ý cài đặt nó.
+- Một bot đưa ra giả thuyết về nguyên nhân nhưng không nhận việc sửa lỗi.
 
 Đánh giá hành động được yêu cầu, không phải sự có mặt của một bot.
 
@@ -239,7 +239,7 @@ Nếu bất kỳ điều kiện nào thất bại, hãy giữ báo cáo tái hi�
 
 Khi qua cổng, cập nhật trạng thái vận hành thành `Attempting bounded fix`.
 
-## 12. Tìm nguyên nhân gốc và cài đặt
+## 12. Tìm nguyên nhân gốc và sửa lỗi
 
 Bên điều phối sở hữu mọi bài đăng Slack, việc review diff cuối cùng, các commit, và pull request.
 
