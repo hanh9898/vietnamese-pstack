@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Sửa bug theo TDD
 
-Khi sửa bug mà có cách kiểm thử ngay trên máy rõ ràng và ít tốn công, hãy viết test tái hiện hành vi lỗi trước khi sửa code production. Mục tiêu là một regression test tập trung, thất bại trước khi sửa và thành công sau khi sửa.
+Khi sửa bug mà có cách kiểm thử rõ ràng và ít tốn công, hãy viết test tái hiện hành vi lỗi trước khi sửa code production. Mục tiêu là một regression test tập trung, thất bại trước khi sửa và thành công sau khi sửa.
 
 Đừng ép buộc một test khi nó không thực tế. Nếu test có sẵn đòi hỏi thiết lập harness rộng, mock dễ vỡ, hạ tầng end-to-end chậm, state chỉ có ở production, các bước tái hiện mơ hồ, hoặc thay đổi lớn ở các fixture không liên quan, hãy bỏ qua việc thêm test mới và dùng phép kiểm chứng hữu ích gần nhất thay vào đó.
 
