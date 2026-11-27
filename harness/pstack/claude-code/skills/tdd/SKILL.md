@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Chỉ dùng khi người dùng yêu cầu rõ ràng về TDD, một bài test thất bại hoặc một regression test, hoặc khi có cách kiểm thử bug trên máy rõ ràng và ít tốn kém. Trừ khi người dùng yêu cầu rõ ràng, hãy bỏ qua nếu chưa rõ nên kiểm thử thế nào, việc kiểm thử quá tốn kém hoặc phụ thuộc nhiều vào tích hợp."
+description: "Chỉ dùng khi người dùng yêu cầu rõ ràng về TDD, một bài test thất bại hoặc một regression test, hoặc khi bug có cách kiểm thử ngay trên máy rõ ràng và ít tốn kém. Bỏ qua khi chưa rõ cách kiểm thử, việc kiểm thử tốn kém, phụ thuộc nhiều vào tích hợp, hoặc không được yêu cầu."
 disable-model-invocation: true
 ---
 
@@ -13,7 +13,7 @@ Khi sửa bug mà có cách kiểm thử ngay trên máy rõ ràng và ít tốn
 ## Workflow
 
 1. **Hiểu bug.** Xác định hành vi dự định, hành vi hiện tại, đường bị ảnh hưởng, và bản tái hiện quan sát được nhỏ nhất.
-2. **Chọn phép kiểm tra thực thi được hẹp nhất.** Ưu tiên test unit, component, integration, hoặc regression gần nhất đã được dùng cho đường code đó. Nếu chưa thấy cách kiểm thử nào rõ ràng và ít tốn công, đừng tự dựng một cách mới chỉ để làm theo quy trình.
+2. **Chọn phép kiểm tra thực thi được hẹp nhất.** Ưu tiên test unit, component, integration, hoặc regression gần nhất đã được dùng cho đường code đó. Nếu chưa thấy cách kiểm thử nào rõ ràng và khả thi, đừng tạo một cách từ đầu chỉ để làm theo quy trình.
 3. **Viết test thất bại trước.** Thêm test tập trung nhỏ nhất lẽ ra đã bắt được bug. Test nên mã hóa hành vi dự định, không phản chiếu phần cài đặt hiện tại.
 4. **Chạy test mới trước khi sửa.** Xác nhận nó thất bại vì đúng lý do dự định. Nếu nó pass hoặc thất bại vì một lý do không liên quan, hãy sửa test hoặc bản tái hiện trước khi sửa phần cài đặt.
 5. **Sửa bug.** Thực hiện thay đổi production nhỏ nhất thỏa mãn hành vi dự định trong khi giữ nguyên các hợp đồng lân cận.
