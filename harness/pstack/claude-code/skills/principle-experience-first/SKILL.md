@@ -1,12 +1,12 @@
 ---
 name: principle-experience-first
-description: "Áp dụng khi xuất hiện các đánh đổi về sản phẩm, UX, hoặc phạm vi feature. Chọn niềm vui cho người dùng thay vì sự tiện lợi khi cài đặt; ship ít feature trau chuốt hơn thay vì nhiều feature thô ráp."
+description: "Áp dụng khi xuất hiện các đánh đổi về sản phẩm, UX, hoặc phạm vi feature. Chọn niềm vui cho người dùng thay vì sự tiện lợi cho người phát triển; ship ít feature trau chuốt hơn thay vì nhiều feature thô ráp."
 disable-model-invocation: true
 ---
 
 # Experience First
 
-Khi sự tiện lợi khi cài đặt mâu thuẫn với niềm vui của người dùng, hãy chọn niềm vui.
+Khi sự tiện lợi cho người phát triển mâu thuẫn với niềm vui của người dùng, hãy chọn niềm vui.
 
 - Mọi feature, control, và tùy chọn đều phải được biện minh
 - Ship ít hơn, ship tốt hơn (trải nghiệm trau chuốt với ba feature thắng trải nghiệm thô ráp với mười)

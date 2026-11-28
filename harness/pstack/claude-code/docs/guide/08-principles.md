@@ -37,7 +37,7 @@ Các nguyên tắc cốt lõi quyết định nên xây bao nhiêu và khi nào 
 - [Subtract Before You Add](../../skills/principle-subtract-before-you-add/SKILL.md) loại bỏ phần thừa trước khi xây lên trên nó.
 - [Minimize Reader Load](../../skills/principle-minimize-reader-load/SKILL.md) gộp bớt các lớp và state ẩn mà người đọc phải giữ trong đầu.
 - [Outcome-Oriented Execution](../../skills/principle-outcome-oriented-execution/SKILL.md) hội tụ các lần viết lại về thiết kế đích thay vì giữ lại các trạng thái tương thích tạm thời.
-- [Experience First](../../skills/principle-experience-first/SKILL.md) chọn kết quả cho người dùng thay vì sự tiện lợi khi cài đặt.
+- [Experience First](../../skills/principle-experience-first/SKILL.md) chọn niềm vui của người dùng thay vì sự tiện lợi cho người phát triển.
 - [Exhaust the Design Space](../../skills/principle-exhaust-the-design-space/SKILL.md) xây hai hoặc ba prototype cạnh tranh khi chưa có tiền lệ.
 - [Build the Lever](../../skills/principle-build-the-lever/SKILL.md) xây script làm hoặc chứng minh công việc, để reviewer có thể chạy lại nó. Khi một agent cứ làm đi làm lại cùng một việc bằng tay, hãy để nó viết công cụ hoặc skill mà nó ước mình có. Nếu một script có thể làm một bước theo cùng một cách mỗi lần, hãy dùng script, và để dành agent cho những quyết định cần phán đoán.
 

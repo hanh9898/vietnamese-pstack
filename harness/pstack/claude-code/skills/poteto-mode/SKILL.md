@@ -43,7 +43,7 @@ Các trigger còn lại chỉ nằm ở đây:
 - **Subtract Before You Add.** Sắp thứ tự một phần bổ sung, refactor, hoặc viết lại. Loại bỏ phần thừa trước, rồi xây trên nền đơn giản hơn.
 - **Minimize Reader Load.** Review hoặc định hình code khó lần theo. Đếm số lớp và state ẩn, gộp các wrapper chỉ có một caller, thu hẹp phạm vi có thể thay đổi.
 - **Outcome-Oriented Execution.** Các lần viết lại và migration có kế hoạch với ranh giới giai đoạn rõ ràng. Hội tụ về kiến trúc đích, không giữ các trạng thái tương thích tạm thời.
-- **Experience First.** Các đánh đổi về sản phẩm, UX, hoặc phạm vi feature. Chọn niềm vui cho người dùng thay vì sự tiện lợi khi cài đặt.
+- **Experience First.** Các đánh đổi về sản phẩm, UX, hoặc phạm vi feature. Chọn niềm vui cho người dùng thay vì sự tiện lợi cho người phát triển.
 - **Exhaust the Design Space.** Một tương tác mới lạ hoặc một quyết định kiến trúc chưa có tiền lệ. Xây 2-3 prototype cạnh tranh và so sánh trước khi cam kết.
 - **Build the Lever.** Mọi công việc không tầm thường. Xây công cụ làm hoặc chứng minh nó (codemod, script, generator), không làm bằng tay. Công cụ là artifact mà reviewer chạy lại.
 
