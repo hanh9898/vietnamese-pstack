@@ -1,19 +1,19 @@
 ---
 name: tdd
-description: "Chỉ dùng khi người dùng yêu cầu rõ ràng TDD, một test thất bại, hoặc một regression test, HOẶC khi bug có một đích test cục bộ rẻ và hiển nhiên. Bỏ qua khi đường test không rõ, tốn kém, nặng về tích hợp, hoặc không được yêu cầu."
+description: "Chỉ dùng khi người dùng yêu cầu rõ ràng về TDD, một bài test thất bại hoặc một regression test, hoặc khi bug có cách kiểm thử ngay trên máy rõ ràng và ít tốn kém. Bỏ qua khi chưa rõ cách kiểm thử, việc kiểm thử tốn kém, phụ thuộc nhiều vào tích hợp, hoặc không được yêu cầu."
 disable-model-invocation: true
 ---
 
 # Sửa bug theo TDD
 
-Khi sửa một bug có đường test rõ ràng và rẻ, hãy biến hành vi bị hỏng thành thứ có thể thực thi trước khi thay đổi code production. Mục tiêu là một regression test tập trung, thất bại trước bản sửa và pass sau bản sửa.
+Khi sửa bug mà có cách kiểm thử rõ ràng và ít tốn công, hãy viết test tái hiện hành vi lỗi trước khi sửa code production. Mục tiêu là một regression test tập trung, thất bại trước khi sửa và thành công sau khi sửa.
 
 Đừng ép buộc một test khi nó không thực tế. Nếu test có sẵn đòi hỏi thiết lập harness rộng, mock dễ vỡ, hạ tầng end-to-end chậm, state chỉ có ở production, các bước tái hiện mơ hồ, hoặc thay đổi lớn ở các fixture không liên quan, hãy bỏ qua việc thêm test mới và dùng phép kiểm chứng hữu ích gần nhất thay vào đó.
 
 ## Workflow
 
 1. **Hiểu bug.** Xác định hành vi dự định, hành vi hiện tại, đường bị ảnh hưởng, và bản tái hiện quan sát được nhỏ nhất.
-2. **Chọn phép kiểm tra thực thi được hẹp nhất.** Ưu tiên test unit, component, integration, hoặc regression gần nhất đã được dùng cho đường code đó. Nếu không có đường test thực tế nào hiển nhiên, đừng tạo một cái từ đầu chỉ để thỏa mãn workflow.
+2. **Chọn phép kiểm tra thực thi được hẹp nhất.** Ưu tiên test unit, component, integration, hoặc regression gần nhất đã được dùng cho đường code đó. Nếu chưa thấy cách kiểm thử nào rõ ràng và khả thi, đừng xây dựng cách kiểm thử mới từ đầu chỉ để làm theo quy trình.
 3. **Viết test thất bại trước.** Thêm test tập trung nhỏ nhất lẽ ra đã bắt được bug. Test nên mã hóa hành vi dự định, không phản chiếu phần cài đặt hiện tại.
 4. **Chạy test mới trước khi sửa.** Xác nhận nó thất bại vì đúng lý do dự định. Nếu nó pass hoặc thất bại vì một lý do không liên quan, hãy sửa test hoặc bản tái hiện trước khi sửa phần cài đặt.
 5. **Sửa bug.** Thực hiện thay đổi production nhỏ nhất thỏa mãn hành vi dự định trong khi giữ nguyên các hợp đồng lân cận.
