@@ -1,6 +1,6 @@
 ### Visual parity
 
-**Bạn chịu trách nhiệm đạt được sự tương đương đến từng pixel với baseline nguyên trạng. Baseline là đặc tả; bạn không được sửa baseline.** Sự tương đương được kiểm chứng bằng image diff, không phải bằng mắt.
+**Bạn chịu trách nhiệm bảo đảm giao diện khớp với bản chuẩn đến từng pixel. Bản chuẩn là đặc tả; không được sửa bản chuẩn.** Sự tương đương được kiểm chứng bằng image diff, không phải bằng mắt.
 
 1. Thiết lập baseline trước, trước mọi migration: một visual regression harness chụp screenshot component hiện tại qua các trạng thái của nó, cộng với đích khi so khớp hai bản cài đặt. Không có baseline, không có khẳng định tương đương. Một điều kiện tiên quyết mang tính chặn, không phải một follow-up.
 2. Các điều khoản chống đi tắt, được nêu ra và giữ vững: không sửa harness, không can thiệp baseline, không tái cấu trúc component để làm một diff pass. Nếu baseline trông sai, hãy dừng lại và hỏi, đừng sửa nó.
