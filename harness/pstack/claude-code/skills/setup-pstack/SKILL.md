@@ -75,7 +75,7 @@ Cho người dùng biết rule đã được ghi và nó áp dụng cho các ses
 
 ### 7. Đề xuất một verification skill (tùy chọn)
 
-Sau khi hoàn tất bước xác nhận rule, chính agent đang chạy skill này kiểm tra xem dự án có cách nào để điều khiển app thật làm bằng chứng không (một skill `verify-*`, hoặc một harness có sẵn). Nếu không, hãy đề xuất đúng một lần trong cuộc trò chuyện setup hiện tại: "bạn có muốn một verification skill cục bộ cho dự án, để agent có thể điều khiển app theo cách người dùng làm và chứng minh các thay đổi hoạt động không?" Nếu đồng ý, gọi lệnh tương ứng với harness: Cursor `/create-verification-skill`; Claude Code `/pstack:create-verification-skill` (được tìm thấy ở bất cứ đâu pstack được cài: workspace, user, hoặc plugin). Nếu không, tiếp tục mà không thúc ép.
+Kiểm tra xem dự án có cách nào để điều khiển app thật làm bằng chứng không (một skill `verify-*`, hoặc một harness có sẵn). Nếu không, hãy đề xuất một lần: "bạn có muốn một verification skill cục bộ cho dự án, để agent có thể điều khiển app theo cách người dùng làm và chứng minh các thay đổi hoạt động không? Tôi có thể tạo một cái bằng /create-verification-skill." Nếu đồng ý, gọi `/create-verification-skill` (được tìm thấy ở bất cứ đâu pstack được cài: workspace, user, hoặc plugin). Nếu không, tiếp tục mà không thúc ép.
 
 ### 8. Đề xuất một formal verification skill (tùy chọn)
 
